@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente - Agencia de Viajes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen flex items-center justify-center p-4">
+
+<div class="w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20 my-8">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-extrabold text-slate-800">Crear una Cuenta</h2>
+        <p class="text-sm text-slate-500 mt-1">Completa tus datos para registrarte en la plataforma</p>
+    </div>
+
+    <!-- Alerta de Error Global -->
+    <div th:if="${errorMessage}" class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded text-sm flex items-center gap-2">
+        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span th:text="${errorMessage}">Error al procesar el registro</span>
+    </div>
+
+    <form th:action="@{/clientes/guardar}" th:object="${registroClienteDTO}" method="POST" class="space-y-5">
+
+        <!-- Nombre Completo -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
+            <input type="text" th:field="*{nombreCompleto}" required
+                   class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                   th:classappend="${#fields.hasErrors('nombreCompleto')} ? 'border-red-500' : 'border-slate-300'"
+                   placeholder="Ej. Juan Pérez Gómez">
+            <p th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}" class="text-red-500 text-xs mt-1"></p>
+        </div>
+
+        <!-- Tipo Doc y Documento (Grid de 2 columnas) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo Doc.</label>
+                <select th:field="*{tipoDocumento}"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    <option value="CC">Cédula de Ciudadanía</option>
+                    <option value="CE">Cédula de Extranjería</option>
+                    <option value="PASAPORTE">Pasaporte</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Número de Documento</label>
+                <input type="text" th:field="*{documento}" required
+                       class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                       th:classappend="${#fields.hasErrors('documento')} ? 'border-red-500' : 'border-slate-300'"
+                       placeholder="Ej. 1012345678">
+                <p th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}" class="text-red-500 text-xs mt-1"></p>
+            </div>
+        </div>
+
+        <!-- Correo y Teléfono (Grid de 2 columnas) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                <input type="email" th:field="*{correo}" required
+                       class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                       th:classappend="${#fields.hasErrors('correo')} ? 'border-red-500' : 'border-slate-300'"
+                       placeholder="correo@ejemplo.com">
+                <p th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}" class="text-red-500 text-xs mt-1"></p>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Teléfono</label>
+                <input type="text" th:field="*{telefono}" required
+                       class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                       th:classappend="${#fields.hasErrors('telefono')} ? 'border-red-500' : 'border-slate-300'"
+                       placeholder="Ej. 3001234567">
+                <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="text-red-500 text-xs mt-1"></p>
+            </div>
+        </div>
+
+        <!-- Dirección -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Dirección de Residencia</label>
+            <input type="text" th:field="*{direccion}"
+                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                   placeholder="Ej. Calle 10 # 40 - 20">
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
+            <input type="password" th:field="*{contrasena}" required
+                   class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                   th:classappend="${#fields.hasErrors('contrasena')} ? 'border-red-500' : 'border-slate-300'"
+                   placeholder="Mínimo 6 caracteres">
+            <p th:if="${#fields.hasErrors('contrasena')}" th:errors="*{contrasena}" class="text-red-500 text-xs mt-1"></p>
+        </div>
+
+        <!-- Botón de Registro -->
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-blue-500/30 transition duration-200 mt-2">
+            Registrarme
+        </button>
+    </form>
+
+    <div class="mt-6 text-center text-sm text-slate-600">
+        ¿Ya tienes una cuenta registrada?
+        <a th:href="@{/ingreso/login}" class="text-blue-600 hover:text-blue-700 font-bold hover:underline">Inicia sesión aquí</a>
+    </div>
+</div>
+
+</body>
+</html>
