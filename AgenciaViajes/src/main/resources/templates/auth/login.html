@@ -42,14 +42,16 @@
     <form th:action="@{/login}" method="POST" class="space-y-5">
         <div>
             <label for="username" class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
-            <input type="email" id="username" name="username" required autofocus
+            <!-- Mapeado a "correo" -->
+            <input type="email" id="username" name="correo" required autofocus
                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                    placeholder="usuario@ejemplo.com">
         </div>
 
         <div>
             <label for="password" class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
-            <input type="password" id="password" name="password" required
+            <!-- Mapeado a "contrasena" -->
+            <input type="password" id="password" name="contrasena" required
                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                    placeholder="••••••••">
         </div>

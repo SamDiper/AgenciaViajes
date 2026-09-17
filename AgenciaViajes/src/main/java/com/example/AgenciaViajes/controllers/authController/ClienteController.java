@@ -26,7 +26,7 @@ public class ClienteController {
     public String listarClientes(Model model) {
         model.addAttribute("clientes", clienteService.obtenerTodos());
         model.addAttribute("titulo", "Lista de Clientes");
-        return "cliente/Lista"; // Nombre de tu vista HTML
+        return "auto/cliente/Lista"; // Nombre de tu vista HTML
     }
 
     // 2. FORMULARIO DE REGISTRO
@@ -55,7 +55,7 @@ public class ClienteController {
             redirectAttributes.addFlashAttribute("mensaje", "Cliente registrado exitosamente");
 
             // 2. Usar 'redirect:' para navegar al login tras guardar
-            return "redirect:/ingreso/login";
+            return "redirect:/login";
 
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -73,7 +73,7 @@ public class ClienteController {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado")));
         model.addAttribute("titulo", "Editar Cliente");
-        return "cliente/Formulario";
+        return "auth/cliente/Formulario";
     }
 
     // 5. ACTUALIZAR (Procesado mediante POST desde el formulario)

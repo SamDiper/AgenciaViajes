@@ -26,6 +26,7 @@ public class loginController {
             model.addAttribute("logoutMessage", "Has cerrado sesión correctamente.");
         }
 
+        // En ClienteController.java -> guardar()
         return "auth/login"; // Ajusta la ruta a la vista de tu plantilla login.html
     }
 }

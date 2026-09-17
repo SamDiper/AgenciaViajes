@@ -23,16 +23,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas (login, registro, recursos estáticos, h2-console)
-                        .requestMatchers("/login", "/clientes/guardar", "/auth/**", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/login", "/clientes", "/clientes/guardar", "/auth/**", "/css/**", "/js/**", "/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")               // GET que mapea el LoginController
-                        .loginProcessingUrl("/login")       // POST al que envía los datos el <form>
-                        .usernameParameter("correo")        // Indica que el campo 'username' es el 'correo'
-                        .passwordParameter("contrasena")    // Debe coincidir con el name del input de contraseña
-                        .defaultSuccessUrl("/home", true)   // Redirección si el inicio de sesión es exitoso
-                        .failureUrl("/login?error=true")    // Redirección si falla la autenticación
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("correo")
+                        .passwordParameter("contrasena")
+                        .defaultSuccessUrl("/home", true) // Llama al @GetMapping("/home")
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout

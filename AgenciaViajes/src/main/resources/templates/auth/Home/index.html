@@ -21,7 +21,7 @@
             <!-- Usuario Autenticado y Logout -->
             <div class="flex items-center gap-4">
                 <div class="text-sm font-medium text-slate-300">
-                    Hola, <span class="text-white font-bold" sec:authentication="name">usuario@correo.com</span>
+                    Hola, <span class="text-white font-bold" sec:authentication="nombreCliente">usuario@correo.com</span>
                 </div>
 
                 <!-- Botón Cerrar Sesión -->
@@ -41,7 +41,7 @@
     <!-- Tarjeta de Bienvenida -->
     <div class="bg-white rounded-2xl shadow-md p-8 mb-8 border border-slate-200">
         <h1 class="text-3xl font-extrabold text-slate-800">
-            ¡Bienvenido de nuevo, <span class="text-blue-600" th:text="${usuarioCorreo}">Usuario</span>!
+            ¡Bienvenido de nuevo, <span class="text-blue-600" th:text="${nombreCliente}">Usuario</span>!
         </h1>
         <p class="text-slate-600 mt-2">
             Has ingresado correctamente a la plataforma de gestión de la Agencia de Viajes.
