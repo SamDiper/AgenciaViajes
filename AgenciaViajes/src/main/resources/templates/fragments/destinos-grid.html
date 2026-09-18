@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="grid(listaDestinos)">
+
+    <div th:if="${#lists.isEmpty(listaDestinos)}" class="text-center py-12">
+        <p class="text-slate-500 text-lg">Pronto habrá nuevos lugares para descubrir ✈️</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(listaDestinos)}"
+         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div th:each="destino : ${listaDestinos}"
+             class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition">
+            <img th:if="${destino.imagenUrl}" th:src="${destino.imagenUrl}"
+                 class="w-full h-40 object-cover" alt="Destino">
+            <div class="p-4">
+                <h3 class="font-bold text-slate-800" th:text="${destino.nombre}">Nombre</h3>
+                <p class="text-sm text-slate-500 mt-1" th:text="${destino.descripcion}">Descripción</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

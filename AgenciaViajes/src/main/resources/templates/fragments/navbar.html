@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<nav th:fragment="navbar" class="bg-slate-900 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+            <a th:href="@{/}" class="text-xl font-extrabold text-blue-400">AgenciaViajes</a>
+
+            <!-- Usuario NO autenticado -->
+            <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
+                <a th:href="@{/login}"
+                   class="text-sm font-semibold text-slate-300 hover:text-white transition">Iniciar sesión</a>
+                <a th:href="@{/register}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">Registrarse</a>
+            </div>
+
+            <!-- Usuario autenticado -->
+            <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+                <span class="text-sm text-slate-300">
+    Hola, <span class="text-white font-bold" th:text="${nombreCliente}"></span>
+</span>
+                <form th:action="@{/logout}" method="POST" class="inline">
+                    <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>
