@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carrito - Agencia de Viajes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="flex-grow max-w-5xl w-full mx-auto p-6">
+    <h1 class="text-2xl font-extrabold text-slate-800 mb-6">Mi Carrito</h1>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
+        <p class="text-slate-500 text-lg">Tu carrito está vacío por ahora.</p>
+        <p class="text-slate-400 text-sm mt-2">Explora nuestros destinos y agrega tus próximos viajes aquí.</p>
+        <a th:href="@{/}" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition">
+            Ver destinos
+        </a>
+    </div>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    &copy; 2026 Agencia de Viajes. Todos los derechos reservados.
+</footer>
+
+</body>
+</html>
