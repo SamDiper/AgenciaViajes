@@ -8,7 +8,7 @@
 <body>
 
     <header th:fragment="navbar" id="navbar"
-        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-transparent">
+        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-transparent bg-white/90 backdrop-blur-md shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
 
@@ -19,41 +19,68 @@
                         class="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
                 </a>
 
-                <!-- CTA and Auth Buttons -->
-                <div class="hidden sm:flex items-center space-x-4">
-                    <!-- CTA Button -->
+                <!-- CTA, Carrito y Botones Auth (Escritorio) -->
+                <div class="hidden sm:flex items-center space-x-5">
+                    
+                    <!-- Botón CTA -->
                     <a href="#destinos"
                         class="inline-flex items-center gap-2 bg-[#073B78] hover:bg-[#052b57] text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-900/20 hover:shadow-lg hover:shadow-blue-900/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 group">
                         <span>Explorar destinos</span>
                         <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
                     </a>
 
-                    <!-- User Session Info (Spring Security) -->
-                    <div sec:authorize="isAuthenticated()"
-                        class="flex items-center gap-3 pl-2 border-l border-slate-300/80">
-                        <div
-                            class="w-8 h-8 rounded-full bg-[#073B78] text-white font-bold flex items-center justify-center text-xs shadow-inner">
-                            <span
-                                th:text="${nombreCliente != null ? #strings.substring(nombreCliente,0,1) : 'U'}">U</span>
+                    <!-- Carrito de Compras (Visible para todos) -->
+                    <a th:href="@{/carrito}" 
+                       class="relative text-slate-600 hover:text-[#073B78] transition-colors p-2 group"
+                       title="Ver carrito">
+                        <i class="fa-solid fa-cart-shopping text-xl transition-transform group-hover:scale-110"></i>
+                        <!-- Punto indicador (opcional, puedes hacerlo dinámico luego con Thymeleaf) -->
+                        <span class="absolute top-1 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                    </a>
+
+                    <!-- Separador -->
+                    <div class="h-6 w-px bg-slate-300"></div>
+
+                    <!-- Usuario Logueado (Spring Security) -->
+                    <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <!-- Avatar Circular -->
+                            <div class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner">
+                                <i class="fa-solid fa-user text-xs"></i>
+                            </div>
+                            <!-- Saludo y Nombre -->
+                            <div class="flex flex-col leading-tight">
+                                <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Hola,</span>
+                                <span class="text-sm font-bold text-slate-800" sec:authentication="principal.nombreCompleto"></span>
+                            </div>
                         </div>
+                        
+                        <!-- Botón Salir -->
                         <form th:action="@{/logout}" method="POST" class="inline">
                             <button type="submit" title="Cerrar sesión"
-                                class="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded transition">
+                                class="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-red-100">
                                 Salir
                             </button>
                         </form>
                     </div>
 
+                    <!-- Usuario NO Logueado -->
                     <div sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
                         <a th:href="@{/login}"
-                            class="text-xs font-semibold text-slate-700 hover:text-[#073B78] px-2.5 py-1.5 rounded transition">
+                            class="text-sm font-semibold text-slate-700 hover:text-[#073B78] px-3 py-2 rounded-lg hover:bg-slate-50 transition">
                             Ingresar
                         </a>
                     </div>
                 </div>
 
-                <!-- Mobile Hamburger Menu Button -->
-                <div class="flex items-center md:hidden">
+                <!-- Botones Móvil (Menú hamburguesa + Carrito) -->
+                <div class="flex items-center gap-3 md:hidden">
+                    <!-- Carrito versión móvil -->
+                    <a th:href="@{/carrito}" class="text-slate-600 hover:text-[#073B78] p-2 relative">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    </a>
+                    
+                    <!-- Menú Hamburguesa -->
                     <button id="mobile-menu-btn" type="button" aria-expanded="false"
                         aria-label="Abrir menú de navegación"
                         class="p-2 rounded-lg text-slate-700 hover:text-[#073B78] hover:bg-slate-100/80 focus:outline-none transition-colors">
@@ -65,35 +92,52 @@
             </div>
         </div>
 
-        <!-- Mobile Menu Drawer -->
+        <!-- Menú Móvil Desplegable -->
         <div id="mobile-menu"
             class="hidden md:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-6 pt-3 pb-6 shadow-xl transition-all duration-300">
             <div class="flex flex-col space-y-3">
-                <a th:href="@{/}"
-                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Inicio</a>
-                <a href="#destinos"
-                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Destinos</a>
-                <a href="#experiencias"
-                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Experiencias</a>
-                <a href="#why-choose-us"
-                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Nosotros</a>
-                <a href="#contacto"
-                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Contacto</a>
+                
+                <!-- Info usuario móvil -->
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-3 py-3 border-b border-slate-100">
+                    <div class="w-10 h-10 rounded-full bg-[#073B78] text-white flex items-center justify-center">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-slate-500">Bienvenido</span>
+                        <span class="font-bold text-slate-800" sec:authentication="principal.nombreCompleto"></span>
+                    </div>
+                </div>
 
-                <div class="pt-3 flex flex-col gap-2">
+                <a th:href="@{/}" class="text-slate-800 hover:text-[#073B78] font-semibold py-2">Inicio</a>
+                <a href="#destinos" class="text-slate-800 hover:text-[#073B78] font-semibold py-2">Destinos</a>
+                <a href="#experiencias" class="text-slate-800 hover:text-[#073B78] font-semibold py-2">Experiencias</a>
+                <a href="#why-choose-us" class="text-slate-800 hover:text-[#073B78] font-semibold py-2">Nosotros</a>
+                <a href="#contacto" class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Contacto</a>
+
+                <div class="pt-3 flex flex-col gap-3">
                     <a href="#destinos"
-                        class="w-full text-center bg-[#073B78] text-white py-2.5 rounded-full font-semibold shadow-sm">
+                        class="w-full text-center bg-[#073B78] hover:bg-[#052b57] text-white py-2.5 rounded-full font-semibold shadow-sm transition-colors">
                         Explorar destinos →
                     </a>
+                    
+                    <!-- Botones Auth Móvil -->
                     <div sec:authorize="!isAuthenticated()" class="flex gap-2 pt-2">
                         <a th:href="@{/login}"
-                            class="flex-1 text-center border border-slate-300 text-slate-700 py-2 rounded-lg font-medium text-sm">
+                            class="flex-1 text-center border border-slate-300 hover:bg-slate-50 text-slate-700 py-2 rounded-lg font-medium text-sm transition">
                             Iniciar sesión
                         </a>
                         <a th:href="@{/clientes}"
-                            class="flex-1 text-center bg-slate-900 text-white py-2 rounded-lg font-medium text-sm">
+                            class="flex-1 text-center bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg font-medium text-sm transition">
                             Registrarse
                         </a>
+                    </div>
+                    
+                    <div sec:authorize="isAuthenticated()" class="pt-2">
+                        <form th:action="@{/logout}" method="POST">
+                            <button type="submit" class="w-full text-center border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg font-medium text-sm transition-colors">
+                                Cerrar sesión
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
