@@ -1,1 +1,178 @@
 @import "tailwindcss";
+
+@layer base {
+    :root {
+        --color-brand-navy: #073B78;
+        --color-brand-blue: #0B4EA2;
+        --color-brand-yellow: #F5C400;
+        --color-brand-red: #E52435;
+        --color-brand-dark: #041E42;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        overflow-x: hidden;
+        background-color: #FFFFFF;
+        color: #1e293b;
+    }
+}
+
+/* Custom font for the slogan */
+.font-slogan {
+    font-family: 'Caveat', 'Dancing Script', 'Playfair Display', cursive, serif;
+}
+
+/* Hero Video Layering & Overlays */
+.hero-video-container {
+    position: relative;
+    width: 100%;
+    height: 90vh;
+    min-height: 600px;
+    max-height: 950px;
+    overflow: hidden;
+    background-color: #041E42;
+}
+
+@media (max-width: 768px) {
+    .hero-video-container {
+        height: 75vh;
+        min-height: 500px;
+    }
+}
+
+.hero-video-iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 56.25vw; /* 16:9 aspect ratio */
+    min-height: 100vh;
+    min-width: 177.77vh; /* 16:9 aspect ratio */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    border: none;
+}
+
+/* Seamless White Gradient Fade at Bottom of Hero */
+.hero-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        rgba(4, 30, 66, 0.4) 0%,
+        rgba(4, 30, 66, 0.1) 30%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 70%,
+        rgba(255, 255, 255, 0.75) 88%,
+        #ffffff 100%
+    );
+}
+
+/* Navbar dynamic states */
+.navbar-scrolled {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px -2px rgba(7, 59, 120, 0.08);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.navbar-scrolled .nav-link-text {
+    color: #334155;
+}
+
+.navbar-scrolled .nav-link-text:hover {
+    color: #073B78;
+}
+
+.navbar-transparent {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+/* Tricolor Colombian accent bar */
+.colombia-tricolor-pill {
+    display: inline-flex;
+    height: 4px;
+    width: 42px;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.colombia-tricolor-pill span:nth-child(1) {
+    width: 50%;
+    background-color: #F5C400;
+}
+
+.colombia-tricolor-pill span:nth-child(2) {
+    width: 25%;
+    background-color: #073B78;
+}
+
+.colombia-tricolor-pill span:nth-child(3) {
+    width: 25%;
+    background-color: #E52435;
+}
+
+/* Destination Card Overlays and Transitions */
+.destination-card-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(4, 30, 66, 0.92) 0%,
+        rgba(7, 59, 120, 0.5) 45%,
+        rgba(0, 0, 0, 0.1) 80%,
+        transparent 100%
+    );
+    transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.destination-card:hover .destination-card-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(4, 30, 66, 0.96) 0%,
+        rgba(7, 59, 120, 0.65) 55%,
+        rgba(0, 0, 0, 0.2) 85%,
+        transparent 100%
+    );
+}
+
+.destination-card img {
+    transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.destination-card:hover img {
+    transform: scale(1.06);
+}
+
+/* Star rating gold */
+.star-gold {
+    color: #F5C400;
+}
+
+/* Decorative side ribbons */
+.flag-side-ribbon-left {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 120px;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.flag-side-ribbon-right {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 120px;
+    pointer-events: none;
+    opacity: 0.85;
+}
