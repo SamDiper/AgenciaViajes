@@ -46,7 +46,7 @@
 
             <!-- Action Button -->
             <div>
-                <a th:href="@{'/destinos/' + ${id != null ? id : ''}}" href="#contacto"
+                <a th:href="@{/paquetes/buscar(destino=${name})}" href="/paquetes"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 hover:border-white/60 shadow-sm transition-all duration-300 transform group-hover:translate-x-1">
                     <span>Conocer destino</span>
                     <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>

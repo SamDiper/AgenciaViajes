@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Explora todos nuestros paquetes de viaje. Filtra por destino, precio o duración y encuentra tu aventura ideal en Colombia." />
+    <title>Paquetes de Viaje — Traveling Colombia</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (compiled) -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="bg-white text-slate-900 font-sans antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <header th:replace="~{components/navbar/navbar :: navbar}"></header>
+
+    <main class="w-full">
+
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden pt-28 pb-14 sm:pt-32 sm:pb-16 text-white"
+            style="background: url('/assets/fondo-paquetes.png') center / cover no-repeat;">
+            <!-- Dark Gradient Overlay -->
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-[#041E42]/85 via-[#073B78]/70 to-[#041E42]/90 pointer-events-none">
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+
+                <!-- Tricolor pill -->
+                <div class="colombia-tricolor-pill mx-auto mb-5">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <h1
+                    class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-4 text-white drop-shadow-md">
+                    Nuestros Paquetes
+                </h1>
+                <p class="text-base sm:text-lg text-slate-100 max-w-xl mx-auto font-medium leading-relaxed drop-shadow">
+                    Encuentra el viaje perfecto. Filtra por destino, precio o duración y reserva tu próxima aventura.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- Panel de Búsqueda y Filtros -->
+        <section class="bg-white py-8 sm:py-10">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl shadow-xl shadow-blue-950/5 border border-slate-200/80 p-6 sm:p-8">
+
+                    <h2 class="text-lg font-bold text-slate-800 mb-1">Buscar paquetes</h2>
+                    <p class="text-sm text-slate-500 mb-6">Completa uno o más filtros y presiona
+                        <strong class="text-slate-700">Buscar</strong>.
+                    </p>
+
+                    <form id="form-buscar" method="GET" th:action="@{/paquetes/buscar}" action="/paquetes/buscar"
+                        class="flex flex-col gap-5">
+
+                        <!-- Fila 1: Destino -->
+                        <div>
+                            <label for="destino"
+                                class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                <i class="fa-solid fa-location-dot mr-1 text-amber-500"></i> Destino
+                            </label>
+                            <select id="destino" name="destino"
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition-all duration-200">
+                                <option value="">— Todos los destinos —</option>
+                                <option th:each="dest : ${destinos}" th:value="${dest.nombre}" th:text="${dest.nombre}"
+                                    th:selected="${filtroDestino != null and filtroDestino == dest.nombre}">
+                                    Destino
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Fila 2: Precio mínimo / máximo -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="precioMin"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                    <i class="fa-solid fa-tag mr-1 text-amber-500"></i> Precio mínimo (COP)
+                                </label>
+                                <input id="precioMin" type="number" name="precioMin" min="0" step="10000"
+                                    placeholder="Ej: 500000" th:value="${filtroPrecioMin}"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition-all duration-200" />
+                            </div>
+                            <div>
+                                <label for="precioMax"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                    <i class="fa-solid fa-tag mr-1 text-amber-500"></i> Precio máximo (COP)
+                                </label>
+                                <input id="precioMax" type="number" name="precioMax" min="0" step="10000"
+                                    placeholder="Ej: 3000000" th:value="${filtroPrecioMax}"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition-all duration-200" />
+                            </div>
+                        </div>
+
+                        <!-- Fila 3: Duración mínima / máxima -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="durMin"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                    <i class="fa-solid fa-calendar-days mr-1 text-amber-500"></i> Duración mínima (días)
+                                </label>
+                                <input id="durMin" type="number" name="durMin" min="1" placeholder="Ej: 3"
+                                    th:value="${filtroDurMin}"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition-all duration-200" />
+                            </div>
+                            <div>
+                                <label for="durMax"
+                                    class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                                    <i class="fa-solid fa-calendar-days mr-1 text-amber-500"></i> Duración máxima (días)
+                                </label>
+                                <input id="durMax" type="number" name="durMax" min="1" placeholder="Ej: 10"
+                                    th:value="${filtroDurMax}"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition-all duration-200" />
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <button id="btn-buscar" type="submit"
+                                class="inline-flex items-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm px-7 py-3 rounded-full border-none cursor-pointer shadow-md shadow-[#073B78]/25 hover:shadow-lg hover:shadow-[#073B78]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                                Buscar paquetes
+                            </button>
+                            <a id="btn-limpiar" th:href="@{/paquetes}" href="/paquetes"
+                                class="inline-flex items-center gap-1.5 text-slate-500 font-semibold text-sm px-5 py-3 rounded-full border border-slate-200 hover:text-[#073B78] hover:border-[#073B78] hover:bg-blue-50 transition-all duration-200 no-underline">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                                Limpiar filtros
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════
+             RESULTADOS — CATÁLOGO DE PAQUETES
+        ══════════════════════════════════════════════ -->
+        <section class="bg-slate-50/50 py-10 sm:py-14 border-t border-slate-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <!-- Contador de resultados -->
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800">
+                            Paquetes disponibles
+                        </h2>
+                        <p class="text-sm text-slate-500 mt-0.5">
+                            <span th:text="${totalResultados}" class="font-semibold text-slate-700">0</span>
+                            resultado<span th:if="${totalResultados != 1}">s</span> encontrado<span
+                                th:if="${totalResultados != 1}">s</span>
+                        </p>
+                    </div>
+                    <!-- Tricolor decorativo -->
+                    <div class="colombia-tricolor-pill hidden sm:flex">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- Grid de tarjetas -->
+                <div th:if="${paquetes != null and !#lists.isEmpty(paquetes)}"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+                    <article th:each="paquete : ${paquetes}"
+                        class="bg-white rounded-2xl overflow-hidden border border-slate-200/70 shadow-sm hover:shadow-xl hover:shadow-[#073B78]/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col group">
+
+                        <!-- Imagen -->
+                        <div class="relative overflow-hidden h-56 w-full bg-slate-100">
+                            <img th:src="${paquete.imagenUrl != null and !#strings.isEmpty(paquete.imagenUrl)
+                                          ? paquete.imagenUrl
+                                          : (paquete.destino.imagenUrl != null and !#strings.isEmpty(paquete.destino.imagenUrl)
+                                             ? paquete.destino.imagenUrl
+                                             : 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=800&auto=format&fit=crop')}"
+                                th:alt="${paquete.nombre}" loading="lazy"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+
+                            <!-- Badge destino -->
+                            <div
+                                class="absolute top-3.5 left-3.5 inline-flex items-center gap-1.5 bg-[#041E42]/85 backdrop-blur-sm border border-amber-400/40 text-amber-400 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+                                <i class="fa-solid fa-location-dot text-amber-400 text-[10px]"></i>
+                                <span th:text="${paquete.destino.nombre}">Destino</span>
+                            </div>
+
+                            <!-- Badge duración -->
+                            <div
+                                class="absolute top-3.5 right-3.5 inline-flex items-center gap-1.5 bg-[#073B78]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                                <i class="fa-solid fa-clock text-[10px]"></i>
+                                <span th:text="${paquete.duracionDias} + ' días'">N días</span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="p-5 flex flex-col flex-1 gap-3">
+
+                            <!-- Nombre del paquete -->
+                            <h3 class="text-base font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-[#073B78] transition-colors"
+                                th:text="${paquete.nombre}">Nombre del paquete</h3>
+
+                            <!-- Descripción -->
+                            <p class="text-sm text-slate-500 leading-relaxed line-clamp-2"
+                                th:text="${paquete.descripcion}">Descripción breve del paquete.</p>
+
+                            <!-- Info rápida -->
+                            <div
+                                class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-calendar-days text-slate-400"></i>
+                                    <span th:text="${paquete.duracionDias} + ' días'">N días</span>
+                                </span>
+                                <span th:if="${paquete.aerolinea != null}" class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plane text-slate-400"></i>
+                                    <span th:text="${paquete.aerolinea.nombre}">Aerolínea</span>
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-globe text-slate-400"></i>
+                                    <span th:text="${paquete.destino.pais}">País</span>
+                                </span>
+                            </div>
+
+                            <!-- Precio + CTA -->
+                            <div class="flex items-end justify-between mt-auto pt-3 border-t border-slate-100">
+                                <div>
+                                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
+                                        Desde</p>
+                                    <p class="text-xl font-extrabold text-[#073B78] leading-none"
+                                        th:text="'$' + ${#numbers.formatDecimal(paquete.precioBase, 0, 'COMMA', 0, 'POINT')}">
+                                        $0
+                                    </p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">COP por persona</p>
+                                </div>
+                                <a th:href="@{'/paquetes/' + ${paquete.idPaquete}}"
+                                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#073B78] hover:bg-[#041E42] px-4 py-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md group/btn">
+                                    Ver detalles
+                                    <i
+                                        class="fa-solid fa-arrow-right text-[10px] transition-transform duration-200 group-hover/btn:translate-x-1"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- Estado vacío -->
+                <div th:if="${paquetes == null or #lists.isEmpty(paquetes)}"
+                    class="flex flex-col items-center justify-center py-20 px-6 text-center text-slate-400">
+                    <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-5">
+                        <i class="fa-solid fa-suitcase-rolling text-3xl text-slate-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-600 mb-2">No se encontraron paquetes</h3>
+                    <p class="text-slate-400 text-sm max-w-sm">
+                        Prueba ajustando los filtros de búsqueda o
+                        <a th:href="@{/paquetes}" href="/paquetes"
+                            class="text-[#073B78] font-semibold underline underline-offset-2 hover:text-[#0B4EA2] transition-colors">
+                            ve todos los paquetes disponibles</a>.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer th:replace="~{components/footer/footer :: footer}"></footer>
+
+    <!-- Script principal -->
+    <script type="module" th:src="@{/js/app.js}" src="/js/app.js"></script>
+
+</body>
+
+</html>
