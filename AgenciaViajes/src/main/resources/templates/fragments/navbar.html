@@ -3,31 +3,49 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-<nav th:fragment="navbar" class="bg-slate-900 text-white shadow-lg">
+<nav th:fragment="navbar" class="bg-slate-900 text-white shadow-lg border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
 
-            <a th:href="@{/}" class="text-xl font-extrabold text-blue-400">AgenciaViajes</a>
-
-            <!-- Usuario NO autenticado -->
-            <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
-                <a th:href="@{/login}"
-                   class="text-sm font-semibold text-slate-300 hover:text-white transition">Iniciar sesión</a>
-                <a th:href="@{/register}"
-                   class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">Registrarse</a>
+            <!-- LOGO / INICIO -->
+            <div class="flex items-center gap-2">
+                <a th:href="@{/}" class="text-xl font-extrabold text-blue-400 hover:text-blue-300 transition-colors">
+                    AgenciaViajes
+                </a>
             </div>
 
-            <!-- Usuario autenticado -->
-            <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
-                <span class="text-sm text-slate-300">
-    Hola, <span class="text-white font-bold" th:text="${nombreCliente}"></span>
-</span>
-                <form th:action="@{/logout}" method="POST" class="inline">
-                    <button type="submit"
-                            class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
-                        Cerrar Sesión
-                    </button>
-                </form>
+            <!-- CONTENEDOR DERECHO -->
+            <div class="flex items-center gap-3 ml-auto">
+
+                <!-- 1. SI NO ESTÁ AUTENTICADO: Iniciar sesión + Registrarse -->
+                <div sec:authorize="!isAuthenticated()" class="flex items-center gap-3">
+                    <a th:href="@{/login}"
+                       class="text-sm font-semibold text-slate-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-slate-800">
+                        Iniciar sesión
+                    </a>
+                    <a th:href="@{/register}"
+                       class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-bold px-5 py-2 rounded-full transition-all shadow-md hover:shadow-lg">
+                        Registrarse
+                    </a>
+                </div>
+
+                <!-- 2. SI SÍ ESTÁ AUTENTICADO: Nombre del usuario + Cerrar Sesión -->
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+                    <span class="text-sm text-slate-300">
+                        Hola, <span class="text-white font-bold"
+                                    th:text="${cliente != null ? cliente.nombreCompleto : #authentication.name}">
+                                    Usuario
+                              </span>
+                    </span>
+
+                    <form th:action="@{/logout}" method="POST" class="inline">
+                        <button type="submit"
+                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-bold px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg cursor-pointer">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+
             </div>
 
         </div>

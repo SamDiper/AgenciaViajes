@@ -30,6 +30,11 @@ public class ClienteService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public Cliente obtenerPorIdUsuario(Integer idUsuario) {
+        return clienteRepository.findByUsuario_IdUsuario(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID de usuario: " + idUsuario));
+    }
+
     @Transactional
     public Cliente registrarCliente(RegistroClienteDTO dto) {
         Rol rolCliente = rolRepository.findByNombreRol("CLIENTE")
@@ -65,10 +70,15 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
+    public Cliente obtenerPorCorreo(String correo) {
+        return clienteRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con el correo: " + correo));
+    }
+
     @Transactional
     public Cliente actualizarPerfil(Integer idCliente, RegistroClienteDTO dto) {
         Cliente cliente = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + idCliente));
 
         cliente.setNombreCompleto(dto.getNombreCompleto());
         cliente.setTelefono(dto.getTelefono());

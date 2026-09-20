@@ -26,12 +26,14 @@
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
             <h3 class="text-lg font-bold text-slate-800 mb-2">Mis Reservas</h3>
             <p class="text-sm text-slate-500 mb-4">Consulta los paquetes y planes turísticos que has programado.</p>
-            <a href="#" class="text-blue-600 font-semibold text-sm hover:underline">Ver detalles &rarr;</a>
+            <a th:href="@{/ingreso/login}" class="text-blue-600 font-semibold text-sm hover:underline">Ver detalles &rarr;</a>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
             <h3 class="text-lg font-bold text-slate-800 mb-2">Perfil</h3>
             <p class="text-sm text-slate-500 mb-4">Actualiza tu información personal y datos de contacto.</p>
-            <a href="#" class="text-blue-600 font-semibold text-sm hover:underline">Gestionar perfil &rarr;</a>
+            <a th:href="@{/clientes/perfil}" class="text-blue-600 font-semibold text-sm hover:underline">
+                Gestionar perfil &rarr;
+            </a>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
             <h3 class="text-lg font-bold text-slate-800 mb-2">Soporte</h3>
