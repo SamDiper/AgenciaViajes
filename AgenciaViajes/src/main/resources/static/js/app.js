@@ -1,8 +1,7 @@
-import { gsap } from "https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm";
+import { LandingComponent } from '../pages/landing/landing.component.js';
 
-gsap.from(".titulo", {
-    duration: 1,
-    scale: 0.5,
-    opacity: 0,
-    ease: "back.out(1.7)"
+// Document ready bootstrap
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new LandingComponent();
+    app.init();
 });

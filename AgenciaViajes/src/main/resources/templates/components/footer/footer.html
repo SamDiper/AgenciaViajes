@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <footer th:fragment="footer" id="contacto" class="relative bg-[#041E42] text-white pt-16 pb-12 overflow-hidden">
+
+        <!-- Subtle Bottom Right Colombian Flag Wave SVG Ribbon -->
+        <div class="absolute right-0 bottom-0 pointer-events-none w-64 sm:w-80 md:w-96 opacity-90">
+            <svg viewBox="0 0 380 140" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                <path d="M0 140C90 110 180 130 260 70C310 30 350 10 380 0V140H0Z" fill="#F5C400" />
+                <path d="M60 140C140 120 210 135 280 85C325 50 360 25 380 15V140H60Z" fill="#073B78" />
+                <path d="M120 140C190 128 245 138 305 98C345 70 370 45 380 32V140H120Z" fill="#E52435" />
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <!-- Top Row: Logo, Navigation, Social Media -->
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-10">
+
+                <!-- Brand Column -->
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <a th:href="@{/}" class="inline-block mb-3">
+                        <img th:src="@{/assets/Traveling-colombia-white.png}" src="/assets/Traveling-colombia-white.png"
+                            alt="Traveling Colombia" class="h-14 sm:h-20 w-auto object-contain" />
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav
+                    class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-sm font-medium text-slate-300">
+                    <a th:href="@{/}" class="hover:text-amber-400 transition-colors duration-200">Inicio</a>
+                    <a href="#destinos" class="hover:text-amber-400 transition-colors duration-200">Destinos</a>
+                    <a href="#why-choose-us" class="hover:text-amber-400 transition-colors duration-200">Nosotros</a>
+                    <a href="#contacto" class="hover:text-amber-400 transition-colors duration-200">Contacto</a>
+                </nav>
+
+                <!-- Social Media Channels -->
+                <div class="flex items-center gap-4 text-slate-300">
+                    <!-- Instagram -->
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="fa-brands fa-facebook-f text-lg"></i>
+                    </a>
+
+                    <!-- TikTok -->
+                    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok"
+                        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="fa-brands fa-tiktok text-lg"></i>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/573000000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                        class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center hover:text-white transition-all duration-300 hover:scale-110">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Divider Line and Copyright -->
+            <div
+                class="border-t border-slate-700/60 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+                <p>© 2026 Traveling Colombia. Todos los derechos reservados.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-slate-200 transition-colors">Términos y condiciones</a>
+                    <a href="#" class="hover:text-slate-200 transition-colors">Política de privacidad</a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+</body>
+
+</html>

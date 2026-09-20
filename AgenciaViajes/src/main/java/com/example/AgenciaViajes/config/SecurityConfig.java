@@ -22,8 +22,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/home",
                                 "/login", "/clientes", "/clientes/guardar", "/auth/**",
-                                "/css/**", "/js/**", "/h2-console/**"
+                                "/css/**", "/js/**", "/assets/**", "/pages/**", "/api/**", "/images/**", "/h2-console/**"
                         ).permitAll()
+                        .requestMatchers("/carrito").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -31,7 +32,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("correo")
                         .passwordParameter("contrasena")
-                        .defaultSuccessUrl("/home", true)
+                        .defaultSuccessUrl("/home", false)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

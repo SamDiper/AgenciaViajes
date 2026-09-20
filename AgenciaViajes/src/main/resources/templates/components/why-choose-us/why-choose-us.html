@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <section th:fragment="why-choose-us" id="why-choose-us" class="py-20 sm:py-28 relative overflow-hidden">
+
+        <!-- Subtle Landscape Background Image -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <img th:src="@{/assets/paisaje.png}" src="/assets/paisaje.png" alt="Colombia Landscape"
+                class="w-full h-full object-cover object-center " />
+            <div class="absolute inset-0 bg-gradient-to-b from-white via-slate-50/60 to-white"></div>
+        </div>
+
+        <!-- Decorative Side Ribbon Left (Colombian Flag Inspired Subtle Wave) -->
+        <div class="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-12 pointer-events-none opacity-80 z-10">
+            <svg viewBox="0 0 48 160" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                <path d="M0 0C25 30 35 60 20 90C5 120 20 145 0 160V140C12 130 0 110 12 85C24 60 16 35 0 18V0Z"
+                    fill="#F5C400" />
+                <path d="M0 25C20 48 28 70 16 95C4 120 16 140 0 152V136C10 126 0 110 10 88C20 66 14 44 0 30V25Z"
+                    fill="#073B78" />
+                <path d="M0 50C16 68 22 85 12 105C2 125 12 138 0 148V138C8 128 0 115 8 98C16 80 10 62 0 54V50Z"
+                    fill="#E52435" />
+            </svg>
+        </div>
+
+        <!-- Decorative Side Ribbon Right (Colombian Flag Inspired Subtle Wave) -->
+        <div class="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-12 pointer-events-none opacity-80 z-10">
+            <svg viewBox="0 0 48 160" fill="none" xmlns="http://www.w3.org/2000/svg"
+                class="w-full h-auto transform -scale-x-100">
+                <path d="M0 0C25 30 35 60 20 90C5 120 20 145 0 160V140C12 130 0 110 12 85C24 60 16 35 0 18V0Z"
+                    fill="#F5C400" />
+                <path d="M0 25C20 48 28 70 16 95C4 120 16 140 0 152V136C10 126 0 110 10 88C20 66 14 44 0 30V25Z"
+                    fill="#073B78" />
+                <path d="M0 50C16 68 22 85 12 105C2 125 12 138 0 148V138C8 128 0 115 8 98C16 80 10 62 0 54V50Z"
+                    fill="#E52435" />
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <!-- Section Header -->
+            <div class="why-header text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#073B78] tracking-tight">
+                    ¿Por qué elegir<br class="hidden sm:inline" /> Traveling Colombia?
+                </h2>
+
+                <!-- Tricolor Colombian Flag Badge -->
+                <div class="colombia-tricolor-pill mx-auto mb-3">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <!-- 4 Benefits Grid / Columns with Subtle Separators -->
+            <div
+                class="benefits-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-slate-200/80">
+
+                <!-- Benefit 01 -->
+                <div class="benefit-item flex flex-col items-start lg:px-8 first:lg:pl-0 last:lg:pr-0 group">
+                    <!-- Icon -->
+                    <div
+                        class="w-14 h-14 rounded-xl flex items-center justify-center text-[#073B78] mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-mountain-sun text-3xl text-[#073B78]"></i>
+                    </div>
+                    <!-- Number -->
+                    <span class="text-2xl font-extrabold text-[#38BDF8] tracking-wider mb-2">01</span>
+                    <!-- Title -->
+                    <h3
+                        class="text-xl font-bold text-[#073B78] mb-2 tracking-tight group-hover:text-[#0B4EA2] transition-colors">
+                        Experiencias auténticas
+                    </h3>
+                    <!-- Description -->
+                    <p class="text-sm text-slate-600 leading-relaxed font-normal">
+                        Descubre lugares y experiencias que conectan con la cultura colombiana.
+                    </p>
+                </div>
+
+                <!-- Benefit 02 -->
+                <div class="benefit-item flex flex-col items-start lg:px-8 group">
+                    <!-- Icon -->
+                    <div
+                        class="w-14 h-14 rounded-xl flex items-center justify-center text-[#073B78] mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-map-location-dot text-3xl text-[#073B78]"></i>
+                    </div>
+                    <!-- Number -->
+                    <span class="text-2xl font-extrabold text-[#38BDF8] tracking-wider mb-2">02</span>
+                    <!-- Title -->
+                    <h3
+                        class="text-xl font-bold text-[#073B78] mb-2 tracking-tight group-hover:text-[#0B4EA2] transition-colors">
+                        Destinos increíbles
+                    </h3>
+                    <!-- Description -->
+                    <p class="text-sm text-slate-600 leading-relaxed font-normal">
+                        Explora playas, montañas, ciudades, pueblos y naturaleza.
+                    </p>
+                </div>
+
+                <!-- Benefit 03 -->
+                <div class="benefit-item flex flex-col items-start lg:px-8 group">
+                    <!-- Icon -->
+                    <div
+                        class="w-14 h-14 rounded-xl flex items-center justify-center text-[#073B78] mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-suitcase-rolling text-3xl text-[#073B78]"></i>
+                    </div>
+                    <!-- Number -->
+                    <span class="text-2xl font-extrabold text-[#38BDF8] tracking-wider mb-2">03</span>
+                    <!-- Title -->
+                    <h3
+                        class="text-xl font-bold text-[#073B78] mb-2 tracking-tight group-hover:text-[#0B4EA2] transition-colors">
+                        Viajes pensados para ti
+                    </h3>
+                    <!-- Description -->
+                    <p class="text-sm text-slate-600 leading-relaxed font-normal">
+                        Encuentra opciones que se adapten a tus intereses y preferencias.
+                    </p>
+                </div>
+
+                <!-- Benefit 04 -->
+                <div class="benefit-item flex flex-col items-start lg:px-8 group">
+                    <!-- Icon -->
+                    <div
+                        class="w-14 h-14 rounded-xl flex items-center justify-center text-[#073B78] mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-shield-halved text-3xl text-[#073B78]"></i>
+                    </div>
+                    <!-- Number -->
+                    <span class="text-2xl font-extrabold text-[#38BDF8] tracking-wider mb-2">04</span>
+                    <!-- Title -->
+                    <h3
+                        class="text-xl font-bold text-[#073B78] mb-2 tracking-tight group-hover:text-[#0B4EA2] transition-colors">
+                        Confianza y acompañamiento
+                    </h3>
+                    <!-- Description -->
+                    <p class="text-sm text-slate-600 leading-relaxed font-normal">
+                        Te acompañamos para que disfrutes cada etapa de tu viaje.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

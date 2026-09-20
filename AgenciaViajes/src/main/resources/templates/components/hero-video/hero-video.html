@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <section th:fragment="hero-video" class="relative w-full overflow-hidden">
+
+        <!-- Video Container -->
+        <div class="hero-video-container relative w-full">
+
+            <!-- YouTube  bg-whiteVideo Embed (Background Player) -->
+            <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+                <iframe class="hero-video-iframe"
+                    src="https://www.youtube-nocookie.com/embed/SrvKADxxsqg?autoplay=1&mute=1&controls=0&loop=1&playlist=SrvKADxxsqg&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&showinfo=0&disablekb=1&iv_load_policy=3"
+                    title="Traveling Colombia Experience Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen loading="lazy">
+                </iframe>
+            </div>
+
+            <!-- Soft Top Vignette for Contrast -->
+            <div
+                class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
+            </div>
+
+            <!-- Smooth White Gradient Overlay at the Bottom -->
+            <div class="hero-gradient-overlay"></div>
+        </div>
+    </section>
+
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <header th:fragment="navbar" id="navbar"
+        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 navbar-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+
+                <!-- Logo -->
+                <a th:href="@{/}" class="flex items-center gap-2 group focus:outline-none">
+                    <img th:src="@{/assets/Traveling colombia.png}" src="/assets/Traveling colombia.png"
+                        alt="Traveling Colombia"
+                        class="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+                </a>
+
+                <!-- CTA and Auth Buttons -->
+                <div class="hidden sm:flex items-center space-x-4">
+                    <!-- CTA Button -->
+                    <a href="#destinos"
+                        class="inline-flex items-center gap-2 bg-[#073B78] hover:bg-[#052b57] text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-900/20 hover:shadow-lg hover:shadow-blue-900/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 group">
+                        <span>Explorar destinos</span>
+                        <i class="fa-solid fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </a>
+
+                    <!-- User Session Info (Spring Security) -->
+                    <div sec:authorize="isAuthenticated()"
+                        class="flex items-center gap-3 pl-2 border-l border-slate-300/80">
+                        <div
+                            class="w-8 h-8 rounded-full bg-[#073B78] text-white font-bold flex items-center justify-center text-xs shadow-inner">
+                            <span
+                                th:text="${nombreCliente != null ? #strings.substring(nombreCliente,0,1) : 'U'}">U</span>
+                        </div>
+                        <form th:action="@{/logout}" method="POST" class="inline">
+                            <button type="submit" title="Cerrar sesión"
+                                class="text-xs text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded transition">
+                                Salir
+                            </button>
+                        </form>
+                    </div>
+
+                    <div sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
+                        <a th:href="@{/login}"
+                            class="text-xs font-semibold text-slate-700 hover:text-[#073B78] px-2.5 py-1.5 rounded transition">
+                            Ingresar
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Hamburger Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" type="button" aria-expanded="false"
+                        aria-label="Abrir menú de navegación"
+                        class="p-2 rounded-lg text-slate-700 hover:text-[#073B78] hover:bg-slate-100/80 focus:outline-none transition-colors">
+                        <i class="icon-open fa-solid fa-bars text-xl"></i>
+                        <i class="icon-close fa-solid fa-xmark text-xl hidden"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-6 pt-3 pb-6 shadow-xl transition-all duration-300">
+            <div class="flex flex-col space-y-3">
+                <a th:href="@{/}"
+                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Inicio</a>
+                <a href="#destinos"
+                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Destinos</a>
+                <a href="#experiencias"
+                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Experiencias</a>
+                <a href="#why-choose-us"
+                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Nosotros</a>
+                <a href="#contacto"
+                    class="text-slate-800 hover:text-[#073B78] font-semibold py-2 border-b border-slate-100">Contacto</a>
+
+                <div class="pt-3 flex flex-col gap-2">
+                    <a href="#destinos"
+                        class="w-full text-center bg-[#073B78] text-white py-2.5 rounded-full font-semibold shadow-sm">
+                        Explorar destinos →
+                    </a>
+                    <div sec:authorize="!isAuthenticated()" class="flex gap-2 pt-2">
+                        <a th:href="@{/login}"
+                            class="flex-1 text-center border border-slate-300 text-slate-700 py-2 rounded-lg font-medium text-sm">
+                            Iniciar sesión
+                        </a>
+                        <a th:href="@{/clientes}"
+                            class="flex-1 text-center bg-slate-900 text-white py-2 rounded-lg font-medium text-sm">
+                            Registrarse
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>
