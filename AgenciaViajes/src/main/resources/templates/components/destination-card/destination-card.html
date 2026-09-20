@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- ==========================================
+         DESTINATION CARD COMPONENT (From Object or Params)
+         ========================================== -->
+    <div th:fragment="destination-card(name, department, description, image, isMain, id)" 
+         th:classappend="${isMain ? 'destination-card-main min-h-[380px] sm:min-h-[460px] lg:min-h-[500px]' : 'destination-card-secondary min-h-[220px] sm:min-h-[235px]'}"
+         class="destination-card relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer border border-slate-100 flex flex-col justify-end p-6 sm:p-8">
+        
+        <!-- Background Image -->
+        <img th:src="${image != null and !#strings.isEmpty(image) ? image : 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1200&auto=format&fit=crop'}" 
+             src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1200&auto=format&fit=crop" 
+             th:alt="${name}" 
+             loading="lazy"
+             class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105" />
+
+        <!-- Gradient Overlay -->
+        <div class="destination-card-overlay absolute inset-0"></div>
+
+        <!-- Content Overlay -->
+        <div class="relative z-10 flex flex-col justify-end text-white">
+            
+            <!-- Location Badge -->
+            <div class="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-amber-300 uppercase mb-2 drop-shadow">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                <span th:text="${department != null ? department : 'Colombia'}">Ubicación</span>
+            </div>
+
+            <!-- Destination Title -->
+            <h3 th:text="${name}" 
+                th:classappend="${isMain ? 'text-2xl sm:text-3xl lg:text-4xl font-extrabold' : 'text-xl sm:text-2xl font-bold'}"
+                class="text-white tracking-tight drop-shadow-md mb-2">
+                Destino
+            </h3>
+
+            <!-- Short Description -->
+            <p th:text="${description}" 
+               th:classappend="${isMain ? 'text-sm sm:text-base max-w-md line-clamp-2' : 'text-xs sm:text-sm max-w-sm line-clamp-2'}"
+               class="text-slate-200 font-normal leading-relaxed mb-4 drop-shadow">
+                Descripción del destino.
+            </p>
+
+            <!-- Action Button -->
+            <div>
+                <a th:href="@{'/destinos/' + ${id != null ? id : ''}}" 
+                   href="#contacto"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 hover:border-white/60 shadow-sm transition-all duration-300 transform group-hover:translate-x-1">
+                    <span>Conocer destino</span>
+                    <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

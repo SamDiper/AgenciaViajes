@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- ==========================================
+         TESTIMONIALS COMPONENT
+         ========================================== -->
+    <section th:fragment="testimonials" id="testimonios" class="relative py-20 sm:py-28 overflow-hidden">
+
+
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <!-- Section Header -->
+            <div class="testimonials-header text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+
+
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#073B78] tracking-tight">
+                    Historias de viajeros
+                </h2>
+                <!-- Tricolor Colombian Flag Badge -->
+                <div class="colombia-tricolor-pill mx-auto mb-3">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p class="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+                    Lo que dicen quienes ya vivieron la experiencia.
+                </p>
+            </div>
+
+            <!-- Testimonials Grid: 3 Columns Desktop, 2 Tablet, 1 Mobile -->
+            <div class="testimonials-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+
+                <!-- Testimonial 1 -->
+                <div th:replace="~{components/testimonial-card/testimonial-card :: testimonial-card(
+                    name='Laura Martínez',
+                    location='Medellín, Colombia',
+                    avatar='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
+                    comment='Una experiencia increíble. Colombia tiene lugares hermosos y Traveling Colombia hizo que descubrirlos fuera mucho más fácil.',
+                    destinationVisited='Guatapé'
+                )}"></div>
+
+                <!-- Testimonial 2 -->
+                <div th:replace="~{components/testimonial-card/testimonial-card :: testimonial-card(
+                    name='Carlos Ramírez',
+                    location='Bogotá, Colombia',
+                    avatar='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
+                    comment='El servicio fue excelente, desde la planeación hasta el regreso. Sin duda volveré a viajar con ellos.',
+                    destinationVisited='Cartagena'
+                )}"></div>
+
+                <!-- Testimonial 3 -->
+                <div th:replace="~{components/testimonial-card/testimonial-card :: testimonial-card(
+                    name='Sofía López',
+                    location='Cali, Colombia',
+                    avatar='https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
+                    comment='Conocer el Eje Cafetero fue una experiencia inolvidable. Todo muy bien organizado y con un equipo increíble.',
+                    destinationVisited='Eje Cafetero'
+                )}"></div>
+
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

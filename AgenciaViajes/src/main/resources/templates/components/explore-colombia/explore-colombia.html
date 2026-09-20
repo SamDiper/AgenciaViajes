@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- ==========================================
+         EXPLORE COLOMBIA COMPONENT (Dynamic DB Data)
+         ========================================== -->
+    <section th:fragment="explore-colombia" id="destinos" class="py-16 sm:py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Section Header -->
+            <div class="section-header text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#073B78] tracking-tight uppercase">
+                    Explora Colombia con Nosotros
+                </h2>
+                <!-- Tricolor Colombian Flag Badge -->
+                <div class="colombia-tricolor-pill mx-auto mb-3">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p class="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+                    Desde paisajes impresionantes hasta experiencias únicas, te llevamos a descubrir lo mejor de nuestro
+                    país.
+                </p>
+
+            </div>
+
+            <!-- Asymmetric Destinations Grid Loaded Dynamically From Database -->
+            <div th:if="${destinos != null and !#lists.isEmpty(destinos)}"
+                class="destinations-grid grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+
+                <!-- Destino Principal (Index 0 - 65% / col-span-7) -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div th:replace="~{components/destination-card/destination-card :: destination-card(
+                        name=${destinos[0].nombre},
+                        department=${destinos[0].ciudad != null ? destinos[0].ciudad : (destinos[0].pais != null ? destinos[0].pais : 'Colombia')},
+                        description=${destinos[0].descripcion},
+                        image=${destinos[0].imagenUrl},
+                        isMain=true,
+                        id=${destinos[0].idDestino}
+                    )}"></div>
+                </div>
+
+                <!-- Destinos Secundarios Stacked (Index 1 y 2 - 35% / col-span-5) -->
+                <div class="lg:col-span-5 flex flex-col gap-6 justify-between">
+
+                    <!-- Destino Secundario 1 (Index 1) -->
+                    <div th:if="${#lists.size(destinos) > 1}">
+                        <div th:replace="~{components/destination-card/destination-card :: destination-card(
+                            name=${destinos[1].nombre},
+                            department=${destinos[1].ciudad != null ? destinos[1].ciudad : (destinos[1].pais != null ? destinos[1].pais : 'Colombia')},
+                            description=${destinos[1].descripcion},
+                            image=${destinos[1].imagenUrl},
+                            isMain=false,
+                            id=${destinos[1].idDestino}
+                        )}"></div>
+                    </div>
+
+                    <!-- Destino Secundario 2 (Index 2) -->
+                    <div th:if="${#lists.size(destinos) > 2}">
+                        <div th:replace="~{components/destination-card/destination-card :: destination-card(
+                            name=${destinos[2].nombre},
+                            department=${destinos[2].ciudad != null ? destinos[2].ciudad : (destinos[2].pais != null ? destinos[2].pais : 'Colombia')},
+                            description=${destinos[2].descripcion},
+                            image=${destinos[2].imagenUrl},
+                            isMain=false,
+                            id=${destinos[2].idDestino}
+                        )}"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Estado alternativo si la base de datos no contiene registros -->
+            <div th:if="${destinos == null or #lists.isEmpty(destinos)}" class="text-center py-12 text-slate-500">
+                <p>No hay destinos registrados en este momento. Por favor regresa más tarde.</p>
+            </div>
+
+            <!-- "Ver más destinos" CTA Button -->
+            <div class="destinations-cta mt-12 sm:mt-16 text-center">
+                <a th:href="@{/destinos}" href="#destinos"
+                    class="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-[#073B78] text-[#073B78] hover:bg-[#073B78] hover:text-white font-semibold text-sm sm:text-base transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-blue-900/15 transform hover:-translate-y-0.5 group">
+                    <span>Ver más destinos</span>
+                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>
