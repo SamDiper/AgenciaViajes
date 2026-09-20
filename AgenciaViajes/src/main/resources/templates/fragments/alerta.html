@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Fragmento Reutilizable de Modal Flotante con Estilos Directos Garantizados -->
+<div th:fragment="alertaMensaje">
+
+    <div id="alertaNotificacion" th:if="${mensaje}"
+         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease;">
+
+        <!-- Tarjeta Cuadrada Centrada -->
+        <div style="background-color: #ffffff; width: 100%; max-width: 360px; padding: 28px 24px; border-radius: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1); text-align: center; font-family: sans-serif; border: 1px solid #f1f5f9;">
+
+            <!-- Ícono de Éxito Ovalado -->
+            <div style="width: 60px; height: 60px; background-color: #d1fae5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin: 0 auto 16px auto;">
+                ✓
+            </div>
+
+            <!-- Título y Mensaje -->
+            <h3 style="font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0;">¡Operación Exitosa!</h3>
+            <p style="font-size: 14px; color: #64748b; margin: 0 0 24px 0; line-height: 1.4;" th:text="${mensaje}">Perfil actualizado correctamente.</p>
+
+            <!-- Botón de Cierre Ovalado -->
+            <button type="button" onclick="cerrarAlertaModal()"
+                    style="width: 100%; background-color: #2563eb; color: #ffffff; border: none; padding: 12px 20px; border-radius: 9999px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background-color 0.2s ease; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">
+                ENTENDIDO
+            </button>
+        </div>
+    </div>
+
+    <!-- Script Autónomo de Cierre y Auto-ocultado -->
+    <script>
+        function cerrarAlertaModal() {
+            var alerta = document.getElementById('alertaNotificacion');
+            if (alerta) {
+                alerta.style.opacity = '0';
+                alerta.style.pointerEvents = 'none';
+                setTimeout(function() {
+                    alerta.remove();
+                }, 300);
+            }
+        }
+
+        // Cierre automático tras 3.5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            var alerta = document.getElementById('alertaNotificacion');
+            if (alerta) {
+                setTimeout(cerrarAlertaModal, 3500);
+            }
+        });
+    </script>
+</div>
+
+</body>
+</html>
