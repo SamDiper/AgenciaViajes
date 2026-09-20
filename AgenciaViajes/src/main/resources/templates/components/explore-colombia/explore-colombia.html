@@ -6,9 +6,7 @@
 </head>
 
 <body>
-    <!-- ==========================================
-         EXPLORE COLOMBIA COMPONENT (Dynamic DB Data)
-         ========================================== -->
+
     <section th:fragment="explore-colombia" id="destinos" class="py-16 sm:py-24 bg-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -88,11 +86,7 @@
                 <a th:href="@{/destinos}" href="#destinos"
                     class="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-[#073B78] text-[#073B78] hover:bg-[#073B78] hover:text-white font-semibold text-sm sm:text-base transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-blue-900/15 transform hover:-translate-y-0.5 group">
                     <span>Ver más destinos</span>
-                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
+                    <i class="fa-solid fa-arrow-right text-sm transition-transform duration-300 group-hover:translate-x-1.5"></i>
                 </a>
             </div>
 
