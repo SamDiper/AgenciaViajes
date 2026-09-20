@@ -35,3 +35,4 @@ build/
 ### Node ###
 node_modules/
 dist/
+src/resources/static/css/output.css
