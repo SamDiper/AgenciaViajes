@@ -33,7 +33,7 @@
                 <!-- Usuario autenticado -->
                 <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
                     <span class="text-sm text-slate-300">
-                        Hola, <span class="text-white font-bold" th:text="${nombreCliente}"></span>
+                        Hola, <span class="text-white font-bold" sec:authentication="principal.nombreCompleto"></span>
                     </span>
                     <form th:action="@{/logout}" method="POST" class="inline">
                         <button type="submit"
