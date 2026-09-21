@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
 </head>
+
 <body>
     <!-- ==========================================
          TESTIMONIAL CARD COMPONENT
          ========================================== -->
-    <div th:fragment="testimonial-card(name, location, avatar, comment, destinationVisited)" 
-         class="testimonial-card bg-white rounded-2xl p-6 sm:p-7 shadow-md hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full group hover:-translate-y-1">
-        
+    <div th:fragment="testimonial-card(name, location, avatar, comment, destinationVisited)"
+        class="testimonial-card bg-white rounded-2xl p-6 sm:p-7 shadow-md hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col justify-between h-full group hover:-translate-y-1">
+
         <div>
             <!-- Author Header -->
             <div class="flex items-center gap-3.5 mb-4">
-                <img th:src="${avatar}" 
-                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" 
-                     th:alt="${name}" 
-                     class="w-12 h-12 rounded-full object-cover border-2 border-slate-100 shadow-sm" />
-                
+                <img th:src="${avatar}"
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                    th:alt="${name}" class="w-12 h-12 rounded-full object-cover border-2 border-slate-100 shadow-sm"
+                    loading="lazy" />
+
                 <div>
                     <h4 th:text="${name}" class="text-sm sm:text-base font-bold text-[#073B78] tracking-tight">
                         Laura Martínez
@@ -38,8 +40,10 @@
             </div>
 
             <!-- Comment Quote -->
-            <p th:text="${'&quot;' + comment + '&quot;'}" class="text-xs sm:text-sm text-slate-600 leading-relaxed italic mb-6">
-                "Una experiencia increíble. Colombia tiene lugares hermosos y Traveling Colombia hizo que descubrirlos fuera mucho más fácil."
+            <p th:text="${'&quot;' + comment + '&quot;'}"
+                class="text-xs sm:text-sm text-slate-600 leading-relaxed italic mb-6">
+                "Una experiencia increíble. Colombia tiene lugares hermosos y Traveling Colombia hizo que descubrirlos
+                fuera mucho más fácil."
             </p>
         </div>
 
@@ -51,4 +55,5 @@
 
     </div>
 </body>
+
 </html>
