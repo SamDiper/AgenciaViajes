@@ -1,0 +1,79 @@
+package com.example.AgenciaViajes.modelo;
+
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
+
+@Entity
+@Table(name = "paquetes")
+public class Paquete {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_paquete")
+    private Long idPaquete;
+
+    @Column(nullable = false, length = 150)
+    private String nombre;
+
+    @Lob
+    private String descripcion;
+
+    @Column(name = "precio_base", nullable = false, precision = 12, scale = 2)
+    private BigDecimal precioBase;
+
+    @Column(name = "duracion_dias", nullable = false)
+    private int duracionDias;
+
+    @Column(name = "imagen_url", length = 255)
+    private String imagenUrl;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_destino", nullable = false)
+    private Destino destino;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_aerolinea")
+    private Aerolinea aerolinea;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoGeneral estado = EstadoGeneral.ACTIVO;
+
+    @Column(name = "fecha_registro", nullable = false)
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    public Paquete() {}
+
+    public Long getIdPaquete() { return idPaquete; }
+    public void setIdPaquete(Long idPaquete) { this.idPaquete = idPaquete; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public BigDecimal getPrecioBase() { return precioBase; }
+    public void setPrecioBase(BigDecimal precioBase) { this.precioBase = precioBase; }
+
+    public int getDuracionDias() { return duracionDias; }
+    public void setDuracionDias(int duracionDias) { this.duracionDias = duracionDias; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+
+    public Destino getDestino() { return destino; }
+    public void setDestino(Destino destino) { this.destino = destino; }
+
+    public Aerolinea getAerolinea() { return aerolinea; }
+    public void setAerolinea(Aerolinea aerolinea) { this.aerolinea = aerolinea; }
+
+    public EstadoGeneral getEstado() { return estado; }
+    public void setEstado(EstadoGeneral estado) { this.estado = estado; }
+
+    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+}
