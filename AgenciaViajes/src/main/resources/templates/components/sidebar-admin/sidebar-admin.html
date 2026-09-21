@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <aside th:fragment="sidebar-admin" id="admin-sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-[#012653] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 select-none shadow-xl border-r border-[#001D40]/50 overflow-hidden">
+
+        <!-- 1. Div Superior: Logo & Navegación -->
+        <div class="flex flex-col pt-5 px-4 shrink-0">
+
+            <!-- Logo Oficial Traveling Colombia -->
+            <div class="px-2 mb-5 flex items-center justify-between">
+                <a th:href="@{/}" class="block focus:outline-none">
+                    <img th:src="@{/assets/Traveling-colombia-white.png}" 
+                        src="/assets/Traveling-colombia-white.png"
+                        alt="Traveling Colombia"
+                        class="h-12 w-auto object-contain" />
+                </a>
+
+                <!-- Botón Cerrar (Solo Móvil) -->
+                <button type="button" id="sidebar-close-btn"
+                    class="lg:hidden text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition focus:outline-none"
+                    aria-label="Cerrar barra lateral">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Menú de Navegación -->
+            <nav class="space-y-1 font-medium text-sm">
+                <!-- Inicio (Activo) -->
+                <a th:href="@{/admin}"
+                    th:classappend="${activeSection == 'dashboard' or activeSection == null} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-house text-base w-5 text-center"></i>
+                    <span>Inicio</span>
+                </a>
+
+                <!-- Reservas -->
+                <a th:href="@{/admin/reservas}"
+                    th:classappend="${activeSection == 'reservas'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-calendar-days text-base w-5 text-center"></i>
+                    <span>Reservas</span>
+                </a>
+
+                <!-- Usuarios -->
+                <a th:href="@{/admin/usuarios}"
+                    th:classappend="${activeSection == 'usuarios'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-user-group text-base w-5 text-center"></i>
+                    <span>Usuarios</span>
+                </a>
+
+                <!-- Reportes -->
+                <a th:href="@{/admin/reportes}"
+                    th:classappend="${activeSection == 'reportes'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-chart-column text-base w-5 text-center"></i>
+                    <span>Reportes</span>
+                </a>
+
+                <!-- Configuración -->
+                <a th:href="@{/admin/configuracion}"
+                    th:classappend="${activeSection == 'configuracion'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-gear text-base w-5 text-center"></i>
+                    <span>Configuración</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- 2. Div Inferior: Imagen integrada con padding y tamaño reducido -->
+        <div class="w-full mt-auto px-5 pb-5 pt-2 flex flex-col items-center justify-end overflow-hidden leading-none select-none pointer-events-none">
+            <img th:src="@{/assets/sidebar-admin.png}" src="/assets/sidebar-admin.png"
+                alt="Colombia siempre inspira"
+                class="w-full max-w-full h-auto object-contain object-bottom block opacity-95"
+                loading="lazy" />
+        </div>
+    </aside>
+
+</body>
+
+</html>

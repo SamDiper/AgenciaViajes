@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="admin-head(title)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title != null ? title + ' | Panel Admin - Traveling Colombia' : 'Panel de Administración | Traveling Colombia'}">Panel Administrativo</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (Output) -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
+
+    <!-- Font Awesome Icons 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Chart.js para los gráficos analíticos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="bg-[#F4F7FC] text-slate-900 font-sans antialiased min-h-screen selection:bg-amber-400 selection:text-slate-900">
+
+    <header th:fragment="admin-topbar"
+        class="sticky top-0 z-40 bg-white border-b border-slate-100 px-6 lg:px-10 py-3.5 flex items-center justify-between shadow-xs">
+        
+        <!-- Izquierda: Botón Móvil & Buscador Global -->
+        <div class="flex items-center gap-4 flex-1 max-w-xl">
+            <!-- Botón Hamburguesa Móvil -->
+            <button type="button" id="sidebar-open-btn"
+                class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition focus:outline-none"
+                aria-label="Abrir barra lateral">
+                <i class="fa-solid fa-bars-staggered text-lg"></i>
+            </button>
+
+            <!-- Campo de Búsqueda -->
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </span>
+                <input type="text"
+                    placeholder="Buscar paquetes, destinos o clientes..."
+                    class="w-full pl-10 pr-4 py-2 bg-slate-50/80 hover:bg-slate-100/80 focus:bg-white text-sm text-slate-700 placeholder-slate-400 rounded-xl border border-slate-200/70 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition duration-150" />
+            </div>
+        </div>
+
+        <!-- Derecha: Notificaciones & Perfil del Administrador -->
+        <div class="flex items-center gap-5 shrink-0 pl-4">
+            
+            <!-- Botón de Notificaciones con Badge 3 -->
+            <div class="relative">
+                <button type="button" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition focus:outline-none">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                    <span class="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white font-bold text-[10px] rounded-full flex items-center justify-center ring-2 ring-white">
+                        3
+                    </span>
+                </button>
+            </div>
+
+            <!-- Perfil Administrador -->
+            <div class="flex items-center gap-3 pl-2 cursor-pointer group">
+                <div class="relative">
+                    <img th:src="@{https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80}"
+                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                         alt="Avatar Admin"
+                         class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-100" />
+                </div>
+                <div class="hidden sm:flex flex-col text-left leading-tight">
+                    <span class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition"
+                          th:text="${nombreAdmin != null ? nombreAdmin : 'Andrés González'}">
+                        Andrés González
+                    </span>
+                    <span class="text-[11px] text-slate-400 font-medium">Administrador</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-hover:text-slate-600 transition ml-0.5"></i>
+            </div>
+        </div>
+    </header>
+
+    <footer th:fragment="admin-footer"
+        class="border-t border-slate-200/80 bg-[#F4F7FC] px-6 lg:px-10 py-5 text-xs text-slate-400 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+            <span class="font-semibold text-slate-500">Traveling Colombia</span>
+            <span>•</span>
+            <span>Panel Administrativo v1.0</span>
+        </div>
+        <div class="flex items-center gap-4 text-slate-400">
+            <a href="#" class="hover:text-slate-600 transition">Términos y condiciones</a>
+            <span>|</span>
+            <a href="#" class="hover:text-slate-600 transition">Política de privacidad</a>
+            <span>|</span>
+            <a href="#" class="hover:text-slate-600 transition">Soporte</a>
+        </div>
+        <div>
+            <span>© 2025 Traveling Colombia. Todos los derechos reservados.</span>
+        </div>
+    </footer>
+
+    <!-- Script de Control del Sidebar Admin -->
+    <script th:fragment="admin-scripts">
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('admin-sidebar');
+            const openBtn = document.getElementById('sidebar-open-btn');
+            const closeBtn = document.getElementById('sidebar-close-btn');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            if (!sidebar || !backdrop) return;
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('opacity-0');
+                setTimeout(() => {
+                    backdrop.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }, 300);
+            }
+
+            if (openBtn) openBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            backdrop.addEventListener('click', closeSidebar);
+        });
+    </script>
+</body>
+
+</html>

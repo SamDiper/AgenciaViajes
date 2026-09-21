@@ -25,6 +25,7 @@ public class SecurityConfig {
                                 "/css/**", "/js/**", "/assets/**", "/pages/**", "/api/**", "/images/**", "/h2-console/**"
                         ).permitAll()
                         .requestMatchers("/carrito").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
