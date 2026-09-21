@@ -110,10 +110,13 @@ public class PaqueteController {
                 .orElse(null);
 
         // Cargar hoteles del destino del paquete
-        List<Hotel> hotelesDestino = hotelRepository.findByEstado(EstadoGeneral.ACTIVO).stream()
-                .filter(h -> h.getDestino() != null
-                        && h.getDestino().getIdDestino().equals(paquete.getDestino().getIdDestino()))
-                .collect(Collectors.toList());
+        List<Hotel> hotelesDestino = List.of();
+        if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
+            hotelesDestino = hotelRepository.findByDestinoIdAndEstado(paquete.getDestino().getIdDestino(), EstadoGeneral.ACTIVO);
+        }
+        if (hotelesDestino.isEmpty() && paquete.getHotel() != null) {
+            hotelesDestino = List.of(paquete.getHotel());
+        }
 
         // Determinar aerolínea seleccionada
         Aerolinea aerolineaSeleccionada = null;
@@ -140,6 +143,13 @@ public class PaqueteController {
             }
         }
 
+        // Paquetes relacionados del mismo destino
+        List<Paquete> paquetesRelacionados = paqueteService.listarActivos().stream()
+                .filter(p -> p.getDestino() != null
+                        && p.getDestino().getIdDestino().equals(paquete.getDestino().getIdDestino())
+                        && !p.getIdPaquete().equals(paquete.getIdPaquete()))
+                .collect(Collectors.toList());
+
         // Cálculos de precios en el servidor
         BigDecimal precioBaseUnitario = paquete.getPrecioBase();
         BigDecimal adicionalAerolinea = (aerolineaSeleccionada != null
@@ -160,6 +170,7 @@ public class PaqueteController {
         model.addAttribute("aerolineas", aerolineas);
         model.addAttribute("aerolineaMasEconomica", aerolineaMasEconomica);
         model.addAttribute("hotelesDestino", hotelesDestino);
+        model.addAttribute("paquetesRelacionados", paquetesRelacionados);
 
         model.addAttribute("cantidadBoletos", cantidadBoletos);
         model.addAttribute("aerolineaSeleccionada", aerolineaSeleccionada);

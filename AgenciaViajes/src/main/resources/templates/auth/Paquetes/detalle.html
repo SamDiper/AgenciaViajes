@@ -389,7 +389,7 @@
                                         </option>
                                         <option th:each="hot : ${hotelesDestino}" th:value="${hot.idHotel}"
                                             th:selected="${!sinVinculacion and hotelSeleccionado != null and hotelSeleccionado.idHotel == hot.idHotel}"
-                                            th:text="${hot.nombre} + ' (' + ${hot.estrellas} + '★) [+$' + #numbers.formatDecimal(hot.precioAdicional, 0, 'COMMA', 0, 'POINT') + ']'">
+                                            th:text="${hot.nombre} + ' (' + ${hot.estrellas} + '★)' + (${hot.precioAdicional != null and hot.precioAdicional.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? ' [+$' + #numbers.formatDecimal(hot.precioAdicional, 0, 'COMMA', 0, 'POINT') + ']' : ' [Tarifa base incluida]'})">
                                             Hotel
                                         </option>
                                     </select>
@@ -427,39 +427,8 @@
                                     <i class="fa-solid fa-arrow-right text-xs"></i>
                                 </a>
 
-                                <p
-                                    class="text-center text-[11px] font-semibold text-slate-400 flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-shield-halved text-emerald-500"></i>
-                                    <span>Pago seguro · Confirmación inmediata</span>
-                                </p>
                             </div>
 
-                        </div>
-
-                        <!-- Card de Ubicación / Mapa Miniatura (Fiel al diseño) -->
-                        <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm">
-                            <div
-                                class="h-32 rounded-2xl overflow-hidden mb-3 relative bg-slate-100 border border-slate-200">
-                                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600&auto=format&fit=crop"
-                                    alt="Mapa de ubicación" class="w-full h-full object-cover" />
-                                <div class="absolute inset-0 bg-[#041E42]/10 flex items-center justify-center">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-lg animate-bounce">
-                                        <i class="fa-solid fa-location-dot text-sm"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-2.5">
-                                <i class="fa-solid fa-location-dot text-[#073B78] mt-1 text-sm"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold text-slate-900">Ubicación</h4>
-                                    <p class="text-xs text-slate-500"
-                                        th:text="${paquete.destino.nombre} + ', Colombia'">Cartagena, Bolívar</p>
-                                    <p class="text-[11px] text-slate-400 mt-1">Una experiencia llena de historia,
-                                        cultura y belleza natural.</p>
-                                </div>
-                            </div>
                         </div>
 
                     </div>
@@ -468,9 +437,7 @@
             </div>
         </section>
 
-        <!-- ══════════════════════════════════════════════
-             3. COMPONENTE: PAQUETES RELACIONADOS (Mismo destino)
-        ══════════════════════════════════════════════ -->
+        <!-- PAQUETES RELACIONADOS (Mismo destino) -->
         <section class="bg-white py-14 sm:py-20 border-t border-slate-200/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

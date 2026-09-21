@@ -1,6 +1,8 @@
 package com.example.AgenciaViajes.modelo;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,11 +49,13 @@ public class Paquete {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "paquete_incluye", joinColumns = @JoinColumn(name = "id_paquete"))
     @Column(name = "item", length = 300)
+    @Fetch(FetchMode.SUBSELECT)
     private List<String> incluye = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "paquete_itinerario", joinColumns = @JoinColumn(name = "id_paquete"))
     @Column(name = "actividad", length = 600)
+    @Fetch(FetchMode.SUBSELECT)
     private List<String> itinerario = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
