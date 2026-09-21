@@ -68,8 +68,8 @@
 
                         <!-- Botón Panel Admin (Solo ADMIN) -->
                         <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
-                            class="text-xs font-semibold text-blue-900 bg-blue-50 border border-blue-200 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-shield-halved text-xs text-amber-500"></i>
+                            class="text-xs font-semibold text-slate-700 hover:text-white bg-slate-100 hover:bg-[#073B78] border border-slate-200 px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 group shadow-2xs">
+                            <i class="fa-solid fa-shield-halved text-xs text-slate-500 group-hover:text-white transition-colors"></i>
                             <span>Admin</span>
                         </a>
 
