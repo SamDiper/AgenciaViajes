@@ -1,125 +1,203 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cliente - Agencia de Viajes</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Cuenta — Traveling Colombia</title>
+    <meta name="description"
+        content="Regístrate en Traveling Colombia para descubrir promociones exclusivas y planear tus viajes por Colombia." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (compiled) -->
     <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body
-    class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen flex items-center justify-center p-4">
+    class="min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans antialiased text-slate-900 selection:bg-amber-400 selection:text-slate-900"
+    style="background: url('/assets/fondo-aeropuerto.png') center / cover no-repeat fixed;">
 
-    <div class="w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20 my-8">
+    <!-- Overlay Gradiente Profesional Deep Navy -->
+    <div
+        class="fixed inset-0 bg-gradient-to-b from-[#041E42]/90 via-[#073B78]/75 to-[#041E42]/95 pointer-events-none -z-10">
+    </div>
 
-        <!-- Encabezado -->
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-slate-800">Crear una Cuenta</h2>
-            <p class="text-sm text-slate-500 mt-1">Completa tus datos para registrarte en la plataforma</p>
-        </div>
+    <!-- Header flotante con Volver al Inicio y Logo -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 flex items-center justify-between z-20">
+        <a th:href="@{/}" href="/"
+            class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white/90 hover:text-white bg-black/25 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full transition-all duration-200 shadow-sm border border-white/10 group">
+            <i
+                class="fa-solid fa-arrow-left text-xs transition-transform duration-200 group-hover:-translate-x-0.5"></i>
+            <span>Volver al inicio</span>
+        </a>
 
-        <!-- Alerta de Error Global -->
-        <div th:if="${errorMessage}"
-            class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded text-sm flex items-center gap-2">
-            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                    clip-rule="evenodd"></path>
-            </svg>
-            <span th:text="${errorMessage}">Error al procesar el registro</span>
-        </div>
+        <a th:href="@{/}" href="/" class="group focus:outline-none">
+            <img th:src="@{/assets/Traveling-colombia-white.png}" src="/assets/Traveling-colombia-white.png"
+                alt="Traveling Colombia"
+                class="h-8 sm:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
+        </a>
+    </header>
 
-        <form th:action="@{/clientes/guardar}" th:object="${registroClienteDTO}" method="POST" class="space-y-5">
+    <!-- Contenido Principal: Tarjeta de Registro -->
+    <main class="w-full flex-1 flex items-center justify-center px-4 py-8 sm:py-12 z-10">
+        <div
+            class="w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl shadow-[#041E42]/40 p-6 sm:p-10 border border-white/50 transition-all duration-300">
 
-            <!-- Nombre Completo -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
-                <input type="text" th:field="*{nombreCompleto}" required
-                    class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    th:classappend="${#fields.hasErrors('nombreCompleto')} ? 'border-red-500' : 'border-slate-300'"
-                    placeholder="Ej. Juan Pérez Gómez">
-                <p th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}"
-                    class="text-red-500 text-xs mt-1"></p>
+            <!-- Marca y Encabezado -->
+            <div class="text-center mb-6 sm:mb-8">
+                <!-- Tricolor pill -->
+                <div class="colombia-tricolor-pill mx-auto mb-3">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                    Crear una Cuenta
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+                    Completa tus datos personales para acceder a los mejores paquetes y experiencias
+                </p>
             </div>
 
-            <!-- Tipo Doc y Documento (Grid de 2 columnas) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo Doc.</label>
-                    <select th:field="*{tipoDocumento}"
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        <option value="CC">Cédula de Ciudadanía</option>
-                        <option value="CE">Cédula de Extranjería</option>
-                        <option value="PASAPORTE">Pasaporte</option>
-                    </select>
+            <!-- Alerta de Error Global -->
+            <div th:if="${errorMessage}"
+                class="mb-6 p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm animate-shake">
+                <div class="w-7 h-7 rounded-xl bg-rose-100 flex items-center justify-center shrink-0 text-rose-600">
+                    <i class="fa-solid fa-triangle-exclamation text-xs"></i>
                 </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Número de Documento</label>
-                    <input type="text" th:field="*{documento}" required
-                        class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                        th:classappend="${#fields.hasErrors('documento')} ? 'border-red-500' : 'border-slate-300'"
-                        placeholder="Ej. 1012345678">
-                    <p th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}"
-                        class="text-red-500 text-xs mt-1"></p>
-                </div>
+                <span th:text="${errorMessage}">Error al procesar el registro</span>
             </div>
 
-            <!-- Correo y Teléfono (Grid de 2 columnas) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Formulario de Registro -->
+            <form th:action="@{/clientes/guardar}" th:object="${registroClienteDTO}" method="POST"
+                class="space-y-4 sm:space-y-5">
+
+                <!-- Nombre Completo -->
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
-                    <input type="email" th:field="*{correo}" required
-                        class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                        th:classappend="${#fields.hasErrors('correo')} ? 'border-red-500' : 'border-slate-300'"
-                        placeholder="correo@ejemplo.com">
-                    <p th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}" class="text-red-500 text-xs mt-1">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-user text-[#073B78] mr-1"></i> Nombre Completo
+                    </label>
+                    <input type="text" th:field="*{nombreCompleto}" required placeholder="Ej. Juan Pérez Gómez"
+                        class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm"
+                        th:classappend="${#fields.hasErrors('nombreCompleto')} ? 'border-rose-400 bg-rose-50/50' : 'border-slate-200'" />
+                    <p th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}"
+                        class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
                     </p>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Teléfono</label>
-                    <input type="text" th:field="*{telefono}" required
-                        class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                        th:classappend="${#fields.hasErrors('telefono')} ? 'border-red-500' : 'border-slate-300'"
-                        placeholder="Ej. 3001234567">
-                    <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"
-                        class="text-red-500 text-xs mt-1"></p>
+
+                <!-- Tipo Doc y Documento (Grid responsive) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <i class="fa-solid fa-id-card text-[#073B78] mr-1"></i> Tipo Doc.
+                        </label>
+                        <select th:field="*{tipoDocumento}"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm">
+                            <option value="CC">Cédula de Ciudadanía (CC)</option>
+                            <option value="CE">Cédula de Extranjería (CE)</option>
+                            <option value="PASAPORTE">Pasaporte</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <i class="fa-solid fa-hashtag text-[#073B78] mr-1"></i> Número de Documento
+                        </label>
+                        <input type="text" th:field="*{documento}" required placeholder="Ej. 1012345678"
+                            class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm"
+                            th:classappend="${#fields.hasErrors('documento')} ? 'border-rose-400 bg-rose-50/50' : 'border-slate-200'" />
+                        <p th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}"
+                            class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                        </p>
+                    </div>
                 </div>
+
+                <!-- Correo y Teléfono (Grid responsive) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <i class="fa-solid fa-envelope text-[#073B78] mr-1"></i> Correo Electrónico
+                        </label>
+                        <input type="email" th:field="*{correo}" required placeholder="correo@ejemplo.com"
+                            class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm"
+                            th:classappend="${#fields.hasErrors('correo')} ? 'border-rose-400 bg-rose-50/50' : 'border-slate-200'" />
+                        <p th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"
+                            class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            <i class="fa-solid fa-phone text-[#073B78] mr-1"></i> Teléfono Móvil
+                        </label>
+                        <input type="text" th:field="*{telefono}" required placeholder="Ej. 3001234567"
+                            class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm"
+                            th:classappend="${#fields.hasErrors('telefono')} ? 'border-rose-400 bg-rose-50/50' : 'border-slate-200'" />
+                        <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"
+                            class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Dirección de Residencia -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-location-dot text-[#073B78] mr-1"></i> Dirección de Residencia <span
+                            class="text-slate-400 font-normal normal-case">(Opcional)</span>
+                    </label>
+                    <input type="text" th:field="*{direccion}" placeholder="Ej. Calle 10 # 40 - 20, Bogotá"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm" />
+                </div>
+
+                <!-- Contraseña -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-lock text-[#073B78] mr-1"></i> Contraseña
+                    </label>
+                    <input type="password" th:field="*{contrasena}" required placeholder="Mínimo 6 caracteres"
+                        class="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm"
+                        th:classappend="${#fields.hasErrors('contrasena')} ? 'border-rose-400 bg-rose-50/50' : 'border-slate-200'" />
+                    <p th:if="${#fields.hasErrors('contrasena')}" th:errors="*{contrasena}"
+                        class="text-rose-600 text-xs font-semibold mt-1 flex items-center gap-1">
+                    </p>
+                </div>
+
+                <!-- Botón de Registro -->
+                <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer mt-3 group">
+                    <span>Registrarme</span>
+                    <i
+                        class="fa-solid fa-arrow-right text-xs transition-transform duration-200 group-hover:translate-x-1"></i>
+                </button>
+            </form>
+
+            <!-- Separador sutil -->
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-500 font-medium">
+                    ¿Ya tienes una cuenta registrada?
+                    <a th:href="@{/login}" href="/login"
+                        class="text-[#073B78] hover:text-[#041E42] font-bold underline underline-offset-2 transition-colors ml-1">
+                        Inicia sesión aquí
+                    </a>
+                </p>
             </div>
 
-            <!-- Dirección -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Dirección de Residencia</label>
-                <input type="text" th:field="*{direccion}"
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    placeholder="Ej. Calle 10 # 40 - 20">
-            </div>
-
-            <!-- Contraseña -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
-                <input type="password" th:field="*{contrasena}" required
-                    class="w-full px-4 py-2.5 bg-slate-50 border rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    th:classappend="${#fields.hasErrors('contrasena')} ? 'border-red-500' : 'border-slate-300'"
-                    placeholder="Mínimo 6 caracteres">
-                <p th:if="${#fields.hasErrors('contrasena')}" th:errors="*{contrasena}"
-                    class="text-red-500 text-xs mt-1"></p>
-            </div>
-
-            <!-- Botón de Registro -->
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-blue-500/30 transition duration-200 mt-2">
-                Registrarme
-            </button>
-        </form>
-
-        <div class="mt-6 text-center text-sm text-slate-600">
-            ¿Ya tienes una cuenta registrada?
-            <a th:href="@{/ingreso/login}" class="text-blue-600 hover:text-blue-700 font-bold hover:underline">Inicia
-                sesión aquí</a>
         </div>
-    </div>
+    </main>
+
+    <!-- Footer Mínimo y Elegante -->
+    <footer class="w-full text-center py-4 text-[11px] text-slate-300 z-10 font-medium">
+        © 2026 Traveling Colombia. Todos los derechos reservados.
+    </footer>
 
 </body>
 

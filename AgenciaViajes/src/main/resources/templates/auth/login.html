@@ -1,84 +1,156 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Agencia de Viajes</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión — Traveling Colombia</title>
+    <meta name="description"
+        content="Inicia sesión en Traveling Colombia para gestionar tus reservas y explorar los mejores destinos." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (compiled) -->
     <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body
-    class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen flex items-center justify-center p-4">
+    class="min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans antialiased text-slate-900 selection:bg-amber-400 selection:text-slate-900"
+    style="background: url('/assets/fondo-aeropuerto.png') center / cover no-repeat fixed;">
 
-    <div class="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
-
-        <!-- Encabezado con marca/logo -->
-        <div class="text-center mb-6">
-            <div
-                class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-2xl shadow-lg mb-3">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11a2 2 0 012-2h1.065M15 20.488V18a2 2 0 012-2h3.064">
-                    </path>
-                </svg>
-            </div>
-            <h2 class="text-3xl font-extrabold text-slate-800">¡Bienvenido!</h2>
-            <p class="text-sm text-slate-500 mt-1">Ingresa a tu cuenta para gestionar tus viajes</p>
-        </div>
-
-        <!-- Alertas de estado -->
-        <div th:if="${errorMessage}"
-            class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded text-sm flex items-center gap-2">
-            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                    clip-rule="evenodd"></path>
-            </svg>
-            <span th:text="${errorMessage}">Error de autenticación</span>
-        </div>
-
-        <div th:if="${successMessage}"
-            class="mb-4 p-3 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 rounded text-sm flex items-center gap-2">
-            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"></path>
-            </svg>
-            <span th:text="${successMessage}">Mensaje de éxito</span>
-        </div>
-
-        <!-- Formulario procesado por Spring Security -->
-        <form th:action="@{/login}" method="POST" class="space-y-5">
-            <div>
-                <label for="username" class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
-                <!-- Mapeado a "correo" -->
-                <input type="email" id="username" name="correo" required autofocus
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                    placeholder="usuario@ejemplo.com">
-            </div>
-
-            <div>
-                <label for="password" class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
-                <!-- Mapeado a "contrasena" -->
-                <input type="password" id="password" name="contrasena" required
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                    placeholder="••••••••">
-            </div>
-
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-blue-500/30 transition duration-200">
-                Iniciar Sesión
-            </button>
-        </form>
-
-        <div class="mt-6 text-center text-sm text-slate-600">
-            ¿Aún no tienes una cuenta?
-            <a th:href="@{/clientes}" class="text-blue-600 hover:text-blue-700 font-bold hover:underline">Regístrate
-                aquí</a>
-        </div>
+    <!-- Overlay Gradiente Profesional Deep Navy -->
+    <div
+        class="fixed inset-0 bg-gradient-to-b from-[#041E42]/90 via-[#073B78]/75 to-[#041E42]/95 pointer-events-none -z-10">
     </div>
+
+    <!-- Header flotante con Volver al Inicio y Logo -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 flex items-center justify-between z-20">
+        <a th:href="@{/}" href="/"
+            class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white/90 hover:text-white bg-black/25 hover:bg-black/40 backdrop-blur-md px-4 py-2 rounded-full transition-all duration-200 shadow-sm border border-white/10 group">
+            <i
+                class="fa-solid fa-arrow-left text-xs transition-transform duration-200 group-hover:-translate-x-0.5"></i>
+            <span>Volver al inicio</span>
+        </a>
+
+        <a th:href="@{/}" href="/" class="group focus:outline-none">
+            <img th:src="@{/assets/Traveling-colombia-white.png}" src="/assets/Traveling-colombia-white.png"
+                alt="Traveling Colombia"
+                class="h-8 sm:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
+        </a>
+    </header>
+
+    <!-- Contenido Principal: Tarjeta de Login -->
+    <main class="w-full flex-1 flex items-center justify-center px-4 py-8 sm:py-12 z-10">
+        <div
+            class="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl shadow-[#041E42]/40 p-6 sm:p-9 border border-white/50 transition-all duration-300">
+
+            <!-- Marca y Encabezado -->
+            <div class="text-center mb-6">
+                <!-- Tricolor pill -->
+                <div class="colombia-tricolor-pill mx-auto mb-3">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                    ¡Bienvenido de nuevo!
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+                    Ingresa a tu cuenta para gestionar tus viajes y reservas
+                </p>
+            </div>
+
+            <!-- Alerta de Error de Autenticación -->
+            <div th:if="${errorMessage}"
+                class="mb-5 p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm animate-shake">
+                <div class="w-7 h-7 rounded-xl bg-rose-100 flex items-center justify-center shrink-0 text-rose-600">
+                    <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                </div>
+                <span th:text="${errorMessage}">Correo o contraseña incorrectos.</span>
+            </div>
+
+            <!-- Alerta de Cierre de Sesión -->
+            <div th:if="${logoutMessage}"
+                class="mb-5 p-3.5 bg-blue-50 border border-blue-200 text-[#073B78] rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm">
+                <div class="w-7 h-7 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 text-[#073B78]">
+                    <i class="fa-solid fa-circle-check text-xs"></i>
+                </div>
+                <span th:text="${logoutMessage}">Has cerrado sesión correctamente.</span>
+            </div>
+
+            <!-- Alerta de Registro Exitoso / Mensaje Flash -->
+            <div th:if="${mensaje}"
+                class="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm">
+                <div
+                    class="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-600">
+                    <i class="fa-solid fa-circle-check text-xs"></i>
+                </div>
+                <span th:text="${mensaje}">Cliente registrado exitosamente.</span>
+            </div>
+
+            <!-- Formulario de Inicio de Sesión -->
+            <form th:action="@{/login}" method="POST" class="space-y-4">
+
+                <!-- Campo Correo -->
+                <div>
+                    <label for="username"
+                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-envelope text-[#073B78] mr-1"></i> Correo Electrónico
+                    </label>
+                    <div class="relative">
+                        <input type="email" id="username" name="correo" required autofocus
+                            placeholder="ejemplo@correo.com"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm" />
+                    </div>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div>
+                    <label for="password"
+                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-lock text-[#073B78] mr-1"></i> Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="password" name="contrasena" required placeholder="••••••••"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition-all duration-200 shadow-sm" />
+                    </div>
+                </div>
+
+                <!-- Botón Iniciar Sesión -->
+                <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer mt-2 group">
+                    <span>Iniciar Sesión</span>
+                    <i
+                        class="fa-solid fa-arrow-right text-xs transition-transform duration-200 group-hover:translate-x-1"></i>
+                </button>
+            </form>
+
+            <!-- Separador sutil -->
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-500 font-medium">
+                    ¿Aún no tienes una cuenta?
+                    <a th:href="@{/clientes}" href="/clientes"
+                        class="text-[#073B78] hover:text-[#041E42] font-bold underline underline-offset-2 transition-colors ml-1">
+                        Regístrate aquí
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Mínimo y Elegante -->
+    <footer class="w-full text-center py-4 text-[11px] text-slate-300 z-10 font-medium">
+        © 2026 Traveling Colombia. Todos los derechos reservados.
+    </footer>
 
 </body>
 
