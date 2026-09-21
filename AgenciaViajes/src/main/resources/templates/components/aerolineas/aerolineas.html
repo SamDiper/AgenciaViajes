@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE: TABLA DE AEROLÍNEAS            -->
+    <!-- ========================================== -->
+    <div th:fragment="aerolineas" class="space-y-6">
+
+        <!-- Encabezado con Título y Botón Nueva Aerolínea -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-5">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <a th:href="@{/admin/configuracion}" class="text-xs font-semibold text-slate-400 hover:text-[#073B78] transition flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                        <span>Configuración</span>
+                    </a>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+                    Aerolíneas
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-0.5 font-medium">
+                    Compañías de transporte aéreo aliadas, código IATA y tarifas de vuelo.
+                </p>
+            </div>
+
+            <!-- Botón Agregar Nueva Aerolínea -->
+            <div class="flex items-center gap-3">
+                <a th:href="@{/admin/aerolineas/nueva}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#073B78] hover:bg-[#052b57] shadow-sm shadow-blue-950/20 transition-all duration-200 focus:outline-none">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Nueva Aerolínea</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenedor de la Tabla -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+
+            <!-- Filtros / Búsqueda -->
+            <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/50">
+                <div class="relative w-full sm:w-72">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text"
+                           placeholder="Buscar aerolínea o IATA..."
+                           class="w-full pl-9 pr-3 py-1.5 bg-white text-xs text-slate-700 placeholder-slate-400 rounded-xl border border-slate-200 focus:border-[#073B78] focus:outline-none transition" />
+                </div>
+
+                <div class="text-xs text-slate-400 font-medium self-end sm:self-center">
+                    Mostrando <span class="font-bold text-slate-700" th:text="${aerolineas != null ? aerolineas.size() : 0}">0</span> registros
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-3.5 px-5"># ID</th>
+                            <th class="py-3.5 px-5">Aerolínea</th>
+                            <th class="py-3.5 px-5">Código IATA</th>
+                            <th class="py-3.5 px-5">Tarifa Adicional</th>
+                            <th class="py-3.5 px-5 text-center">Acciones CRUD</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
+                        <tr th:each="aero : ${aerolineas}" class="hover:bg-slate-50/80 transition-colors">
+                            <td class="py-3.5 px-5 font-bold text-slate-900" th:text="${aero.idAerolinea}">1</td>
+                            <td class="py-3.5 px-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 text-[#073B78] flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-plane-departure"></i>
+                                    </div>
+                                    <span class="font-semibold text-slate-800" th:text="${aero.nombre}">Avianca</span>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-5">
+                                <span class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-200"
+                                      th:text="${aero.codigoIata != null ? aero.codigoIata : '-'}">
+                                    AV
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-5 font-bold text-slate-900"
+                                th:text="${aero.precioAdicional != null ? '$ ' + #numbers.formatDecimal(aero.precioAdicional, 0, 'POINT', 0, 'COMMA') : '$ 0'}">
+                                $ 50.000
+                            </td>
+                            <td class="py-3.5 px-5 text-center">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <a th:href="@{/admin/aerolineas/editar/{id}(id=${aero.idAerolinea})}"
+                                       class="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                                       title="Editar aerolínea">
+                                        <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                    </a>
+                                    <a th:href="@{/admin/aerolineas/eliminar/{id}(id=${aero.idAerolinea})}"
+                                       class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                       onclick="return confirm('¿Está seguro de eliminar esta aerolínea?');"
+                                       title="Eliminar aerolínea">
+                                        <i class="fa-regular fa-trash-can text-xs"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${aerolineas == null or #lists.isEmpty(aerolineas)}">
+                            <td colspan="5" class="py-12 text-center text-slate-400">
+                                <p class="font-bold text-slate-700 text-sm">No hay aerolíneas registradas</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 bg-slate-50/30">
+                <span>Registros totales: <b class="text-slate-800" th:text="${totalAerolineas != null ? totalAerolineas : 0}">0</b></span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
