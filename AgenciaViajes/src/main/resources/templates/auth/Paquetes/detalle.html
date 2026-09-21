@@ -29,10 +29,6 @@
     <header th:replace="~{components/navbar/navbar :: navbar}"></header>
 
     <main class="w-full">
-
-        <!-- ══════════════════════════════════════════════
-             1. HERO BANNER PRINCIPAL (Fiel al mockup)
-        ══════════════════════════════════════════════ -->
         <section
             class="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 text-white min-h-[360px] flex items-center"
             th:style="'background: url(' + (${paquete.imagenUrl != null and !#strings.isEmpty(paquete.imagenUrl) ? paquete.imagenUrl : (paquete.destino.imagenUrl != null ? paquete.destino.imagenUrl : 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1600')}) + ') center / cover no-repeat;'">
