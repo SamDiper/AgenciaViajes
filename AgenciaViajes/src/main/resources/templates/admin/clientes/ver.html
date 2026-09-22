@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{components/layout-admin/layout-admin :: admin-head('Detalle del cliente')}">
+</head>
+
+<body class="bg-[#F4F7FC] text-slate-800 font-sans antialiased min-h-screen selection:bg-amber-400 selection:text-slate-900">
+
+    <aside th:replace="~{components/sidebar-admin/sidebar-admin :: sidebar-admin}"></aside>
+
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden hidden transition-opacity duration-300 opacity-0"
+        aria-hidden="true"></div>
+
+    <div class="lg:pl-64 flex flex-col min-h-screen">
+        <header th:replace="~{components/layout-admin/layout-admin :: admin-topbar}"></header>
+
+        <main class="flex-1 p-6 lg:p-8">
+            <div class="max-w-3xl mx-auto space-y-8" th:object="${clienteDetalle}">
+
+                <!-- Volver -->
+                <a th:href="@{/admin/clientes}"
+                    class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#073B78] transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a clientes
+                </a>
+
+                <!-- Encabezado -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner shrink-0">
+                            <i class="fa-solid fa-user text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Detalle del cliente</span>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5" th:text="*{nombreCompleto}">Nombre</h1>
+                            <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                                <i class="fa-solid fa-id-card text-slate-400"></i>
+                                <span class="font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full text-xs"
+                                    th:text="*{tipoDocumento} + ' · ' + *{documento}">CC · 000</span>
+                            </p>
+                        </div>
+                    </div>
+                    <span class="px-4 py-1.5 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full uppercase tracking-wider shadow-sm"
+                        th:text="*{estado}">ACTIVO</span>
+                </div>
+
+                <!-- Datos -->
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6 sm:p-8">
+                    <h2 class="text-lg font-extrabold text-slate-900 mb-6 border-b pb-4 border-slate-100">Datos personales</h2>
+
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Correo electrónico</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{correo}">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Teléfono</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{telefono} ?: '-'">-</dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Dirección de residencia</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{direccion} ?: '-'">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Fecha de registro</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800"
+                                th:text="*{fechaRegistro} != null ? ${#temporals.format(clienteDetalle.fechaRegistro, 'dd/MM/yyyy HH:mm')} : '-'">-</dd>
+                        </div>
+                    </dl>
+
+                    <!-- Botones -->
+                    <div class="pt-6 flex justify-end items-center gap-3">
+                        <form th:action="@{/admin/clientes/eliminar/{id}(id=*{idCliente})}" method="POST"
+                            onsubmit="return confirm('¿Eliminar este cliente?');">
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold rounded-full text-xs transition-all border border-red-100 shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                            </button>
+                        </form>
+                        <a th:href="@{/admin/clientes/editar/{id}(id=*{idCliente})}"
+                            class="px-5 py-2.5 bg-[#073B78] hover:bg-[#041E42] text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all">
+                            <i class="fa-solid fa-pen mr-1"></i> Editar
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <th:block th:replace="~{components/layout-admin/layout-admin :: admin-scripts}"></th:block>
+</body>
+
+</html>

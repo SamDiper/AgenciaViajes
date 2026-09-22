@@ -65,12 +65,12 @@ public class ClienteController {
 
 // 4. FORMULARIO DE EDICIÓN
 @GetMapping("/editar/{id}")
-public String editarForm(@PathVariable Integer id, Model model) {
-    Cliente cliente = clienteService.obtenerTodos()
-            .stream()
-            .filter(c -> c.getIdCliente().equals(id))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+public String editarForm(@PathVariable Integer id, Authentication auth, Model model) {
+    // Cada cliente solo puede ver su propio perfil (evita cambiar el id en la URL)
+    Cliente cliente = clienteService.obtenerPorCorreo(auth.getName());
+    if (!cliente.getIdCliente().equals(id)) {
+        return "redirect:/clientes/mi-perfil";
+    }
 
     RegistroClienteDTO dto = new RegistroClienteDTO();
     dto.setNombreCompleto(cliente.getNombreCompleto());
@@ -99,11 +99,23 @@ public String editarForm(@PathVariable Integer id, Model model) {
     return "auth/cliente/Formulario";
 }
 
-    // 5. ACTUALIZAR
+    // 5. ACTUALIZAR (desde "Mi perfil")
     @PostMapping("/actualizar/{id}")
-    public String actualizar(@PathVariable Integer id, @ModelAttribute("cliente") RegistroClienteDTO dto) {
+    public String actualizar(@PathVariable Integer id,
+                             @ModelAttribute("registroClienteDTO") RegistroClienteDTO dto,
+                             Authentication auth,
+                             RedirectAttributes flash) {
+        // Solo puede editar su propio perfil
+        Cliente logueado = clienteService.obtenerPorCorreo(auth.getName());
+        if (!logueado.getIdCliente().equals(id)) {
+            flash.addFlashAttribute("error", "No puedes editar los datos de otro usuario.");
+            return "redirect:/clientes/mi-perfil";
+        }
+
         clienteService.actualizarPerfil(id, dto);
-        return "redirect:/clientes";
+        flash.addFlashAttribute("exito", "Tus datos se actualizaron correctamente.");
+        // Directo a /editar/{id}: si pasara por /mi-perfil (que redirige otra vez) se perdería el mensaje
+        return "redirect:/clientes/editar/" + id;
     }
 
     @GetMapping("/mi-perfil")

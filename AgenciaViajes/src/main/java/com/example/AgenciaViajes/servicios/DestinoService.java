@@ -40,4 +40,12 @@ public class DestinoService {
     public long contar() {
         return destinoRepository.count();
     }
+
+    public Destino guardar(Destino destino) {
+        return destinoRepository.save(destino);
+    }
+
+    public void eliminar(Long id) {
+        destinoRepository.deleteById(id);
+    }
 }

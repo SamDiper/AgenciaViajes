@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{components/layout-admin/layout-admin :: admin-head(${usuarioForm.idUsuario == null} ? 'Nuevo usuario' : 'Editar usuario')}">
+</head>
+
+<body class="bg-[#F4F7FC] text-slate-800 font-sans antialiased min-h-screen selection:bg-amber-400 selection:text-slate-900">
+
+    <aside th:replace="~{components/sidebar-admin/sidebar-admin :: sidebar-admin}"></aside>
+
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden hidden transition-opacity duration-300 opacity-0"
+        aria-hidden="true"></div>
+
+    <div class="lg:pl-64 flex flex-col min-h-screen">
+        <header th:replace="~{components/layout-admin/layout-admin :: admin-topbar}"></header>
+
+        <main class="flex-1 p-6 lg:p-8">
+            <div class="max-w-2xl mx-auto space-y-8">
+
+                <!-- Volver -->
+                <a th:href="@{/admin/usuarios}"
+                    class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#073B78] transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a usuarios
+                </a>
+
+                <!-- Encabezado -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner shrink-0">
+                        <i class="fa-solid fa-user-shield text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Usuarios administradores</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5"
+                            th:text="${usuarioForm.idUsuario == null} ? 'Nuevo usuario' : 'Editar usuario'">Nuevo usuario</h1>
+                        <p class="text-sm text-slate-500 mt-1">
+                            Rol asignado:
+                            <span class="font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full text-xs"
+                                th:text="${usuarioForm.rol != null} ? ${usuarioForm.rol.nombreRol} : 'ADMIN'">ADMIN</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6 sm:p-8">
+                    <h2 class="text-lg font-extrabold text-slate-900 mb-6 border-b pb-4 border-slate-100">Datos de acceso</h2>
+
+                    <!-- Crear va a /guardar, editar va a /actualizar/{id} -->
+                    <form th:action="${usuarioForm.idUsuario == null} ? @{/admin/usuarios/guardar} : @{/admin/usuarios/actualizar/{id}(id=${usuarioForm.idUsuario})}"
+                        method="POST" class="space-y-5">
+
+                        <div>
+                            <label for="nombreUsuario"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Nombre de usuario</label>
+                            <input type="text" id="nombreUsuario" name="nombreUsuario" th:value="${usuarioForm.nombreUsuario}"
+                                required maxlength="50" placeholder="Ej: admin.juan"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+
+                        <div>
+                            <label for="correo"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Correo electrónico</label>
+                            <input type="email" id="correo" name="correo" th:value="${usuarioForm.correo}"
+                                required maxlength="100" placeholder="usuario@correo.com"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+
+                        <!-- Contraseña: obligatoria al crear, opcional al editar -->
+                        <div>
+                            <label for="contrasena"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1"
+                                th:text="${usuarioForm.idUsuario == null} ? 'Contraseña' : 'Nueva contraseña (déjala vacía para no cambiarla)'">Contraseña</label>
+                            <input type="password" id="contrasena" name="contrasena" minlength="6"
+                                th:required="${usuarioForm.idUsuario == null}"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+
+                        <!-- Estado: solo al editar (al crear queda ACTIVO) -->
+                        <div th:if="${usuarioForm.idUsuario != null}">
+                            <label for="estado"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Estado</label>
+                            <select id="estado" name="estado"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                                <option th:each="e : ${T(com.example.AgenciaViajes.modelo.Enum.EstadoGeneral).values()}"
+                                    th:value="${e}" th:text="${e}" th:selected="${e == usuarioForm.estado}">ACTIVO</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="pt-3 flex justify-end items-center gap-3">
+                            <a th:href="@{/admin/usuarios}"
+                                class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-full text-xs transition-all border border-slate-200 shadow-sm">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-[#073B78] hover:bg-[#041E42] text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all cursor-pointer">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i>
+                                <span th:text="${usuarioForm.idUsuario == null} ? 'Crear usuario' : 'Guardar cambios'">Guardar</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <th:block th:replace="~{components/layout-admin/layout-admin :: admin-scripts}"></th:block>
+</body>
+
+</html>

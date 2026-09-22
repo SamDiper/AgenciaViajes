@@ -48,6 +48,13 @@
                     <span>Reservas</span>
                 </a>
 
+                <a th:href="@{/admin/facturas}"
+                    th:classappend="${activeSection == 'facturas'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
+                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
+                    <i class="fa-solid fa-file-invoice-dollar text-base w-5 text-center"></i>
+                    <span>Facturación</span>
+                </a>
+
                 <!-- Usuarios -->
                 <a th:href="@{/admin/usuarios}"
                     th:classappend="${activeSection == 'usuarios'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"

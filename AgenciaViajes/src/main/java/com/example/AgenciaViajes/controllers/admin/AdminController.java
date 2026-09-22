@@ -2,21 +2,33 @@ package com.example.AgenciaViajes.controllers.admin;
 
 import com.example.AgenciaViajes.dto.EntidadConfigDTO;
 import com.example.AgenciaViajes.modelo.Aerolinea;
+import com.example.AgenciaViajes.modelo.CategoriaDestino;
 import com.example.AgenciaViajes.modelo.Cliente;
+import com.example.AgenciaViajes.modelo.Destino;
 import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
 import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
 import com.example.AgenciaViajes.modelo.Reserva;
+import com.example.AgenciaViajes.modelo.Rol;
+import com.example.AgenciaViajes.modelo.Usuario;
 import com.example.AgenciaViajes.servicios.AerolineaService;
 import com.example.AgenciaViajes.servicios.CategoriaDestinoService;
+import com.example.AgenciaViajes.servicios.ClienteAdminService;
 import com.example.AgenciaViajes.servicios.ClienteService;
 import com.example.AgenciaViajes.servicios.DestinoService;
+import com.example.AgenciaViajes.servicios.Pago.FacturaService;
 import com.example.AgenciaViajes.servicios.HotelService;
 import com.example.AgenciaViajes.servicios.PaqueteService;
 import com.example.AgenciaViajes.servicios.ReservaService;
 import com.example.AgenciaViajes.servicios.RolService;
+import com.example.AgenciaViajes.servicios.UsuarioAdminService;
 import com.example.AgenciaViajes.servicios.UsuarioService;
+import com.example.AgenciaViajes.servicios.Pdf.PdfService;
+import com.example.AgenciaViajes.modelo.Factura;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,6 +38,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -46,6 +59,10 @@ public class AdminController {
     private final RolService rolService;
     private final UsuarioService usuarioService;
     private final ReservaService reservaService;
+    private final ClienteAdminService clienteAdminService;
+    private final UsuarioAdminService usuarioAdminService;
+    private final FacturaService facturaService;
+    private final PdfService pdfService;
 
     public AdminController(ClienteService clienteService,
                            PaqueteService paqueteService,
@@ -55,7 +72,11 @@ public class AdminController {
                            AerolineaService aerolineaService,
                            RolService rolService,
                            UsuarioService usuarioService,
-                           ReservaService reservaService) {
+                           ReservaService reservaService,
+                           ClienteAdminService clienteAdminService,
+                           UsuarioAdminService usuarioAdminService,
+                           FacturaService facturaService,
+                           PdfService pdfService) {
         this.clienteService = clienteService;
         this.paqueteService = paqueteService;
         this.destinoService = destinoService;
@@ -65,6 +86,10 @@ public class AdminController {
         this.rolService = rolService;
         this.usuarioService = usuarioService;
         this.reservaService = reservaService;
+        this.clienteAdminService = clienteAdminService;
+        this.usuarioAdminService = usuarioAdminService;
+        this.facturaService = facturaService;
+        this.pdfService = pdfService;
     }
 
     private void agregarDatosAdmin(Model model) {
@@ -90,7 +115,7 @@ public class AdminController {
     public String configuracion(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        
+
         List<EntidadConfigDTO> entidades = new ArrayList<>();
 
         entidades.add(EntidadConfigDTO.builder()
@@ -169,6 +194,54 @@ public class AdminController {
         model.addAttribute("usuarios", usuarioService.listarTodos());
         model.addAttribute("totalUsuarios", usuarioService.contar());
         return "admin/usuarios";
+    }
+
+    @GetMapping({"/usuarios/nuevo", "/usuarios/nueva"})
+    public String nuevoUsuario(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "usuarios");
+        model.addAttribute("usuarioForm", new Usuario());
+        return "admin/usuarios/formulario";
+    }
+
+    @PostMapping("/usuarios/guardar")
+    public String guardarUsuario(@RequestParam String nombreUsuario,
+                                 @RequestParam String correo,
+                                 @RequestParam String contrasena) {
+        usuarioAdminService.crear(nombreUsuario, correo, contrasena);
+        return "redirect:/admin/usuarios";
+    }
+
+    @GetMapping("/usuarios/ver/{id}")
+    public String verUsuario(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "usuarios");
+        model.addAttribute("usuarioDetalle", usuarioAdminService.buscarPorId(id));
+        return "admin/usuarios/ver";
+    }
+
+    @GetMapping("/usuarios/editar/{id}")
+    public String editarUsuario(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "usuarios");
+        model.addAttribute("usuarioForm", usuarioAdminService.buscarPorId(id));
+        return "admin/usuarios/formulario";
+    }
+
+    @PostMapping("/usuarios/actualizar/{id}")
+    public String actualizarUsuario(@PathVariable Integer id,
+                                    @RequestParam String nombreUsuario,
+                                    @RequestParam String correo,
+                                    @RequestParam(required = false) String contrasena,
+                                    @RequestParam(required = false) EstadoGeneral estado) {
+        usuarioAdminService.actualizar(id, nombreUsuario, correo, contrasena, estado);
+        return "redirect:/admin/usuarios";
+    }
+
+    @RequestMapping(value = "/usuarios/eliminar/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String eliminarUsuario(@PathVariable Integer id) {
+        usuarioAdminService.eliminar(id);
+        return "redirect:/admin/usuarios";
     }
 
     // ==========================================
@@ -312,44 +385,8 @@ public class AdminController {
     }
 
     // ==========================================
-    // OTRAS VISTAS (DESTINOS, CATEGORÍAS, CLIENTES, ROLES, RESERVAS)
+    // RESERVAS
     // ==========================================
-    @GetMapping("/destinos")
-    public String destinos(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("destinos", destinoService.listarTodos());
-        model.addAttribute("totalDestinos", destinoService.contar());
-        return "admin/destinos";
-    }
-
-    @GetMapping("/categorias")
-    public String categorias(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
-        model.addAttribute("totalCategorias", categoriaDestinoService.contar());
-        return "admin/categorias";
-    }
-
-    @GetMapping("/clientes")
-    public String clientes(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("clientes", clienteService.obtenerTodos());
-        model.addAttribute("totalClientes", clienteService.contar());
-        return "admin/clientes";
-    }
-
-    @GetMapping("/roles")
-    public String roles(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("roles", rolService.listarTodos());
-        model.addAttribute("totalRoles", rolService.contar());
-        return "admin/roles";
-    }
-
     @GetMapping("/reservas")
     public String reservas(Model model) {
         agregarDatosAdmin(model);
@@ -379,5 +416,275 @@ public class AdminController {
         model.addAttribute("montoTotal", montoTotal);
 
         return "admin/reservas";
+    }
+
+    // ==========================================
+    // FACTURACIÓN
+    // ==========================================
+    @GetMapping("/facturas")
+    public String facturas(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "facturas");
+
+        List<Factura> facturas = facturaService.listarTodas();
+        BigDecimal totalFacturado = facturas.stream()
+                .map(Factura::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalIva = facturas.stream()
+                .map(Factura::getIva)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("facturas", facturas);
+        model.addAttribute("totalFacturas", facturas.size());
+        model.addAttribute("totalFacturado", totalFacturado);
+        model.addAttribute("totalIva", totalIva);
+        return "admin/factura/facturas";
+    }
+
+    @GetMapping("/facturas/{id}/pdf")
+    public ResponseEntity<byte[]> descargarFacturaAdmin(@PathVariable Integer id) {
+        Factura factura = facturaService.buscarPorId(id);
+        byte[] pdf = pdfService.generarFactura(factura);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=factura_" + factura.getNumero() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    // ==========================================
+    // CRUD DESTINOS
+    // ==========================================
+    @GetMapping("/destinos")
+    public String destinos(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("destinos", destinoService.listarTodos());
+        model.addAttribute("totalDestinos", destinoService.contar());
+        return "admin/destinos";
+    }
+
+    @GetMapping({"/destinos/nuevo", "/destinos/nueva"})
+    public String nuevoDestino(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("destino", new Destino());
+        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
+        return "admin/destinos/formulario";
+    }
+
+    @GetMapping("/destinos/ver/{id}")
+    public String verDestino(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("destino", destinoService.buscarPorId(id));
+        return "admin/destinos/ver";
+    }
+
+    @GetMapping("/destinos/editar/{id}")
+    public String editarDestino(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("destino", destinoService.buscarPorId(id));
+        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
+        return "admin/destinos/formulario";
+    }
+
+    @PostMapping("/destinos/guardar")
+    public String guardarDestino(@ModelAttribute Destino destino,
+                                 @RequestParam("idCategoria") Long idCategoria) {
+        CategoriaDestino categoria = categoriaDestinoService.buscarPorId(idCategoria);
+
+        if (destino.getIdDestino() == null) {
+            // Crear: se guarda lo que viene del formulario
+            if (destino.getEstado() == null) {
+                destino.setEstado(EstadoGeneral.ACTIVO);
+            }
+            destino.setCategoria(categoria);
+            destinoService.guardar(destino);
+        } else {
+            // Editar: se copian los datos del formulario sobre el destino que ya existe,
+            // así no se pierden campos como la fecha de registro
+            Destino existente = destinoService.buscarPorId(destino.getIdDestino());
+            existente.setNombre(destino.getNombre());
+            existente.setCiudad(destino.getCiudad());
+            existente.setPais(destino.getPais());
+            existente.setDescripcion(destino.getDescripcion());
+            existente.setImagenUrl(destino.getImagenUrl());
+            if (destino.getEstado() != null) {
+                existente.setEstado(destino.getEstado());
+            }
+            existente.setCategoria(categoria);
+            destinoService.guardar(existente);
+        }
+        return "redirect:/admin/destinos";
+    }
+
+    @RequestMapping(value = "/destinos/eliminar/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String eliminarDestino(@PathVariable Long id) {
+        destinoService.eliminar(id);
+        return "redirect:/admin/destinos";
+    }
+
+    // ==========================================
+    // CRUD CATEGORÍAS
+    // ==========================================
+    @GetMapping("/categorias")
+    public String categorias(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
+        model.addAttribute("totalCategorias", categoriaDestinoService.contar());
+        return "admin/categorias";
+    }
+
+    @GetMapping({"/categorias/nuevo", "/categorias/nueva"})
+    public String nuevaCategoria(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("categoria", new CategoriaDestino());
+        return "admin/categorias/formulario";
+    }
+
+    @GetMapping("/categorias/ver/{id}")
+    public String verCategoria(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("categoria", categoriaDestinoService.buscarPorId(id));
+        return "admin/categorias/ver";
+    }
+
+    @GetMapping("/categorias/editar/{id}")
+    public String editarCategoria(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("categoria", categoriaDestinoService.buscarPorId(id));
+        return "admin/categorias/formulario";
+    }
+
+    @PostMapping("/categorias/guardar")
+    public String guardarCategoria(@RequestParam(required = false) Long idCategoria,
+                                   @RequestParam String nombre) {
+        if (idCategoria == null) {
+            categoriaDestinoService.crear(nombre);
+        } else {
+            categoriaDestinoService.actualizar(idCategoria, nombre);
+        }
+        return "redirect:/admin/categorias";
+    }
+
+    @RequestMapping(value = "/categorias/eliminar/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String eliminarCategoria(@PathVariable Long id) {
+        categoriaDestinoService.eliminar(id);
+        return "redirect:/admin/categorias";
+    }
+
+    // ==========================================
+    // CRUD CLIENTES
+    // ==========================================
+    @GetMapping("/clientes")
+    public String clientes(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("clientes", clienteService.obtenerTodos());
+        model.addAttribute("totalClientes", clienteService.contar());
+        return "admin/clientes";
+    }
+
+    @GetMapping({"/clientes/nuevo", "/clientes/nueva"})
+    public String nuevoCliente(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("clienteForm", new Cliente());
+        return "admin/clientes/formulario";
+    }
+
+    @PostMapping("/clientes/guardar")
+    public String guardarCliente(@ModelAttribute Cliente cliente,
+                                 @RequestParam String contrasena) {
+        clienteAdminService.crear(cliente, contrasena);
+        return "redirect:/admin/clientes";
+    }
+
+    @GetMapping("/clientes/ver/{id}")
+    public String verCliente(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("clienteDetalle", clienteAdminService.buscarPorId(id));
+        return "admin/clientes/ver";
+    }
+
+    @GetMapping("/clientes/editar/{id}")
+    public String editarCliente(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("clienteForm", clienteAdminService.buscarPorId(id));
+        return "admin/clientes/formulario";
+    }
+
+    @PostMapping("/clientes/actualizar/{id}")
+    public String actualizarCliente(@PathVariable Integer id, @ModelAttribute Cliente cliente) {
+        clienteAdminService.actualizar(id, cliente);
+        return "redirect:/admin/clientes";
+    }
+
+    // Acepta GET y POST, así funciona tanto con un enlace como con un formulario
+    @RequestMapping(value = "/clientes/eliminar/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String eliminarCliente(@PathVariable Integer id) {
+        clienteAdminService.eliminar(id);
+        return "redirect:/admin/clientes";
+    }
+
+    // ==========================================
+    // CRUD ROLES
+    // ==========================================
+    @GetMapping("/roles")
+    public String roles(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("roles", rolService.listarTodos());
+        model.addAttribute("totalRoles", rolService.contar());
+        return "admin/roles";
+    }
+
+    @GetMapping({"/roles/nuevo", "/roles/nueva"})
+    public String nuevoRol(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("rol", new Rol());
+        return "admin/roles/formulario";
+    }
+
+    @GetMapping("/roles/ver/{id}")
+    public String verRol(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("rol", rolService.buscarPorId(id));
+        return "admin/roles/ver";
+    }
+
+    @GetMapping("/roles/editar/{id}")
+    public String editarRol(@PathVariable Integer id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("rol", rolService.buscarPorId(id));
+        return "admin/roles/formulario";
+    }
+
+    @PostMapping("/roles/guardar")
+    public String guardarRol(@RequestParam(required = false) Integer idRol,
+                             @RequestParam String nombreRol) {
+        if (idRol == null) {
+            rolService.crear(nombreRol);
+        } else {
+            rolService.actualizar(idRol, nombreRol);
+        }
+        return "redirect:/admin/roles";
+    }
+
+    @RequestMapping(value = "/roles/eliminar/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String eliminarRol(@PathVariable Integer id) {
+        rolService.eliminar(id);
+        return "redirect:/admin/roles";
     }
 }

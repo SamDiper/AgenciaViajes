@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
+import com.example.AgenciaViajes.modelo.Reserva;
 import com.example.AgenciaViajes.modelo.carrito.Carrito;
 import com.example.AgenciaViajes.repositorio.AerolineaRepository;
 import com.example.AgenciaViajes.repositorio.HotelRepository;
@@ -121,9 +122,9 @@ public class CarritoController {
                 item.setFechaViaje(fechaViaje);
             }
 
-            reservaService.crearDesdeCarrito(carrito, principal.getName());
-            flash.addFlashAttribute("exito", "¡Reserva creada! Quedó pendiente de confirmación por la agencia.");
-            return "redirect:/reservas/mis-reservas";
+            // Se crea la reserva (queda PENDIENTE) y se lleva al cliente a la pasarela de pago
+            Reserva reserva = reservaService.crearDesdeCarrito(carrito, principal.getName());
+            return "redirect:/pago/" + reserva.getId();
             
         } catch (IllegalArgumentException | IllegalStateException e) {
             flash.addFlashAttribute("error", e.getMessage());

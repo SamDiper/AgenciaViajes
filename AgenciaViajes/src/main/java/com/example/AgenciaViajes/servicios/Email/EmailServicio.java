@@ -16,32 +16,32 @@ import org.springframework.scheduling.annotation.Async;
 public class EmailServicio {
 
     @Autowired
-    private JavaMailSender mailEnviar; 
+    private JavaMailSender mailEnviar;
 
     @Autowired
-    private SpringTemplateEngine templateMotor; 
+    private SpringTemplateEngine templateMotor;
 
     @Value("${spring.mail.username}")
-    private String correoRemitente; 
+    private String correoRemitente;
 
     @Async
-    public void enviarCorreoReserva(String destino, String asunto, String nombrePlantilla, 
-                                    Map<String, Object> variablesReserva, 
+    public void enviarCorreoReserva(String destino, String asunto, String nombrePlantilla,
+                                    Map<String, Object> variablesReserva,
                                     byte[] documentoAdjunto, String nombreAdjunto) {
         try {
             Context context = new Context();
             if (variablesReserva != null) {
                 context.setVariables(variablesReserva);
             }
-            String html = templateMotor.process(nombrePlantilla, context); 
+            String html = templateMotor.process(nombrePlantilla, context);
 
             MimeMessage message = mailEnviar.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); 
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(destino);
             helper.setSubject(asunto);
             helper.setText(html, true);
-            helper.setFrom(correoRemitente); 
+            helper.setFrom(correoRemitente);
 
             if (documentoAdjunto != null && documentoAdjunto.length > 0) {
                 helper.addAttachment(nombreAdjunto, new ByteArrayResource(documentoAdjunto));
@@ -52,6 +52,45 @@ public class EmailServicio {
 
         } catch (Exception e) {
             System.err.println("Fallo al enviar correo de reserva a " + destino + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Igual que enviarCorreoReserva, pero permite varios adjuntos.
+     * adjuntos: nombre del archivo -> contenido (ej: "factura.pdf" -> bytes).
+     */
+    @Async
+    public void enviarCorreoConAdjuntos(String destino, String asunto, String nombrePlantilla,
+                                        Map<String, Object> variables,
+                                        Map<String, byte[]> adjuntos) {
+        try {
+            Context context = new Context();
+            if (variables != null) {
+                context.setVariables(variables);
+            }
+            String html = templateMotor.process(nombrePlantilla, context);
+
+            MimeMessage message = mailEnviar.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(destino);
+            helper.setSubject(asunto);
+            helper.setText(html, true);
+            helper.setFrom(correoRemitente);
+
+            if (adjuntos != null) {
+                for (Map.Entry<String, byte[]> adjunto : adjuntos.entrySet()) {
+                    if (adjunto.getValue() != null && adjunto.getValue().length > 0) {
+                        helper.addAttachment(adjunto.getKey(), new ByteArrayResource(adjunto.getValue()));
+                    }
+                }
+            }
+
+            mailEnviar.send(message);
+            System.out.println("Correo enviado a: " + destino);
+
+        } catch (Exception e) {
+            System.err.println("Fallo al enviar correo a " + destino + ": " + e.getMessage());
         }
     }
 }

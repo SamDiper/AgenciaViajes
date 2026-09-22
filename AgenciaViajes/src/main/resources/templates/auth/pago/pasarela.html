@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago de tu reserva — Traveling Colombia</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col">
+
+    <header th:replace="~{components/navbar/navbar :: navbar}"></header>
+
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 flex-1">
+
+        <div class="mb-8">
+            <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Paso 2 de 2</span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-1">Pago de tu reserva</h1>
+            <p class="text-sm sm:text-base text-slate-500 mt-2">
+                Tu reserva <span class="font-bold text-slate-700" th:text="'#RES-' + ${reserva.id}">#RES-1</span>
+                está pendiente. Completa el pago para confirmarla.
+            </p>
+        </div>
+
+        <!-- Mensaje de error del pago -->
+        <div th:if="${error}" role="alert"
+            class="mb-6 flex items-start gap-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">
+            <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- Columna izquierda: formulario de tarjeta -->
+            <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xl shadow-blue-950/5">
+                <div class="flex items-center justify-between mb-6 border-b pb-4 border-slate-100">
+                    <h2 class="text-lg font-extrabold text-slate-900">Datos de la tarjeta</h2>
+                    <div class="flex items-center gap-2 text-2xl text-slate-400">
+                        <i class="fa-brands fa-cc-visa"></i>
+                        <i class="fa-brands fa-cc-mastercard"></i>
+                        <i class="fa-brands fa-cc-amex"></i>
+                    </div>
+                </div>
+
+                <form th:action="@{/pago/{id}(id=${reserva.id})}" method="post" class="space-y-5" autocomplete="off">
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Tipo de tarjeta</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 cursor-pointer">
+                                <input type="radio" name="tipoTarjeta" value="Tarjeta de crédito" checked> Crédito
+                            </label>
+                            <label class="flex items-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 cursor-pointer">
+                                <input type="radio" name="tipoTarjeta" value="Tarjeta débito"> Débito
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="titular" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Nombre del titular</label>
+                        <input type="text" id="titular" name="titular" required placeholder="Como aparece en la tarjeta"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 uppercase outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label for="numeroTarjeta" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Número de tarjeta</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none">
+                                <i class="fa-regular fa-credit-card"></i>
+                            </span>
+                            <input type="text" id="numeroTarjeta" name="numeroTarjeta" required inputmode="numeric"
+                                maxlength="19" placeholder="4111 1111 1111 1111"
+                                class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 tracking-wider outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="vencimiento" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Vencimiento</label>
+                            <input type="text" id="vencimiento" name="vencimiento" required maxlength="5" placeholder="MM/AA"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">CVV</label>
+                            <input type="password" id="cvv" name="cvv" required inputmode="numeric" maxlength="4" placeholder="•••"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-lock"></i>
+                        <span th:text="'Pagar $' + ${#numbers.formatDecimal(reserva.total, 0, 'POINT', 0, 'COMMA')}">Pagar $0</span>
+                    </button>
+
+                    <p class="text-[11px] text-slate-400 text-center leading-relaxed">
+                        <i class="fa-solid fa-shield-halved mr-1"></i>
+                        Pasarela de pago simulada: no se realiza ningún cobro real y no se guarda el número de tu tarjeta.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Columna derecha: resumen de la reserva -->
+            <aside class="lg:col-span-5 lg:sticky lg:top-28">
+                <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm">
+                    <h2 class="text-lg font-extrabold text-slate-900 mb-4">Resumen de la reserva</h2>
+
+                    <ul class="divide-y divide-slate-100">
+                        <li th:each="d : ${reserva.detalles}" th:if="${d.estado.name() != 'CANCELADA'}" class="py-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-slate-800" th:text="${d.paquete.nombre}">Paquete</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">
+                                        <i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>
+                                        <span th:text="${d.paquete.destino.nombre}">Destino</span>
+                                    </p>
+                                    <p class="text-xs text-slate-500 mt-0.5">
+                                        <i class="fa-solid fa-calendar-day text-slate-400 mr-1"></i>
+                                        <span th:text="${#temporals.format(d.fechaViaje, 'dd/MM/yyyy')}">--/--/----</span>
+                                        · <span th:text="${d.cantidadPersonas} + ' persona(s)'">2 personas</span>
+                                    </p>
+                                </div>
+                                <p class="text-sm font-extrabold text-slate-800 whitespace-nowrap"
+                                    th:text="'$' + ${#numbers.formatDecimal(d.subtotal, 0, 'POINT', 0, 'COMMA')}">$0</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="flex items-baseline justify-between pt-4 mt-2 border-t border-slate-100">
+                        <span class="text-sm font-semibold text-slate-600">Total a pagar</span>
+                        <span class="text-2xl font-extrabold text-[#073B78]"
+                            th:text="'$' + ${#numbers.formatDecimal(reserva.total, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 text-right">COP · IVA incluido</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer th:replace="~{components/footer/footer :: footer}"></footer>
+
+    <script type="module" th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+
+</html>

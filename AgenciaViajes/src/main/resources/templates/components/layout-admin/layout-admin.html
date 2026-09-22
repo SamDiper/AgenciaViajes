@@ -61,22 +61,52 @@
                 </button>
             </div>
 
-            <!-- Perfil Administrador -->
-            <div class="flex items-center gap-3 pl-2 cursor-pointer group">
-                <div class="relative">
-                    <img th:src="@{https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80}"
-                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                         alt="Avatar Admin"
-                         class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-100" />
+            <!-- Perfil Administrador: al pasar el mouse muestra "Cerrar sesión" -->
+            <style>
+                .perfil-admin { position: relative; }
+                .perfil-admin .perfil-menu {
+                    position: absolute; right: 0; top: 100%; padding-top: 8px;
+                    opacity: 0; visibility: hidden; transform: translateY(-4px);
+                    transition: opacity .15s ease, transform .15s ease, visibility .15s;
+                    z-index: 50;
+                }
+                .perfil-admin:hover .perfil-menu,
+                .perfil-admin:focus-within .perfil-menu {
+                    opacity: 1; visibility: visible; transform: translateY(0);
+                }
+                .perfil-admin:hover .perfil-flecha { transform: rotate(180deg); }
+                .perfil-flecha { transition: transform .15s ease; }
+            </style>
+
+            <div class="perfil-admin pl-2">
+                <div class="flex items-center gap-3 cursor-pointer group" tabindex="0">
+                    <!-- Ícono de usuario en lugar de la foto -->
+                    <div class="w-9 h-9 rounded-full bg-[#073B78] text-white flex items-center justify-center ring-2 ring-slate-100 shrink-0">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </div>
+                    <div class="hidden sm:flex flex-col text-left leading-tight">
+                        <span class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition"
+                              th:text="${nombreAdmin != null ? nombreAdmin : 'Administrador'}">
+                            Administrador
+                        </span>
+                        <span class="text-[11px] text-slate-400 font-medium">Administrador</span>
+                    </div>
+                    <i class="perfil-flecha fa-solid fa-chevron-down text-xs text-slate-400 group-hover:text-slate-600 ml-0.5"></i>
                 </div>
-                <div class="hidden sm:flex flex-col text-left leading-tight">
-                    <span class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition"
-                          th:text="${nombreAdmin != null ? nombreAdmin : 'Andrés González'}">
-                        Andrés González
-                    </span>
-                    <span class="text-[11px] text-slate-400 font-medium">Administrador</span>
+
+                <!-- Menú desplegable -->
+                <div class="perfil-menu">
+                    <div class="w-48 bg-white rounded-xl border border-slate-200 shadow-lg py-1.5">
+                        <!-- Spring Security cierra sesión con POST a /logout; th:action agrega el token CSRF -->
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit"
+                                class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer text-left">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-hover:text-slate-600 transition ml-0.5"></i>
             </div>
         </div>
     </header>
