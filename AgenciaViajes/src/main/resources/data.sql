@@ -47,24 +47,56 @@ VALUES ('Hotel Tamacá Beach Resort', 'Hotel frente a la bahía de El Rodadero c
 
 -- Paquetes — Destino 1: Cartagena
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Islas del Rosario y Barú', 'Recorre la ciudad amurallada, el castillo San Felipe y las playas de arena blanca en las Islas del Rosario.', 1200000, 4, 'https://plus.unsplash.com/premium_photo-1697730195920-86bc1a6eeab0', 1, 1, 1, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Islas del Rosario y Barú', 'Recorre la ciudad amurallada, el castillo San Felipe y las playas de arena blanca en las Islas del Rosario.', 1200000, 4, 'https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/09/51/a4/95.jpg', 1, 1, 1, 'ACTIVO', CURRENT_TIMESTAMP);
 
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Cartagena Colonial y Caribe', 'Experiencia premium en hoteles boutique del centro histórico con paseo en catamarán al atardecer.', 3500000, 7, 'https://plus.unsplash.com/premium_photo-1697730195920-86bc1a6eeab0', 1, 3, 2, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Cartagena Colonial y Caribe', 'Experiencia premium en hoteles boutique del centro histórico con paseo en catamarán al atardecer.', 3500000, 7, 'https://i.pinimg.com/736x/45/9e/e1/459ee13a31178049afd9a1c831d8ec2a.jpg', 1, 3, 2, 'ACTIVO', CURRENT_TIMESTAMP);
 
 -- Paquetes — Destino 2: Salento
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Valle del Cocora', 'Senderismo por el bosque de niebla, avistamiento de palmas de cera y recorrido guiado por el pueblo de Salento.', 980000, 3, 'https://images.unsplash.com/photo-1697818634560-27ddca612f88', 2, 1, 3, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Valle del Cocora', 'Senderismo por el bosque de niebla, avistamiento de palmas de cera y recorrido guiado por el pueblo de Salento.', 980000, 3, 'https://i.pinimg.com/736x/8f/8a/5f/8f8a5f00886cbd8bc7cb865548f336da.jpg', 2, 1, 3, 'ACTIVO', CURRENT_TIMESTAMP);
 
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Ruta del Café y Tradición', 'Visita haciendas cafeteras con degustación de cafés especiales, cabalgata por la montaña y posada campestre.', 1500000, 5, 'https://images.unsplash.com/photo-1697818634560-27ddca612f88', 2, 2, 4, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Ruta del Café y Tradición', 'Visita haciendas cafeteras con degustación de cafés especiales, cabalgata por la montaña y posada campestre.', 1500000, 5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiPLNwaunAJZqPlOlKMpFoO4nSU5GC0k2nCLNErrtoftzBn6sS8Tt_dts&s=10', 2, 2, 4, 'ACTIVO', CURRENT_TIMESTAMP);
 
 -- Paquetes — Destino 3: Santa Marta
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Parque Tayrona', 'Explora las playas de Cabo San Juan, La Piscina y Arrecifes. Incluye entrada al parque y estadía en cabañas ecológicas.', 1100000, 3, 'https://images.unsplash.com/photo-1635079552384-dd8adecd8a7c', 3, 1, 5, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Parque Tayrona', 'Explora las playas de Cabo San Juan, La Piscina y Arrecifes. Incluye entrada al parque y estadía en cabañas ecológicas.', 1100000, 3, 'https://expotur-eco.com/wp-content/uploads/2019/10/parque-tayrona-santa-marta-colombia-expotur.jpg', 3, 1, 5, 'ACTIVO', CURRENT_TIMESTAMP);
 
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
-VALUES ('Ciudad Perdida y Playas', 'Aventura de senderismo arqueológico a Ciudad Perdida combinado con descanso en las playas de Santa Marta.', 2800000, 8, 'https://images.unsplash.com/photo-1635079552384-dd8adecd8a7c', 3, 3, 6, 'ACTIVO', CURRENT_TIMESTAMP);
+VALUES ('Ciudad Perdida y Playas', 'Aventura de senderismo arqueológico a Ciudad Perdida combinado con descanso en las playas de Santa Marta.', 2800000, 8, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqumiDf0ljZnCyLBtyoU5OPHgy73Ofz9OJW8KZ7y28JIFhdxveGXDwW5c&s=10', 3, 3, 6, 'ACTIVO', CURRENT_TIMESTAMP);
+
+-- IMÁGENES SECUNDARIAS (paquete_imagenes)
+
+-- Paquete 1: Islas del Rosario y Barú
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS-1_UhGT6-fFIppsr7VpqXECYocS_I5r7VEYkNhK7cTKl7jMVWeKdn987&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJT6RAsOIPABRSkzve9qTcW9d6AUmriFJektCqhs2Z_CTz7csnar8P1GA&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (1, 'https://cdn.getyourguide.com/img/tour/0eda0dee7e691523592113b7ba6be18fc16f31136e52cd9aed25409fbb7099d1.jpeg/148.jpg');
+
+-- Paquete 2: Cartagena Colonial y Caribe
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbYo4O3zG6NuXy4LGIWA3-Cu0YRmwO--hvbDeLdXyLlL6CkchjijbQdbA&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkK6feLydoYuyqw0b_H9HFdwe0iWpSUTQOVa4MYf3xRQ&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (2, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ807HCetXwst4gBFsw4oWoMdqJQsUXWNaPCkgumlvMwgarZ2oYQbIw3Ww&s=10');
+
+-- Paquete 3: Valle del Cocora
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (3, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9j2HFxwjGLVAo53YAbYx06GVTm3GB8FgcSL_jqcFZsI9otT18t4c9VwM&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (3, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiPLNwaunAJZqPlOlKMpFoO4nSU5GC0k2nCLNErrtoftzBn6sS8Tt_dts&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (3, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyIPMrkB8KWDpId9JUJOZ8B2NZYiHVtWyQnr233RPoKPRYXwqIAC9PIsAX&s=10');
+
+-- Paquete 4: Ruta del Café y Tradición
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (4, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBLrwS9SXuWxyRhirzNJCu5g3WCfUKciog5XsIunB84g6wj5TyXgj0T8E&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (4, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZMbSYmqupKqYkcSbtZ4FkXutdpWv2g5AjVF2CTXemfrym0pexU0j3fbFh&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (4, 'https://www.daytours4u.com/images/blog/la-ruta-del-cafe-en-colombia-tips-paseos-y-como-llegar-fadaa1cb.webp');
+
+-- Paquete 5: Parque Tayrona
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScXvc4cySQ5S7Lv84buuAEhnKKRqy0g-KejDPsvpVuAxHBAxTyVstI-Dw&s=10');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (5, 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/863747430.jpg?k=4d21152119b6724811c277a319c51c2ad8659588927e940a9f2ed05999d68ff9&o=');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3G217scDZY9C1Z6iNOZXgykiFBph4_tM9c8CR02bey1siNZX-SlSsYYk&s=10');
+
+-- Paquete 6: Ciudad Perdida y Playas
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://travelgrafia.co/wp-content/uploads/2024/02/Terrazas-de-Ciudad-Perdida-Colombia.jpg');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://viajeserviexpress.com/wp-content/uploads/playa-cristal-santa-marta-600x400.webp');
+INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQir8aqXatou2NkrnFIUUYffoCSyOH0qmIVU2t65xpa4QEVMQBY7CicD9ge&s=10');
 
 -- ¿QUÉ INCLUYE? (paquete_incluye)
 

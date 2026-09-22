@@ -65,8 +65,16 @@ public class Paquete {
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro = LocalDateTime.now();
 
+    @ElementCollection
+@CollectionTable(name = "paquete_imagenes", joinColumns = @JoinColumn(name = "id_paquete"))
+@Column(name = "imagen_url", length = 500)
+private List<String> imagenes = new ArrayList<>();
+
     public Paquete() {}
 
+    
+     public List<String> getImagenes() { return imagenes; }
+    public void setImagenes(List<String> imagenes) { this.imagenes = imagenes; }    
     public Long getIdPaquete() { return idPaquete; }
     public void setIdPaquete(Long idPaquete) { this.idPaquete = idPaquete; }
 

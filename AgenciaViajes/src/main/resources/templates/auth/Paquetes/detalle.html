@@ -147,17 +147,13 @@
                                         th:alt="${paquete.nombre}" class="w-full h-full object-cover" />
                                 </div>
                                 <!-- Miniaturas si existen ambas -->
-                                <div class="grid grid-cols-2 gap-2.5 sm:gap-3"
-                                    th:if="${paquete.imagenUrl != null and !#strings.isEmpty(paquete.imagenUrl) and paquete.destino != null and paquete.destino.imagenUrl != null and !#strings.isEmpty(paquete.destino.imagenUrl)}">
-                                    <div class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                                        <img th:src="${paquete.imagenUrl}" th:alt="${paquete.nombre}"
-                                            class="w-full h-full object-cover" />
-                                    </div>
-                                    <div class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                                        <img th:src="${paquete.destino.imagenUrl}" th:alt="${paquete.destino.nombre}"
-                                            class="w-full h-full object-cover" />
-                                    </div>
-                                </div>
+                                <div class="grid grid-cols-3 gap-2.5 sm:gap-3"
+     th:if="${paquete.imagenes != null and !#lists.isEmpty(paquete.imagenes)}">
+    <div th:each="img : ${paquete.imagenes}"
+         class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+        <img th:src="${img}" th:alt="${paquete.nombre}" class="w-full h-full object-cover" />
+    </div>
+</div>
                             </div>
 
                         </div>
