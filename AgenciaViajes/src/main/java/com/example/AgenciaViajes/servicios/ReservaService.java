@@ -243,6 +243,26 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     // ------------------------------------------------------------------
     // Modificar
     // ------------------------------------------------------------------
+    // Modificar
+    // ------------------------------------------------------------------
+
+    /** Pagar / simulación de pago de reserva (cliente o staff). */
+    @Transactional
+    public Reserva pagarReserva(Integer id, String username, boolean esStaff) {
+        Reserva reserva = reservaRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
+
+        if (!esStaff && !esDuenio(reserva, username)) {
+            throw new AccessDeniedException("No tienes permiso para pagar esta reserva.");
+        }
+        if (reserva.getEstadoReserva() != EstadoReserva.PENDIENTE) {
+            throw new IllegalStateException("Solo se pueden pagar reservas que estén en estado pendiente.");
+        }
+
+        reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
+        usuarioRepo.findByNombreUsuario(username).ifPresent(reserva::setUsuarioGestiona);
+        return reservaRepo.save(reserva);
+    }
 
     /** Cambio de estado hecho por ADMIN o EMPLEADO. */
     @Transactional

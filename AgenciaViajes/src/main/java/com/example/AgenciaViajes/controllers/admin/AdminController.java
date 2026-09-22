@@ -2,12 +2,15 @@ package com.example.AgenciaViajes.controllers.admin;
 
 import com.example.AgenciaViajes.dto.EntidadConfigDTO;
 import com.example.AgenciaViajes.modelo.Cliente;
+import com.example.AgenciaViajes.modelo.Reserva;
+import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
 import com.example.AgenciaViajes.repositorio.AerolineaRepository;
 import com.example.AgenciaViajes.repositorio.CategoriaDestinoRepository;
 import com.example.AgenciaViajes.repositorio.ClienteRepository;
 import com.example.AgenciaViajes.repositorio.DestinoRepository;
 import com.example.AgenciaViajes.repositorio.HotelRepository;
 import com.example.AgenciaViajes.repositorio.PaqueteRepository;
+import com.example.AgenciaViajes.repositorio.ReservaRepository;
 import com.example.AgenciaViajes.repositorio.RolRepository;
 import com.example.AgenciaViajes.repositorio.UsuarioRepository;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +37,7 @@ public class AdminController {
     private final AerolineaRepository aerolineaRepository;
     private final RolRepository rolRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ReservaRepository reservaRepository;
 
     public AdminController(ClienteRepository clienteRepository,
                            PaqueteRepository paqueteRepository,
@@ -41,7 +46,8 @@ public class AdminController {
                            HotelRepository hotelRepository,
                            AerolineaRepository aerolineaRepository,
                            RolRepository rolRepository,
-                           UsuarioRepository usuarioRepository) {
+                           UsuarioRepository usuarioRepository,
+                           ReservaRepository reservaRepository) {
         this.clienteRepository = clienteRepository;
         this.paqueteRepository = paqueteRepository;
         this.destinoRepository = destinoRepository;
@@ -50,6 +56,7 @@ public class AdminController {
         this.aerolineaRepository = aerolineaRepository;
         this.rolRepository = rolRepository;
         this.usuarioRepository = usuarioRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     private void agregarDatosAdmin(Model model) {
@@ -217,5 +224,37 @@ public class AdminController {
         model.addAttribute("roles", rolRepository.findAll());
         model.addAttribute("totalRoles", rolRepository.count());
         return "admin/roles";
+    }
+
+    @GetMapping("/reservas")
+    public String reservas(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "reservas");
+
+        // Mapear todas las reservas independientemente del estado
+        List<Reserva> reservas = reservaRepository.findAllByOrderByFechaReservaDesc();
+        model.addAttribute("reservas", reservas);
+        model.addAttribute("totalReservas", reservas.size());
+
+        long totalPendientes = reservas.stream()
+                .filter(r -> r.getEstadoReserva() == EstadoReserva.PENDIENTE)
+                .count();
+        long totalConfirmadas = reservas.stream()
+                .filter(r -> r.getEstadoReserva() == EstadoReserva.CONFIRMADA)
+                .count();
+        long totalCanceladas = reservas.stream()
+                .filter(r -> r.getEstadoReserva() == EstadoReserva.CANCELADA)
+                .count();
+        BigDecimal montoTotal = reservas.stream()
+                .filter(r -> r.getEstadoReserva() != EstadoReserva.CANCELADA && r.getTotal() != null)
+                .map(Reserva::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("totalPendientes", totalPendientes);
+        model.addAttribute("totalConfirmadas", totalConfirmadas);
+        model.addAttribute("totalCanceladas", totalCanceladas);
+        model.addAttribute("montoTotal", montoTotal);
+
+        return "admin/reservas";
     }
 }

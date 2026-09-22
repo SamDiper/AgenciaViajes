@@ -32,23 +32,8 @@ public class ReservaController {
  
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
-    public String listar(@RequestParam(required = false) Integer idCliente,
-                         @RequestParam(required = false) Long idDestino,
-                         @RequestParam(required = false) EstadoReserva estado,
-                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
-                         Model model) {
- 
-        model.addAttribute("reservas", reservaService.buscar(idCliente, idDestino, estado, desde, hasta));
-        model.addAttribute("estados", EstadoReserva.values());
- 
-        // Para conservar los filtros en el formulario
-        model.addAttribute("idCliente", idCliente);
-        model.addAttribute("idDestino", idDestino);
-        model.addAttribute("estadoSel", estado);
-        model.addAttribute("desde", desde);
-        model.addAttribute("hasta", hasta);
-        return "reservas/lista";
+    public String listar() {
+        return "redirect:/admin/reservas";
     }
  
     // ---------------- Cliente: sus reservas ----------------
@@ -100,6 +85,17 @@ public class ReservaController {
         return "redirect:/reservas/" + idReserva;
     }
     // ---------------- Acciones ----------------
+ 
+    @PostMapping("/{id}/pagar")
+    public String pagar(@PathVariable Integer id, Authentication auth, RedirectAttributes flash) {
+        try {
+            reservaService.pagarReserva(id, auth.getName(), esStaff(auth));
+            flash.addFlashAttribute("exito", "¡Pago procesado exitosamente! Tu reserva ha sido confirmada.");
+        } catch (IllegalArgumentException | IllegalStateException | org.springframework.security.access.AccessDeniedException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/reservas/" + id;
+    }
  
     @PostMapping("/{id}/estado")
     @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")

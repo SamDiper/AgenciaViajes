@@ -95,6 +95,12 @@
                                 </span>
                             </td>
                             <td class="py-4 text-right whitespace-nowrap">
+                                <a th:if="${r.estadoReserva.name() == 'PENDIENTE'}"
+                                   th:href="@{/reservas/{id}(id=${r.id})}"
+                                   class="inline-flex items-center gap-1.5 mr-1 px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-2xs transition-colors">
+                                    <i class="fa-solid fa-credit-card text-[11px]"></i>
+                                    <span>Pagar</span>
+                                </a>
                                 <a th:href="@{/reservas/{id}(id=${r.id})}"
                                    class="px-3 py-1.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:border-[#073B78] hover:text-[#073B78] transition-colors">
                                     Ver detalle

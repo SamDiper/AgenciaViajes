@@ -62,20 +62,6 @@
                                 class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1 transition-transform duration-200 group-hover:rotate-180"></i>
                         </div>
                         <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <!-- Avatar Circular -->
-                                <div
-                                    class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner">
-                                    <i class="fa-solid fa-user text-xs"></i>
-                                </div>
-                                <!-- Saludo y Nombre -->
-                                <div class="flex flex-col leading-tight">
-                                    <span
-                                        class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Hola,</span>
-                                    <span class="text-sm font-bold text-slate-800"
-                                        sec:authentication="principal.nombreCompleto"></span>
-                                </div>
-                            </div>
 
                             <!-- Botón Panel Admin (Solo ADMIN) -->
                             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
