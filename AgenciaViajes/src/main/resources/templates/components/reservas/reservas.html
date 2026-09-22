@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <div th:fragment="reservas" class="space-y-6">
+
+        <!-- Notificaciones Flash -->
+        <div th:if="${exito}" class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+            <span th:text="${exito}"></span>
+        </div>
+        <div th:if="${error}" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-rose-600 text-sm"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Encabezado con Título -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-5">
+            <div>
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+                    Gestión de Reservas
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-0.5 font-medium">
+                    Panel general de reservas: visualiza todos los destinos, paquetes turísticos, valores y usuarios sin importar el estado.
+                </p>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="flex items-center gap-2">
+                <a th:href="@{/admin/reservas}"
+                   class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 shadow-2xs transition">
+                    <i class="fa-solid fa-rotate-right text-xs text-slate-500"></i>
+                    <span>Refrescar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Métricas / KPIs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- Total -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#073B78] flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-calendar-days text-base"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Reservas</p>
+                    <p class="text-xl font-extrabold text-slate-900" th:text="${totalReservas != null ? totalReservas : 0}">0</p>
+                </div>
+            </div>
+
+            <!-- Confirmadas -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Confirmadas</p>
+                    <p class="text-xl font-extrabold text-emerald-700" th:text="${totalConfirmadas != null ? totalConfirmadas : 0}">0</p>
+                </div>
+            </div>
+
+            <!-- Pendientes -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-clock text-base"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pendientes</p>
+                    <p class="text-xl font-extrabold text-amber-700" th:text="${totalPendientes != null ? totalPendientes : 0}">0</p>
+                </div>
+            </div>
+
+            <!-- Canceladas -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-circle-xmark text-base"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Canceladas</p>
+                    <p class="text-xl font-extrabold text-rose-700" th:text="${totalCanceladas != null ? totalCanceladas : 0}">0</p>
+                </div>
+            </div>
+
+            <!-- Valor Total -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs flex items-center gap-3.5 sm:col-span-2 lg:col-span-1">
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-wallet text-base"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider truncate">Facturación Activa</p>
+                    <p class="text-base font-extrabold text-slate-900 truncate"
+                       th:text="${montoTotal != null ? '$ ' + #numbers.formatDecimal(montoTotal, 0, 'POINT', 0, 'COMMA') : '$ 0'}">$ 0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor Principal de la Tabla -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+
+            <!-- Barra de Filtros y Búsqueda Interactiva -->
+            <div class="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/50">
+                
+                <!-- Input Búsqueda en Vivo -->
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input id="inputBusquedaReservas"
+                           type="text"
+                           placeholder="Buscar por ID, usuario, cliente, destino o paquete..."
+                           class="w-full pl-9 pr-3 py-1.5 bg-white text-xs text-slate-700 placeholder-slate-400 rounded-xl border border-slate-200 focus:border-[#073B78] focus:outline-none transition" />
+                </div>
+
+                <!-- Filtros rápidos de estado -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" onclick="filtrarPorEstado('TODOS')" id="btn-filtro-TODOS"
+                            class="filtro-btn px-3 py-1 rounded-lg text-xs font-bold bg-[#073B78] text-white shadow-2xs transition">
+                        Todos (<span th:text="${totalReservas != null ? totalReservas : 0}">0</span>)
+                    </button>
+                    <button type="button" onclick="filtrarPorEstado('CONFIRMADA')" id="btn-filtro-CONFIRMADA"
+                            class="filtro-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">
+                        Confirmadas (<span th:text="${totalConfirmadas != null ? totalConfirmadas : 0}">0</span>)
+                    </button>
+                    <button type="button" onclick="filtrarPorEstado('PENDIENTE')" id="btn-filtro-PENDIENTE"
+                            class="filtro-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">
+                        Pendientes (<span th:text="${totalPendientes != null ? totalPendientes : 0}">0</span>)
+                    </button>
+                    <button type="button" onclick="filtrarPorEstado('CANCELADA')" id="btn-filtro-CANCELADA"
+                            class="filtro-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">
+                        Canceladas (<span th:text="${totalCanceladas != null ? totalCanceladas : 0}">0</span>)
+                    </button>
+                </div>
+
+                <div class="text-xs text-slate-400 font-medium self-end md:self-center">
+                    Mostrando <span id="contadorMostrados" class="font-bold text-slate-700" th:text="${reservas != null ? reservas.size() : 0}">0</span> reservas
+                </div>
+            </div>
+
+            <!-- Tabla de Reservas -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs" id="tablaReservas">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-3.5 px-4 w-16"># ID</th>
+                            <th class="py-3.5 px-4">Usuario / Cliente</th>
+                            <th class="py-3.5 px-4">Destino</th>
+                            <th class="py-3.5 px-4">Paquete(s) &amp; Itinerario</th>
+                            <th class="py-3.5 px-4">Valor Total</th>
+                            <th class="py-3.5 px-4">Estado</th>
+                            <th class="py-3.5 px-4">Fecha Registro</th>
+                            <th class="py-3.5 px-4 text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
+                        <!-- Fila por cada reserva -->
+                        <tr th:each="r : ${reservas}"
+                            class="fila-reserva hover:bg-slate-50/80 transition-colors"
+                            th:attr="data-estado=${r.estadoReserva != null ? r.estadoReserva.name() : ''},
+                                     data-id=${r.id},
+                                     data-usuario=${r.cliente != null and r.cliente.usuario != null ? r.cliente.usuario.nombreUsuario : ''},
+                                     data-cliente=${r.cliente != null ? r.cliente.nombreCompleto : ''},
+                                     data-correo=${r.cliente != null ? r.cliente.correo : ''},
+                                     data-documento=${r.cliente != null ? r.cliente.documento : ''}">
+                            
+                            <!-- 1. ID Reserva -->
+                            <td class="py-3.5 px-4">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 font-bold text-slate-900 border border-slate-200"
+                                      th:text="'#' + ${r.id}">
+                                    #1
+                                </span>
+                            </td>
+
+                            <!-- 2. Usuario & Cliente -->
+                            <td class="py-3.5 px-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                                        <span th:text="${r.cliente != null and r.cliente.nombreCompleto != null and !r.cliente.nombreCompleto.isEmpty() ? #strings.substring(r.cliente.nombreCompleto, 0, 1).toUpperCase() : 'U'}">U</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-900 truncate" th:text="${r.cliente != null ? r.cliente.nombreCompleto : 'Sin cliente'}">
+                                            Nombre Cliente
+                                        </p>
+                                        <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                                            <span class="font-semibold text-blue-800" th:if="${r.cliente != null and r.cliente.usuario != null}" th:text="'@' + ${r.cliente.usuario.nombreUsuario}">@usuario</span>
+                                            <span th:if="${r.cliente != null and r.cliente.correo != null}" class="truncate" th:text="'· ' + ${r.cliente.correo}">· correo@ejemplo.com</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400" th:if="${r.cliente != null and r.cliente.documento != null}" th:text="'Doc: ' + ${r.cliente.documento}">Doc: 123456</p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- 3. Destino(s) -->
+                            <td class="py-3.5 px-4">
+                                <div class="space-y-1">
+                                    <div th:if="${r.detalles != null and !#lists.isEmpty(r.detalles)}">
+                                        <div th:each="d : ${r.detalles}" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-sky-50 text-sky-800 border border-sky-200 text-[11px] font-bold mr-1 mb-1">
+                                            <i class="fa-solid fa-location-dot text-sky-600 text-[10px]"></i>
+                                            <span th:text="${d.paquete != null and d.paquete.destino != null ? d.paquete.destino.nombre : 'Destino N/A'}">Cartagena</span>
+                                        </div>
+                                    </div>
+                                    <div th:if="${r.detalles == null or #lists.isEmpty(r.detalles)}" class="text-slate-400 text-xs italic">
+                                        Sin destino asignado
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- 4. Paquete(s) & Personas -->
+                            <td class="py-3.5 px-4 max-w-xs">
+                                <div th:if="${r.detalles != null and !#lists.isEmpty(r.detalles)}" class="space-y-1.5">
+                                    <div th:each="d : ${r.detalles}" class="bg-slate-50/90 rounded-lg p-2 border border-slate-200/70">
+                                        <div class="flex items-start justify-between gap-1.5">
+                                            <p class="font-bold text-slate-800 truncate" th:text="${d.paquete != null ? d.paquete.nombre : 'Paquete'}">
+                                                Tour Caribe Mágico
+                                            </p>
+                                            <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-white text-slate-600 border border-slate-200 shrink-0"
+                                                  th:text="${d.cantidadPersonas + ' pers.'}">
+                                                2 pers.
+                                            </span>
+                                        </div>
+                                        <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-slate-500 mt-1">
+                                            <span th:if="${d.fechaViaje != null}">
+                                                <i class="fa-regular fa-calendar text-[9px] text-slate-400"></i>
+                                                <span th:text="${#temporals.format(d.fechaViaje, 'dd/MM/yyyy')}">15/10/2026</span>
+                                            </span>
+                                            <span th:if="${d.hotel != null}">
+                                                <i class="fa-solid fa-hotel text-[9px] text-slate-400"></i>
+                                                <span th:text="${d.hotel.nombre}">Hotel Plaza</span>
+                                            </span>
+                                            <span th:if="${d.aerolinea != null}">
+                                                <i class="fa-solid fa-plane text-[9px] text-slate-400"></i>
+                                                <span th:text="${d.aerolinea.nombre}">Avianca</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${r.detalles == null or #lists.isEmpty(r.detalles)}" class="text-slate-400 text-xs italic">
+                                    Sin paquetes
+                                </div>
+                            </td>
+
+                            <!-- 5. Valor Total -->
+                            <td class="py-3.5 px-4 whitespace-nowrap">
+                                <span class="font-black text-slate-900 text-sm"
+                                      th:text="${r.total != null ? '$ ' + #numbers.formatDecimal(r.total, 0, 'POINT', 0, 'COMMA') : '$ 0'}">
+                                    $ 1.500.000
+                                </span>
+                                <span class="text-[10px] font-semibold text-slate-400 block">COP</span>
+                            </td>
+
+                            <!-- 6. Estado de la Reserva -->
+                            <td class="py-3.5 px-4 whitespace-nowrap">
+                                <!-- Confirmada -->
+                                <span th:if="${r.estadoReserva != null and r.estadoReserva.name() == 'CONFIRMADA'}"
+                                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Confirmada</span>
+                                </span>
+
+                                <!-- Pendiente -->
+                                <span th:if="${r.estadoReserva != null and r.estadoReserva.name() == 'PENDIENTE'}"
+                                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                    <span>Pendiente</span>
+                                </span>
+
+                                <!-- Cancelada -->
+                                <span th:if="${r.estadoReserva != null and r.estadoReserva.name() == 'CANCELADA'}"
+                                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                    <span>Cancelada</span>
+                                </span>
+                            </td>
+
+                            <!-- 7. Fecha de Registro -->
+                            <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap"
+                                th:text="${r.fechaReserva != null ? #temporals.format(r.fechaReserva, 'dd/MM/yyyy HH:mm') : '-'}">
+                                21/09/2026 14:30
+                            </td>
+
+                            <!-- 8. Acciones -->
+                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                <a th:href="@{/reservas/{id}(id=${r.id})}"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-[#073B78] bg-blue-50/80 hover:bg-blue-100 hover:text-[#052b57] border border-blue-200/80 transition"
+                                   title="Ver detalle completo de la reserva">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                    <span>Ver Detalle</span>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Empty State si no hay registros -->
+                        <tr id="filaSinRegistros" th:if="${reservas == null or #lists.isEmpty(reservas)}">
+                            <td colspan="8" class="py-12 text-center text-slate-400">
+                                <div class="max-w-xs mx-auto flex flex-col items-center">
+                                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
+                                        <i class="fa-solid fa-calendar-xmark text-lg"></i>
+                                    </div>
+                                    <p class="font-bold text-slate-700 text-sm">No hay reservas registradas</p>
+                                    <p class="text-xs text-slate-400 mt-1">Aún no se han generado órdenes o reservas de paquetes en la plataforma.</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Mensaje de Búsqueda sin coincidencias (Oculto por defecto) -->
+                        <tr id="filaSinCoincidencias" class="hidden">
+                            <td colspan="8" class="py-10 text-center text-slate-400">
+                                <div class="max-w-xs mx-auto flex flex-col items-center">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-filter text-base"></i>
+                                    </div>
+                                    <p class="font-bold text-slate-700 text-xs">Sin resultados para tu filtro</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Prueba con otros términos de búsqueda o selecciona otro estado.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer de la Tabla -->
+            <div class="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 bg-slate-50/30">
+                <span>Registros totales del sistema: <b class="text-slate-800" th:text="${totalReservas != null ? totalReservas : 0}">0</b></span>
+                <span class="text-slate-400 font-medium">Traveling Colombia &copy; Administración</span>
+            </div>
+        </div>
+
+        <!-- Script de Búsqueda y Filtrado Instantáneo -->
+        <script>
+            let estadoSeleccionado = 'TODOS';
+
+            function filtrarPorEstado(estado) {
+                estadoSeleccionado = estado;
+                
+                // Actualizar estilos de los botones
+                document.querySelectorAll('.filtro-btn').forEach(btn => {
+                    btn.classList.remove('bg-[#073B78]', 'text-white');
+                    btn.classList.add('bg-white', 'text-slate-600');
+                });
+
+                const btnActivo = document.getElementById('btn-filtro-' + estado);
+                if (btnActivo) {
+                    btnActivo.classList.remove('bg-white', 'text-slate-600');
+                    btnActivo.classList.add('bg-[#073B78]', 'text-white');
+                }
+
+                aplicarFiltros();
+            }
+
+            function aplicarFiltros() {
+                const query = (document.getElementById('inputBusquedaReservas')?.value || '').toLowerCase().trim();
+                const filas = document.querySelectorAll('.fila-reserva');
+                let visibles = 0;
+
+                filas.forEach(fila => {
+                    const estado = fila.getAttribute('data-estado') || '';
+                    const textoFila = fila.innerText.toLowerCase();
+
+                    const coincideEstado = (estadoSeleccionado === 'TODOS' || estado === estadoSeleccionado);
+                    const coincideTexto = query === '' || textoFila.includes(query);
+
+                    if (coincideEstado && coincideTexto) {
+                        fila.classList.remove('hidden');
+                        visibles++;
+                    } else {
+                        fila.classList.add('hidden');
+                    }
+                });
+
+                // Actualizar contador
+                const contador = document.getElementById('contadorMostrados');
+                if (contador) contador.innerText = visibles;
+
+                // Mensaje si 0 coincidencias
+                const filaSin = document.getElementById('filaSinCoincidencias');
+                if (filaSin) {
+                    if (visibles === 0 && filas.length > 0) {
+                        filaSin.classList.remove('hidden');
+                    } else {
+                        filaSin.classList.add('hidden');
+                    }
+                }
+            }
+
+            document.getElementById('inputBusquedaReservas')?.addEventListener('input', aplicarFiltros);
+        </script>
+
+    </div>
+
+</body>
+
+</html>

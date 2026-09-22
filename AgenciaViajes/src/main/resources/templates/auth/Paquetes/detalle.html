@@ -311,7 +311,7 @@
                     <div class="lg:col-span-4 sticky top-28 flex flex-col gap-6">
 
                         <!-- Tarjeta de Cotización y Reserva (Fiel al diseño) -->
-                        <div
+                        <div id="tarjeta-reserva"
                             class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl shadow-blue-950/5">
 
                             <!-- Header de Precio -->
@@ -417,12 +417,20 @@
 
                             <!-- Botón Reservar Ahora (CTA Principal) -->
                             <div class="mt-4 flex flex-col gap-3">
-                                <a th:href="@{/carrito}" href="/carrito"
-                                    class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center no-underline cursor-pointer">
-                                    <span>Reservar ahora</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                                </a>
-
+                                <form th:action="@{/carrito/agregar}" method="post">
+                                    <input type="hidden" name="idPaquete" th:value="${paquete.idPaquete}" />
+                                    <input type="hidden" name="personas" th:value="${cantidadBoletos}" />
+                                    <input type="hidden" name="idAerolinea"
+                                        th:value="${aerolineaSeleccionada != null ? aerolineaSeleccionada.idAerolinea : ''}" />
+                                    <input type="hidden" name="idHotel"
+                                        th:value="${(!sinVinculacion and hotelSeleccionado != null) ? hotelSeleccionado.idHotel : 0}" />
+                                    
+                                    <button type="submit"
+                                        class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                                        <span>Reservar ahora</span>
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </form>
                             </div>
 
                         </div>
@@ -536,11 +544,30 @@
                     aventura.
                 </h3>
 
-                <a th:href="@{/carrito}" href="/carrito"
-                    class="inline-flex items-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm px-8 py-3.5 rounded-full shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/35 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
-                    <span>Reservar ahora</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </a>
+                <div class="mt-4 flex flex-col gap-3">
+
+        <!-- Con sesión: agrega lo cotizado al carrito -->
+        <form sec:authorize="isAuthenticated()" th:action="@{/carrito/agregar}" method="post">
+    <input type="hidden" name="idPaquete" th:value="${paquete.idPaquete}" />
+    <input type="hidden" name="personas" th:value="${cantidadBoletos}" />
+    <input type="hidden" name="idAerolinea"
+        th:value="${aerolineaSeleccionada != null ? aerolineaSeleccionada.idAerolinea : ''}" />
+    <input type="hidden" name="idHotel"
+        th:value="${(!sinVinculacion and hotelSeleccionado != null) ? hotelSeleccionado.idHotel : 0}" />
+    
+    <button type="submit"
+        class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+        <span>Reservar ahora</span>
+        <i class="fa-solid fa-arrow-right text-xs"></i>
+    </button>
+</form>
+
+            <!-- Sin sesión -->
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" href="/login"
+                class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl transition-colors text-center">
+                Inicia sesión para reservar
+            </a>
+        </div>
 
             </div>
         </section>
