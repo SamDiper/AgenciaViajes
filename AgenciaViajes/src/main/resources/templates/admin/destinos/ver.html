@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{components/layout-admin/layout-admin :: admin-head('Detalle del destino')}">
+</head>
+
+<body class="bg-[#F4F7FC] text-slate-800 font-sans antialiased min-h-screen selection:bg-amber-400 selection:text-slate-900">
+
+    <aside th:replace="~{components/sidebar-admin/sidebar-admin :: sidebar-admin}"></aside>
+
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden hidden transition-opacity duration-300 opacity-0"
+        aria-hidden="true"></div>
+
+    <div class="lg:pl-64 flex flex-col min-h-screen">
+        <header th:replace="~{components/layout-admin/layout-admin :: admin-topbar}"></header>
+
+        <main class="flex-1 p-6 lg:p-8">
+            <div class="max-w-3xl mx-auto space-y-8" th:object="${destino}">
+
+                <!-- Volver -->
+                <a th:href="@{/admin/destinos}"
+                    class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#073B78] transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a destinos
+                </a>
+
+                <!-- Encabezado -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner shrink-0">
+                        <i class="fa-solid fa-location-dot text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Detalle del destino</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5" th:text="*{nombre}">Nombre</h1>
+                    </div>
+                </div>
+
+                <!-- Datos -->
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6 sm:p-8">
+                    <h2 class="text-lg font-extrabold text-slate-900 mb-6 border-b pb-4 border-slate-100">Información</h2>
+
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Código</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{idDestino}">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Categoría</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{categoria} != null ? *{categoria.nombre} : '-'">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Ciudad</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{ciudad} ?: '-'">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">País</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{pais} ?: '-'">-</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Estado</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{estado} ?: '-'">-</dd>
+                        </div>
+                        <div class="sm:col-span-2" th:if="*{imagenUrl} != null and *{imagenUrl} != ''">
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Imagen</dt>
+                            <dd><img th:src="*{imagenUrl}" alt="Imagen del destino" class="w-full max-h-64 object-cover rounded-xl border border-slate-200"></dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Descripción</dt>
+                            <dd class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800" th:text="*{descripcion} ?: '-'">-</dd>
+                        </div>
+                    </dl>
+
+                    <!-- Botones -->
+                    <div class="pt-6 flex justify-end items-center gap-3">
+                        <form th:action="@{/admin/destinos/eliminar/{id}(id=*{idDestino})}" method="POST"
+                            onsubmit="return confirm('¿Eliminar este registro?');">
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold rounded-full text-xs transition-all border border-red-100 shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                            </button>
+                        </form>
+                        <a th:href="@{/admin/destinos/editar/{id}(id=*{idDestino})}"
+                            class="px-5 py-2.5 bg-[#073B78] hover:bg-[#041E42] text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all">
+                            <i class="fa-solid fa-pen mr-1"></i> Editar
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <th:block th:replace="~{components/layout-admin/layout-admin :: admin-scripts}"></th:block>
+</body>
+
+</html>

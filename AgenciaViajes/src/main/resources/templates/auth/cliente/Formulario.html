@@ -25,6 +25,18 @@
     <!-- Contenido Principal Centrado -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-28 space-y-8">
 
+        <!-- Mensajes después de guardar -->
+        <div th:if="${exito}" role="status"
+            class="flex items-start gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 text-sm">
+            <i class="fa-solid fa-circle-check mt-0.5"></i>
+            <span th:text="${exito}"></span>
+        </div>
+        <div th:if="${error}" role="alert"
+            class="flex items-start gap-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">
+            <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+            <span th:text="${error}"></span>
+        </div>
+
         <!-- Tarjeta Encabezado del Perfil -->
         <div
             class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -190,7 +202,7 @@
                             <tbody class="divide-y divide-slate-100">
                                 <tr th:each="historia : ${historialViajes}" class="hover:bg-slate-50/60 transition-colors">
                                     <td class="py-3.5 pr-3 font-extrabold text-slate-600"
-                                        th:text="${'#RES-' + historia.idReserva}">#RES-00</td>
+                                        th:text="${'#RES-' + historia.id}">#RES-00</td>
                                     <td class="py-3.5 pr-3 text-slate-600"
                                         th:text="${#temporals.format(historia.fechaViaje, 'dd/MM/yyyy')}">--/--/----
                                     </td>
@@ -222,6 +234,41 @@
     </main>
 
     <footer th:replace="~{components/footer/footer :: footer}"></footer>
+
+    <!-- Habilitar / cancelar la edición de los datos personales -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnEditar = document.getElementById('btnHabilitarEditar');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const botones = document.getElementById('contenedorBotones');
+            const inputs = document.querySelectorAll('.input-perfil');
+
+            if (!btnEditar || !botones) return;
+
+            // Se guardan los valores originales para poder cancelar
+            const originales = {};
+            inputs.forEach(input => originales[input.id] = input.value);
+
+            function modoEdicion(activo) {
+                inputs.forEach(input => {
+                    input.readOnly = !activo;
+                    input.classList.toggle('cursor-not-allowed', !activo);
+                    input.classList.toggle('bg-slate-50', !activo);
+                    input.classList.toggle('bg-white', activo);
+                });
+                botones.classList.toggle('hidden', !activo);
+                btnEditar.classList.toggle('hidden', activo);
+                if (activo && inputs.length > 0) inputs[0].focus();
+            }
+
+            btnEditar.addEventListener('click', () => modoEdicion(true));
+
+            btnCancelar.addEventListener('click', () => {
+                inputs.forEach(input => input.value = originales[input.id]);
+                modoEdicion(false);
+            });
+        });
+    </script>
 
 </body>
 

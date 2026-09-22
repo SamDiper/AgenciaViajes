@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{components/layout-admin/layout-admin :: admin-head(${destino.idDestino == null} ? 'Nuevo destino' : 'Editar destino')}">
+</head>
+
+<body class="bg-[#F4F7FC] text-slate-800 font-sans antialiased min-h-screen selection:bg-amber-400 selection:text-slate-900">
+
+    <aside th:replace="~{components/sidebar-admin/sidebar-admin :: sidebar-admin}"></aside>
+
+    <div id="sidebar-backdrop"
+        class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 lg:hidden hidden transition-opacity duration-300 opacity-0"
+        aria-hidden="true"></div>
+
+    <div class="lg:pl-64 flex flex-col min-h-screen">
+        <header th:replace="~{components/layout-admin/layout-admin :: admin-topbar}"></header>
+
+        <main class="flex-1 p-6 lg:p-8">
+            <div class="max-w-3xl mx-auto space-y-8">
+
+                <!-- Volver -->
+                <a th:href="@{/admin/destinos}"
+                    class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#073B78] transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a destinos
+                </a>
+
+                <!-- Encabezado -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner shrink-0">
+                        <i class="fa-solid fa-location-dot text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Configuración</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5"
+                            th:text="${destino.idDestino == null} ? 'Nuevo destino' : 'Editar destino'">Nuevo destino</h1>
+                        <p class="text-sm text-slate-500 mt-1">Ciudades y lugares que ofrece la agencia.</p>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6 sm:p-8">
+                    <h2 class="text-lg font-extrabold text-slate-900 mb-6 border-b pb-4 border-slate-100">Datos del destino</h2>
+
+                    <form th:action="@{/admin/destinos/guardar}" th:object="${destino}" method="POST" class="space-y-5">
+
+                        <!-- Id oculto: vacío al crear, con valor al editar -->
+                        <input type="hidden" th:field="*{idDestino}">
+
+                        <div>
+                            <label for="nombre"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Nombre del destino</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" required maxlength="100" placeholder="Ej: Cartagena"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="ciudad"
+                                    class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Ciudad</label>
+                                <input type="text" id="ciudad" th:field="*{ciudad}" required maxlength="100" placeholder="Ej: Cartagena de Indias"
+                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                            </div>
+                            <div>
+                                <label for="pais"
+                                    class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">País</label>
+                                <input type="text" id="pais" th:field="*{pais}" required maxlength="100" placeholder="Ej: Colombia"
+                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="imagenUrl"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">URL de la imagen</label>
+                            <input type="text" id="imagenUrl" th:field="*{imagenUrl}" placeholder="https://..."
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                        </div>
+
+                        <div>
+                            <label for="estado"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Estado</label>
+                            <select id="estado" th:field="*{estado}"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                                <option th:each="e : ${T(com.example.AgenciaViajes.modelo.Enum.EstadoGeneral).values()}"
+                                    th:value="${e}" th:text="${e}">ACTIVO</option>
+                            </select>
+                        </div>
+
+                        <!-- Categoría: el name debe ser "idCategoria" porque así lo pide el controller -->
+                        <div>
+                            <label for="idCategoria"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Categoría</label>
+                            <select id="idCategoria" name="idCategoria" required
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
+                                <option value="" disabled th:selected="${destino.categoria == null}">Selecciona una categoría</option>
+                                <option th:each="c : ${categorias}"
+                                    th:value="${c.idCategoria}"
+                                    th:text="${c.nombre}"
+                                    th:selected="${destino.categoria != null and destino.categoria.idCategoria == c.idCategoria}">Playa</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="descripcion"
+                                class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Descripción</label>
+                            <textarea id="descripcion" th:field="*{descripcion}" rows="4" placeholder="Describe el destino..."
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white"></textarea>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="pt-3 flex justify-end items-center gap-3">
+                            <a th:href="@{/admin/destinos}"
+                                class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-full text-xs transition-all border border-slate-200 shadow-sm">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-[#073B78] hover:bg-[#041E42] text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all cursor-pointer">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i>
+                                <span th:text="${destino.idDestino == null} ? 'Crear destino' : 'Guardar cambios'">Guardar</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <th:block th:replace="~{components/layout-admin/layout-admin :: admin-scripts}"></th:block>
+</body>
+
+</html>

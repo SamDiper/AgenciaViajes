@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Cliente;
 import com.example.AgenciaViajes.modelo.DetalleReserva;
+import com.example.AgenciaViajes.modelo.Factura;
 import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
@@ -28,6 +30,7 @@ import com.example.AgenciaViajes.repositorio.PaqueteRepository;
 import com.example.AgenciaViajes.repositorio.ReservaRepository;
 import com.example.AgenciaViajes.repositorio.UsuarioRepository;
 import com.example.AgenciaViajes.servicios.Email.EmailServicio;
+import com.example.AgenciaViajes.servicios.Pago.FacturaService;
 import com.example.AgenciaViajes.servicios.Pdf.PdfService;  
 
 @Service
@@ -41,6 +44,7 @@ public class ReservaService {
     private final HotelRepository hotelRepo;
     private final EmailServicio emailServicio;
     private final PdfService pdfService;
+    private final FacturaService facturaService;
 
     public ReservaService(ReservaRepository reservaRepo,
                           PaqueteRepository paqueteRepo,
@@ -49,7 +53,8 @@ public class ReservaService {
                           AerolineaRepository aerolineaRepo,
                           HotelRepository hotelRepo,
                           EmailServicio emailServicio,
-                          PdfService pdfService) {
+                          PdfService pdfService,
+                          FacturaService facturaService) {
         this.reservaRepo = reservaRepo;
         this.paqueteRepo = paqueteRepo;
         this.clienteRepo = clienteRepo;
@@ -58,6 +63,7 @@ public class ReservaService {
         this.hotelRepo = hotelRepo;
         this.emailServicio = emailServicio;
         this.pdfService = pdfService;
+        this.facturaService = facturaService;
     }
 
     // ------------------------------------------------------------------
@@ -105,12 +111,13 @@ public Reserva crearDesdeCarrito(Carrito carrito, String username) {
     Reserva guardada = reservaRepo.save(reserva);
     carrito.vaciar();
 
-    enviarCorreoConfirmacion(guardada, cliente);
+    // El correo ya NO se envía aquí: la reserva queda PENDIENTE hasta que se pague.
+    // Se envía en pagarReserva(), cuando el pago es exitoso.
 
     return guardada;
 }
 
-private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
+private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura factura) {
     try {
         DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd 'de' MMMM, yyyy");
 
@@ -133,20 +140,22 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
         variables.put("destino", destinos);
         variables.put("fecha", fechaTexto);
         variables.put("cantidadPaquetes", reserva.getDetalles().size());
-        variables.put("mensaje", "¡Tu reserva #" + reserva.getId() + " ha sido registrada exitosamente!");
+        variables.put("mensaje", "¡Tu pago fue recibido y tu reserva #" + reserva.getId()
+                + " está confirmada! Adjuntamos tu factura " + factura.getNumero() + " y tu itinerario.");
 
         String asunto = "Confirmación de Reserva - " + destinos;
 
-        byte[] pdfItinerario = pdfService.generarItinerario(reserva);
-        String nombreAdjunto = "itinerario_reserva_" + reserva.getId() + ".pdf";
+        // Dos adjuntos: la factura y el itinerario
+        Map<String, byte[]> adjuntos = new LinkedHashMap<>();
+        adjuntos.put("factura_" + factura.getNumero() + ".pdf", pdfService.generarFactura(factura));
+        adjuntos.put("itinerario_reserva_" + reserva.getId() + ".pdf", pdfService.generarItinerario(reserva));
 
-        emailServicio.enviarCorreoReserva(
+        emailServicio.enviarCorreoConAdjuntos(
                 cliente.getCorreo(),
                 asunto,
                 "Email/correo",
                 variables,
-                pdfItinerario,
-                nombreAdjunto
+                adjuntos
         );
     } catch (Exception e) {
         System.err.println("No se pudo enviar el correo de confirmación: " + e.getMessage());
@@ -246,6 +255,17 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     /** Pagar / simulación de pago de reserva (cliente o staff). */
 
     public Reserva pagarReserva(Integer id, String username, boolean esStaff) {
+        return pagarReserva(id, username, esStaff, "Pago simulado", null);
+    }
+
+    /**
+     * Pago desde la pasarela: confirma la reserva, genera la factura y envía el correo.
+     * @param metodoPago     texto que aparece en la factura (ej: "Tarjeta de crédito")
+     * @param ultimosDigitos últimos 4 dígitos de la tarjeta (puede ser null)
+     */
+    @Transactional
+    public Reserva pagarReserva(Integer id, String username, boolean esStaff,
+                                String metodoPago, String ultimosDigitos) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
 
@@ -257,8 +277,24 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
         }
 
         reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
+
+        // Los paquetes pendientes también quedan confirmados (los cancelados se dejan igual)
+        for (DetalleReserva detalle : reserva.getDetalles()) {
+            if (detalle.getEstado() == EstadoReserva.PENDIENTE) {
+                detalle.setEstado(EstadoReserva.CONFIRMADA);
+            }
+        }
+
         usuarioRepo.findByNombreUsuario(username).ifPresent(reserva::setUsuarioGestiona);
-        return reservaRepo.save(reserva);
+        Reserva pagada = reservaRepo.save(reserva);
+
+        // Se genera la factura del pago
+        Factura factura = facturaService.generar(pagada, metodoPago, ultimosDigitos);
+
+        // Ahora sí: el correo de confirmación sale después del pago, con la factura adjunta
+        enviarCorreoConfirmacion(pagada, pagada.getCliente(), factura);
+
+        return pagada;
     }
 
     /** Cambio de estado hecho por ADMIN o EMPLEADO. */
