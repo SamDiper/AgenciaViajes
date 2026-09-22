@@ -83,7 +83,7 @@
                         <label for="precioBase" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                             Precio Base (COP) <span class="text-rose-500">*</span>
                         </label>
-                        <input type="number" id="precioBase" th:field="*{precioBase}" step="10000" min="0" required
+                        <input type="number" id="precioBase" th:field="*{precioBase}" step="10000" min="100000" required
                                placeholder="Ej: 1200000"
                                class="w-full px-3.5 py-2.5 bg-slate-50/50 text-sm text-slate-800 font-bold rounded-xl border border-slate-200 focus:border-[#073B78] focus:bg-white focus:outline-none transition" />
                     </div>
@@ -133,34 +133,44 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- Aerolínea Asociada -->
                     <div>
-                        <label for="aerolinea" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Aerolínea Asignada
+                        <label for="aerolinea" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span>Aerolínea Asignada</span>
+                            <span id="labelFiltroAero" class="text-[10px] text-slate-400 font-normal"></span>
                         </label>
                         <select id="aerolinea" th:field="*{aerolinea.idAerolinea}"
                                 class="w-full px-3.5 py-2.5 bg-slate-50/50 text-sm text-slate-800 rounded-xl border border-slate-200 focus:border-[#073B78] focus:bg-white focus:outline-none transition">
                             <option value="">-- Sin aerolínea (Solo terrestre / Ninguna) --</option>
                             <option th:each="aero : ${aerolineas}"
                                     th:value="${aero.idAerolinea}"
+                                    th:data-destinos="${aero.destinos != null ? #strings.listJoin(aero.destinos.![idDestino], ',') : ''}"
                                     th:text="${aero.nombre + (aero.codigoIata != null ? ' [' + aero.codigoIata + ']' : '')}">
                                 Avianca [AV]
                             </option>
                         </select>
+                        <p id="msgSinAero" class="text-[11px] text-amber-600 mt-1 hidden">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> No hay aerolíneas con cobertura para este destino.
+                        </p>
                     </div>
 
                     <!-- Hotel Asociado -->
                     <div>
-                        <label for="hotel" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Hotel / Hospedaje Asignado
+                        <label for="hotel" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span>Hotel / Hospedaje Asignado</span>
+                            <span id="labelFiltroHotel" class="text-[10px] text-slate-400 font-normal"></span>
                         </label>
                         <select id="hotel" th:field="*{hotel.idHotel}"
                                 class="w-full px-3.5 py-2.5 bg-slate-50/50 text-sm text-slate-800 rounded-xl border border-slate-200 focus:border-[#073B78] focus:bg-white focus:outline-none transition">
                             <option value="">-- Sin hotel (No aplica) --</option>
                             <option th:each="hot : ${hoteles}"
                                     th:value="${hot.idHotel}"
+                                    th:data-destino-id="${hot.destino != null ? hot.destino.idDestino : ''}"
                                     th:text="${hot.nombre + ' (' + hot.estrellas + '★)'}">
                                 Hotel Caribe (4★)
                             </option>
                         </select>
+                        <p id="msgSinHotel" class="text-[11px] text-amber-600 mt-1 hidden">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> No hay hoteles registrados para este destino.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -342,6 +352,113 @@
                             agregarItinerario();
                         }
                     });
+                }
+
+                // 3. Filtrado reactivo de Hoteles y Aerolíneas por Destino seleccionado
+                const selectDestino = document.getElementById('destino');
+                const selectHotel = document.getElementById('hotel');
+                const selectAerolinea = document.getElementById('aerolinea');
+                const msgSinHotel = document.getElementById('msgSinHotel');
+                const msgSinAero = document.getElementById('msgSinAero');
+                const labelFiltroHotel = document.getElementById('labelFiltroHotel');
+                const labelFiltroAero = document.getElementById('labelFiltroAero');
+
+                function filtrarHotelesYAerolineas(esCargaInicial = false) {
+                    if (!selectDestino) return;
+                    const destinoId = selectDestino.value;
+
+                    // --- FILTRADO DE HOTELES ---
+                    let totalHotelesDisponibles = 0;
+                    const hotelActual = selectHotel ? selectHotel.value : '';
+                    let hotelActualValido = false;
+
+                    if (selectHotel) {
+                        const opcionesHotel = selectHotel.querySelectorAll('option');
+                        opcionesHotel.forEach(opt => {
+                            if (!opt.value) {
+                                opt.hidden = false;
+                                opt.disabled = false;
+                                return;
+                            }
+                            const destIdHotel = opt.getAttribute('data-destino-id');
+                            if (destinoId && destIdHotel === destinoId) {
+                                opt.hidden = false;
+                                opt.disabled = false;
+                                totalHotelesDisponibles++;
+                                if (opt.value === hotelActual) {
+                                    hotelActualValido = true;
+                                }
+                            } else {
+                                opt.hidden = true;
+                                opt.disabled = true;
+                            }
+                        });
+
+                        if (!hotelActualValido && !esCargaInicial) {
+                            selectHotel.value = '';
+                        }
+                    }
+
+                    if (labelFiltroHotel) {
+                        labelFiltroHotel.textContent = destinoId ? `(${totalHotelesDisponibles} con cobertura)` : '(Selecciona destino)';
+                    }
+                    if (msgSinHotel) {
+                        if (destinoId && totalHotelesDisponibles === 0) {
+                            msgSinHotel.classList.remove('hidden');
+                        } else {
+                            msgSinHotel.classList.add('hidden');
+                        }
+                    }
+
+                    // --- FILTRADO DE AEROLÍNEAS ---
+                    let totalAerosDisponibles = 0;
+                    const aeroActual = selectAerolinea ? selectAerolinea.value : '';
+                    let aeroActualValida = false;
+
+                    if (selectAerolinea) {
+                        const opcionesAero = selectAerolinea.querySelectorAll('option');
+                        opcionesAero.forEach(opt => {
+                            if (!opt.value) {
+                                opt.hidden = false;
+                                opt.disabled = false;
+                                return;
+                            }
+                            const destinosStr = opt.getAttribute('data-destinos') || '';
+                            const destinosList = destinosStr.split(',').map(s => s.trim()).filter(Boolean);
+
+                            if (destinoId && destinosList.includes(destinoId)) {
+                                opt.hidden = false;
+                                opt.disabled = false;
+                                totalAerosDisponibles++;
+                                if (opt.value === aeroActual) {
+                                    aeroActualValida = true;
+                                }
+                            } else {
+                                opt.hidden = true;
+                                opt.disabled = true;
+                            }
+                        });
+
+                        if (!aeroActualValida && !esCargaInicial) {
+                            selectAerolinea.value = '';
+                        }
+                    }
+
+                    if (labelFiltroAero) {
+                        labelFiltroAero.textContent = destinoId ? `(${totalAerosDisponibles} con cobertura)` : '(Selecciona destino)';
+                    }
+                    if (msgSinAero) {
+                        if (destinoId && totalAerosDisponibles === 0) {
+                            msgSinAero.classList.remove('hidden');
+                        } else {
+                            msgSinAero.classList.add('hidden');
+                        }
+                    }
+                }
+
+                if (selectDestino) {
+                    selectDestino.addEventListener('change', () => filtrarHotelesYAerolineas(false));
+                    filtrarHotelesYAerolineas(true);
                 }
 
                 // Delegación de eventos para eliminar items

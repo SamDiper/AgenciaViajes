@@ -63,6 +63,7 @@
                             <th class="py-3.5 px-5"># ID</th>
                             <th class="py-3.5 px-5">Aerolínea</th>
                             <th class="py-3.5 px-5">Código IATA</th>
+                            <th class="py-3.5 px-5">Destinos / Cobertura</th>
                             <th class="py-3.5 px-5">Tarifa Adicional</th>
                             <th class="py-3.5 px-5 text-center">Acciones CRUD</th>
                         </tr>
@@ -82,6 +83,18 @@
                                 <span class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-200"
                                       th:text="${aero.codigoIata != null ? aero.codigoIata : '-'}">
                                     AV
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-5">
+                                <div class="flex flex-wrap gap-1 max-w-xs" th:if="${aero.destinos != null and !#lists.isEmpty(aero.destinos)}">
+                                    <span th:each="d : ${aero.destinos}"
+                                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-[#073B78] border border-blue-100">
+                                        <i class="fa-solid fa-location-dot text-[9px] text-amber-500"></i>
+                                        <span th:text="${d.nombre}">Cartagena</span>
+                                    </span>
+                                </div>
+                                <span th:if="${aero.destinos == null or #lists.isEmpty(aero.destinos)}" class="text-slate-400 text-xs italic">
+                                    Sin destinos asociados
                                 </span>
                             </td>
                             <td class="py-3.5 px-5 font-bold text-slate-900"
@@ -105,7 +118,7 @@
                             </td>
                         </tr>
                         <tr th:if="${aerolineas == null or #lists.isEmpty(aerolineas)}">
-                            <td colspan="5" class="py-12 text-center text-slate-400">
+                            <td colspan="6" class="py-12 text-center text-slate-400">
                                 <p class="font-bold text-slate-700 text-sm">No hay aerolíneas registradas</p>
                             </td>
                         </tr>

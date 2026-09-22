@@ -30,7 +30,6 @@ public class ClienteService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
     public Cliente registrarCliente(RegistroClienteDTO dto) {
     Rol rolCliente = rolRepository.findById(2)
             .orElseThrow(() -> new IllegalStateException("No existe el rol con id 2 (CLIENTE)."));
@@ -61,7 +60,6 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    @Transactional
     public Cliente actualizarPerfil(Integer idCliente, RegistroClienteDTO dto) {
         Cliente cliente = clienteRepository.findById(idCliente)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
@@ -74,8 +72,15 @@ public class ClienteService {
     }
 
     public Cliente obtenerPorCorreo(String correo) {
-    return clienteRepository.findByCorreo(correo)
-            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-}
-    
+        return clienteRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+    }
+
+    public java.util.Optional<Cliente> buscarPorCorreoOpt(String correo) {
+        return clienteRepository.findByCorreo(correo);
+    }
+
+    public long contar() {
+        return clienteRepository.count();
+    }
 }

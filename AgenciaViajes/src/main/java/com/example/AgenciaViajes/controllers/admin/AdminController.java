@@ -3,21 +3,20 @@ package com.example.AgenciaViajes.controllers.admin;
 import com.example.AgenciaViajes.dto.EntidadConfigDTO;
 import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Cliente;
-import com.example.AgenciaViajes.modelo.Destino;
 import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
 import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
 import com.example.AgenciaViajes.modelo.Reserva;
-import com.example.AgenciaViajes.repositorio.AerolineaRepository;
-import com.example.AgenciaViajes.repositorio.CategoriaDestinoRepository;
-import com.example.AgenciaViajes.repositorio.ClienteRepository;
-import com.example.AgenciaViajes.repositorio.DestinoRepository;
-import com.example.AgenciaViajes.repositorio.HotelRepository;
-import com.example.AgenciaViajes.repositorio.PaqueteRepository;
-import com.example.AgenciaViajes.repositorio.ReservaRepository;
-import com.example.AgenciaViajes.repositorio.RolRepository;
-import com.example.AgenciaViajes.repositorio.UsuarioRepository;
+import com.example.AgenciaViajes.servicios.AerolineaService;
+import com.example.AgenciaViajes.servicios.CategoriaDestinoService;
+import com.example.AgenciaViajes.servicios.ClienteService;
+import com.example.AgenciaViajes.servicios.DestinoService;
+import com.example.AgenciaViajes.servicios.HotelService;
+import com.example.AgenciaViajes.servicios.PaqueteService;
+import com.example.AgenciaViajes.servicios.ReservaService;
+import com.example.AgenciaViajes.servicios.RolService;
+import com.example.AgenciaViajes.servicios.UsuarioService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,46 +32,45 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final ClienteRepository clienteRepository;
-    private final PaqueteRepository paqueteRepository;
-    private final DestinoRepository destinoRepository;
-    private final CategoriaDestinoRepository categoriaDestinoRepository;
-    private final HotelRepository hotelRepository;
-    private final AerolineaRepository aerolineaRepository;
-    private final RolRepository rolRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final ReservaRepository reservaRepository;
+    private final ClienteService clienteService;
+    private final PaqueteService paqueteService;
+    private final DestinoService destinoService;
+    private final CategoriaDestinoService categoriaDestinoService;
+    private final HotelService hotelService;
+    private final AerolineaService aerolineaService;
+    private final RolService rolService;
+    private final UsuarioService usuarioService;
+    private final ReservaService reservaService;
 
-    public AdminController(ClienteRepository clienteRepository,
-                           PaqueteRepository paqueteRepository,
-                           DestinoRepository destinoRepository,
-                           CategoriaDestinoRepository categoriaDestinoRepository,
-                           HotelRepository hotelRepository,
-                           AerolineaRepository aerolineaRepository,
-                           RolRepository rolRepository,
-                           UsuarioRepository usuarioRepository,
-                           ReservaRepository reservaRepository) {
-        this.clienteRepository = clienteRepository;
-        this.paqueteRepository = paqueteRepository;
-        this.destinoRepository = destinoRepository;
-        this.categoriaDestinoRepository = categoriaDestinoRepository;
-        this.hotelRepository = hotelRepository;
-        this.aerolineaRepository = aerolineaRepository;
-        this.rolRepository = rolRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.reservaRepository = reservaRepository;
+    public AdminController(ClienteService clienteService,
+                           PaqueteService paqueteService,
+                           DestinoService destinoService,
+                           CategoriaDestinoService categoriaDestinoService,
+                           HotelService hotelService,
+                           AerolineaService aerolineaService,
+                           RolService rolService,
+                           UsuarioService usuarioService,
+                           ReservaService reservaService) {
+        this.clienteService = clienteService;
+        this.paqueteService = paqueteService;
+        this.destinoService = destinoService;
+        this.categoriaDestinoService = categoriaDestinoService;
+        this.hotelService = hotelService;
+        this.aerolineaService = aerolineaService;
+        this.rolService = rolService;
+        this.usuarioService = usuarioService;
+        this.reservaService = reservaService;
     }
 
     private void agregarDatosAdmin(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-            Optional<Cliente> clienteOpt = clienteRepository.findByCorreo(auth.getName());
+            Optional<Cliente> clienteOpt = clienteService.buscarPorCorreoOpt(auth.getName());
             clienteOpt.ifPresent(cliente -> {
                 model.addAttribute("cliente", cliente);
                 model.addAttribute("nombreAdmin", cliente.getNombreCompleto());
@@ -100,7 +98,7 @@ public class AdminController {
                 .descripcion("Planes turísticos, itinerarios, inclusión de servicios y precios base.")
                 .icono("fa-solid fa-suitcase")
                 .url("/admin/paquetes")
-                .totalRegistros(paqueteRepository.count())
+                .totalRegistros(paqueteService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -109,7 +107,7 @@ public class AdminController {
                 .descripcion("Ciudades colombianas, descripciones y galerías fotográficas.")
                 .icono("fa-solid fa-location-dot")
                 .url("/admin/destinos")
-                .totalRegistros(destinoRepository.count())
+                .totalRegistros(destinoService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -118,7 +116,7 @@ public class AdminController {
                 .descripcion("Clasificación tipológica: Playa, Montaña, Ecoturismo y Aventura.")
                 .icono("fa-solid fa-layer-group")
                 .url("/admin/categorias")
-                .totalRegistros(categoriaDestinoRepository.count())
+                .totalRegistros(categoriaDestinoService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -127,7 +125,7 @@ public class AdminController {
                 .descripcion("Alojamientos asociados, estrellas, destinos y tarifas extra.")
                 .icono("fa-solid fa-hotel")
                 .url("/admin/hoteles")
-                .totalRegistros(hotelRepository.count())
+                .totalRegistros(hotelService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -136,7 +134,7 @@ public class AdminController {
                 .descripcion("Compañías aéreas, códigos IATA y suplementos de vuelo.")
                 .icono("fa-solid fa-plane-departure")
                 .url("/admin/aerolineas")
-                .totalRegistros(aerolineaRepository.count())
+                .totalRegistros(aerolineaService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -145,7 +143,7 @@ public class AdminController {
                 .descripcion("Padrón de usuarios, documentos de identidad y contactos.")
                 .icono("fa-solid fa-users")
                 .url("/admin/clientes")
-                .totalRegistros(clienteRepository.count())
+                .totalRegistros(clienteService.contar())
                 .sufijo("reg.")
                 .build());
 
@@ -154,7 +152,7 @@ public class AdminController {
                 .descripcion("Niveles de acceso, permisos y cuentas del sistema.")
                 .icono("fa-solid fa-shield-halved")
                 .url("/admin/roles")
-                .totalRegistros(rolRepository.count())
+                .totalRegistros(rolService.contar())
                 .sufijo("roles")
                 .build());
 
@@ -168,8 +166,8 @@ public class AdminController {
     public String usuarios(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "usuarios");
-        model.addAttribute("usuarios", usuarioRepository.findAll());
-        model.addAttribute("totalUsuarios", usuarioRepository.count());
+        model.addAttribute("usuarios", usuarioService.listarTodos());
+        model.addAttribute("totalUsuarios", usuarioService.contar());
         return "admin/usuarios";
     }
 
@@ -180,8 +178,8 @@ public class AdminController {
     public String paquetes(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("paquetes", paqueteRepository.findAll());
-        model.addAttribute("totalPaquetes", paqueteRepository.count());
+        model.addAttribute("paquetes", paqueteService.listarTodos());
+        model.addAttribute("totalPaquetes", paqueteService.contar());
         return "admin/paquetes";
     }
 
@@ -192,9 +190,9 @@ public class AdminController {
         Paquete paquete = new Paquete();
         paquete.setEstado(EstadoGeneral.ACTIVO);
         model.addAttribute("paquete", paquete);
-        model.addAttribute("destinos", destinoRepository.findAll());
-        model.addAttribute("hoteles", hotelRepository.findAll());
-        model.addAttribute("aerolineas", aerolineaRepository.findAll());
+        model.addAttribute("destinos", destinoService.listarTodos());
+        model.addAttribute("hoteles", hotelService.listarTodos());
+        model.addAttribute("aerolineas", aerolineaService.listarTodas());
         return "admin/paquetes-form";
     }
 
@@ -202,11 +200,11 @@ public class AdminController {
     public String editarPaquete(@PathVariable Long id, Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        Paquete paquete = paqueteRepository.findById(id).orElse(new Paquete());
+        Paquete paquete = paqueteService.obtenerPorId(id).orElse(new Paquete());
         model.addAttribute("paquete", paquete);
-        model.addAttribute("destinos", destinoRepository.findAll());
-        model.addAttribute("hoteles", hotelRepository.findAll());
-        model.addAttribute("aerolineas", aerolineaRepository.findAll());
+        model.addAttribute("destinos", destinoService.listarTodos());
+        model.addAttribute("hoteles", hotelService.listarTodos());
+        model.addAttribute("aerolineas", aerolineaService.listarTodas());
         return "admin/paquetes-form";
     }
 
@@ -214,45 +212,13 @@ public class AdminController {
     public String guardarPaquete(@ModelAttribute Paquete paquete,
                                  @RequestParam(value = "incluye", required = false) List<String> incluye,
                                  @RequestParam(value = "itinerario", required = false) List<String> itinerario) {
-        if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
-            destinoRepository.findById(paquete.getDestino().getIdDestino()).ifPresent(paquete::setDestino);
-        }
-        if (paquete.getAerolinea() != null && paquete.getAerolinea().getIdAerolinea() != null) {
-            aerolineaRepository.findById(paquete.getAerolinea().getIdAerolinea()).ifPresent(paquete::setAerolinea);
-        } else {
-            paquete.setAerolinea(null);
-        }
-        if (paquete.getHotel() != null && paquete.getHotel().getIdHotel() != null) {
-            hotelRepository.findById(paquete.getHotel().getIdHotel()).ifPresent(paquete::setHotel);
-        } else {
-            paquete.setHotel(null);
-        }
-
-        if (incluye != null) {
-            paquete.setIncluye(incluye.stream().filter(s -> s != null && !s.isBlank()).collect(Collectors.toList()));
-        } else {
-            paquete.setIncluye(new ArrayList<>());
-        }
-
-        if (itinerario != null) {
-            paquete.setItinerario(itinerario.stream().filter(s -> s != null && !s.isBlank()).collect(Collectors.toList()));
-        } else {
-            paquete.setItinerario(new ArrayList<>());
-        }
-
-        if (paquete.getIdPaquete() != null) {
-            paqueteRepository.findById(paquete.getIdPaquete()).ifPresent(existente -> {
-                paquete.setFechaRegistro(existente.getFechaRegistro());
-            });
-        }
-
-        paqueteRepository.save(paquete);
+        paqueteService.guardar(paquete, incluye, itinerario);
         return "redirect:/admin/paquetes";
     }
 
     @GetMapping("/paquetes/eliminar/{id}")
     public String eliminarPaquete(@PathVariable Long id) {
-        paqueteRepository.deleteById(id);
+        paqueteService.eliminar(id);
         return "redirect:/admin/paquetes";
     }
 
@@ -263,8 +229,8 @@ public class AdminController {
     public String hoteles(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("hoteles", hotelRepository.findAll());
-        model.addAttribute("totalHoteles", hotelRepository.count());
+        model.addAttribute("hoteles", hotelService.listarTodos());
+        model.addAttribute("totalHoteles", hotelService.contar());
         return "admin/hoteles";
     }
 
@@ -275,7 +241,7 @@ public class AdminController {
         Hotel hotel = new Hotel();
         hotel.setEstado(EstadoGeneral.ACTIVO);
         model.addAttribute("hotel", hotel);
-        model.addAttribute("destinos", destinoRepository.findAll());
+        model.addAttribute("destinos", destinoService.listarTodos());
         return "admin/hoteles-form";
     }
 
@@ -283,24 +249,21 @@ public class AdminController {
     public String editarHotel(@PathVariable Long id, Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        Hotel hotel = hotelRepository.findById(id).orElse(new Hotel());
+        Hotel hotel = hotelService.obtenerPorId(id).orElse(new Hotel());
         model.addAttribute("hotel", hotel);
-        model.addAttribute("destinos", destinoRepository.findAll());
+        model.addAttribute("destinos", destinoService.listarTodos());
         return "admin/hoteles-form";
     }
 
     @PostMapping("/hoteles/guardar")
     public String guardarHotel(@ModelAttribute Hotel hotel) {
-        if (hotel.getDestino() != null && hotel.getDestino().getIdDestino() != null) {
-            destinoRepository.findById(hotel.getDestino().getIdDestino()).ifPresent(hotel::setDestino);
-        }
-        hotelRepository.save(hotel);
+        hotelService.guardar(hotel);
         return "redirect:/admin/hoteles";
     }
 
     @GetMapping("/hoteles/eliminar/{id}")
     public String eliminarHotel(@PathVariable Long id) {
-        hotelRepository.deleteById(id);
+        hotelService.eliminar(id);
         return "redirect:/admin/hoteles";
     }
 
@@ -311,8 +274,8 @@ public class AdminController {
     public String aerolineas(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("aerolineas", aerolineaRepository.findAll());
-        model.addAttribute("totalAerolineas", aerolineaRepository.count());
+        model.addAttribute("aerolineas", aerolineaService.listarTodas());
+        model.addAttribute("totalAerolineas", aerolineaService.contar());
         return "admin/aerolineas";
     }
 
@@ -321,6 +284,7 @@ public class AdminController {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
         model.addAttribute("aerolinea", new Aerolinea());
+        model.addAttribute("destinos", destinoService.listarTodos());
         return "admin/aerolineas-form";
     }
 
@@ -328,20 +292,22 @@ public class AdminController {
     public String editarAerolinea(@PathVariable Long id, Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        Aerolinea aero = aerolineaRepository.findById(id).orElse(new Aerolinea());
+        Aerolinea aero = aerolineaService.obtenerPorId(id).orElse(new Aerolinea());
         model.addAttribute("aerolinea", aero);
+        model.addAttribute("destinos", destinoService.listarTodos());
         return "admin/aerolineas-form";
     }
 
     @PostMapping("/aerolineas/guardar")
-    public String guardarAerolinea(@ModelAttribute Aerolinea aerolinea) {
-        aerolineaRepository.save(aerolinea);
+    public String guardarAerolinea(@ModelAttribute Aerolinea aerolinea,
+                                   @RequestParam(value = "destinoIds", required = false) List<Long> destinoIds) {
+        aerolineaService.guardar(aerolinea, destinoIds);
         return "redirect:/admin/aerolineas";
     }
 
     @GetMapping("/aerolineas/eliminar/{id}")
     public String eliminarAerolinea(@PathVariable Long id) {
-        aerolineaRepository.deleteById(id);
+        aerolineaService.eliminar(id);
         return "redirect:/admin/aerolineas";
     }
 
@@ -352,8 +318,8 @@ public class AdminController {
     public String destinos(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("destinos", destinoRepository.findAll());
-        model.addAttribute("totalDestinos", destinoRepository.count());
+        model.addAttribute("destinos", destinoService.listarTodos());
+        model.addAttribute("totalDestinos", destinoService.contar());
         return "admin/destinos";
     }
 
@@ -361,8 +327,8 @@ public class AdminController {
     public String categorias(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("categorias", categoriaDestinoRepository.findAll());
-        model.addAttribute("totalCategorias", categoriaDestinoRepository.count());
+        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
+        model.addAttribute("totalCategorias", categoriaDestinoService.contar());
         return "admin/categorias";
     }
 
@@ -370,8 +336,8 @@ public class AdminController {
     public String clientes(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("clientes", clienteRepository.findAll());
-        model.addAttribute("totalClientes", clienteRepository.count());
+        model.addAttribute("clientes", clienteService.obtenerTodos());
+        model.addAttribute("totalClientes", clienteService.contar());
         return "admin/clientes";
     }
 
@@ -379,8 +345,8 @@ public class AdminController {
     public String roles(Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("roles", rolRepository.findAll());
-        model.addAttribute("totalRoles", rolRepository.count());
+        model.addAttribute("roles", rolService.listarTodos());
+        model.addAttribute("totalRoles", rolService.contar());
         return "admin/roles";
     }
 
@@ -389,7 +355,7 @@ public class AdminController {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "reservas");
 
-        List<Reserva> reservas = reservaRepository.findAllByOrderByFechaReservaDesc();
+        List<Reserva> reservas = reservaService.listarTodasOrdenadasPorFecha();
         model.addAttribute("reservas", reservas);
         model.addAttribute("totalReservas", reservas.size());
 

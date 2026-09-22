@@ -2,12 +2,11 @@ package com.example.AgenciaViajes.controllers.authController;
 
 import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Destino;
-import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
-import com.example.AgenciaViajes.repositorio.AerolineaRepository;
-import com.example.AgenciaViajes.repositorio.DestinoRepository;
-import com.example.AgenciaViajes.repositorio.HotelRepository;
+import com.example.AgenciaViajes.servicios.AerolineaService;
+import com.example.AgenciaViajes.servicios.DestinoService;
+import com.example.AgenciaViajes.servicios.HotelService;
 import com.example.AgenciaViajes.servicios.PaqueteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,19 +30,19 @@ public class PaqueteController {
     private PaqueteService paqueteService;
 
     @Autowired
-    private DestinoRepository destinoRepository;
+    private DestinoService destinoService;
 
     @Autowired
-    private AerolineaRepository aerolineaRepository;
+    private AerolineaService aerolineaService;
 
     @Autowired
-    private HotelRepository hotelRepository;
+    private HotelService hotelService;
 
     /** Catálogo completo — muestra todos los paquetes activos */
     @GetMapping
     public String catalogo(Model model) {
         List<Paquete> paquetes = paqueteService.listarActivos();
-        List<Destino> destinos = destinoRepository.findAll();
+        List<Destino> destinos = destinoService.listarTodos();
 
         model.addAttribute("paquetes", paquetes);
         model.addAttribute("destinos", destinos);
@@ -62,7 +61,7 @@ public class PaqueteController {
             Model model) {
 
         List<Paquete> paquetes = paqueteService.buscar(destino, precioMin, precioMax, durMin, durMax);
-        List<Destino> destinos = destinoRepository.findAll();
+        List<Destino> destinos = destinoService.listarTodos();
 
         model.addAttribute("paquetes", paquetes);
         model.addAttribute("destinos", destinos);
@@ -100,21 +99,31 @@ public class PaqueteController {
             cantidadBoletos = 1;
         }
 
-        // Cargar aerolíneas
-        List<Aerolinea> aerolineas = aerolineaRepository.findAll();
+        // Cargar aerolíneas con cobertura en el destino del paquete o asignadas al paquete
+        List<Aerolinea> aerolineas = List.of();
+        if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
+            aerolineas = aerolineaService.listarPorDestino(paquete.getDestino().getIdDestino());
+        }
+        if (paquete.getAerolinea() != null) {
+            boolean contieneAero = aerolineas.stream().anyMatch(a -> a.getIdAerolinea().equals(paquete.getAerolinea().getIdAerolinea()));
+            if (!contieneAero) {
+                aerolineas = new java.util.ArrayList<>(aerolineas);
+                aerolineas.add(0, paquete.getAerolinea());
+            }
+        }
+        if (aerolineas.isEmpty() && paquete.getAerolinea() != null) {
+            aerolineas = List.of(paquete.getAerolinea());
+        }
 
-        // Encontrar la aerolínea más económica
+        // Encontrar la aerolínea más económica entre las disponibles
         Aerolinea aerolineaMasEconomica = aerolineas.stream()
                 .min(Comparator
                         .comparing(a -> a.getPrecioAdicional() != null ? a.getPrecioAdicional() : BigDecimal.ZERO))
                 .orElse(null);
 
-        // Cargar hoteles del destino del paquete
+        // Cargar exclusivamente el hotel asignado al paquete (no todos los hoteles del destino)
         List<Hotel> hotelesDestino = List.of();
-        if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
-            hotelesDestino = hotelRepository.findByDestinoIdAndEstado(paquete.getDestino().getIdDestino(), EstadoGeneral.ACTIVO);
-        }
-        if (hotelesDestino.isEmpty() && paquete.getHotel() != null) {
+        if (paquete.getHotel() != null) {
             hotelesDestino = List.of(paquete.getHotel());
         }
 

@@ -66,6 +66,52 @@
                 </div>
             </div>
 
+            <!-- Destinos con Cobertura (Dinámico con Select y Botón +) -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-[#073B78]"></i>
+                        <span>Destinos con Cobertura</span>
+                    </h3>
+                    <span class="text-[11px] text-slate-400 font-medium">Rutas y destinos a los que vuela</span>
+                </div>
+
+                <!-- Select + Botón para agregar destino -->
+                <div class="flex gap-2">
+                    <select id="selectDestino"
+                            class="flex-1 px-3.5 py-2.5 bg-slate-50/50 text-sm text-slate-800 rounded-xl border border-slate-200 focus:border-[#073B78] focus:bg-white focus:outline-none transition">
+                        <option value="">-- Seleccionar destino a asociar --</option>
+                        <option th:each="dest : ${destinos}"
+                                th:value="${dest.idDestino}"
+                                th:text="${dest.nombre + ' (' + dest.ciudad + ')'}">
+                            Cartagena (Cartagena)
+                        </option>
+                    </select>
+                    <button type="button" id="btnAgregarDestino"
+                            class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#073B78] hover:bg-[#052b57] shadow-xs flex items-center gap-1.5 transition shrink-0">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Agregar</span>
+                    </button>
+                </div>
+
+                <!-- Lista de destinos agregados -->
+                <div id="contenedorDestinos" class="space-y-2 pt-1">
+                    <!-- Destinos existentes si estamos editando -->
+                    <div th:each="dest : ${aerolinea.destinos}"
+                         th:data-id="${dest.idDestino}"
+                         class="item-destino flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+                        <div class="flex items-center gap-2.5 text-slate-700">
+                            <i class="fa-solid fa-location-dot text-amber-500 text-xs shrink-0"></i>
+                            <span class="font-medium text-slate-800" th:text="${dest.nombre + ' (' + dest.ciudad + ')'}">Cartagena (Cartagena)</span>
+                        </div>
+                        <input type="hidden" name="destinoIds" th:value="${dest.idDestino}" />
+                        <button type="button" class="btn-eliminar-destino text-slate-400 hover:text-rose-600 p-1 transition" title="Eliminar destino">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Botones de Acción -->
             <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                 <a th:href="@{/admin/aerolineas}"
@@ -79,6 +125,59 @@
                 </button>
             </div>
         </form>
+
+        <!-- Script de Manejo Dinámico para Destinos de la Aerolínea -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const selectDestino = document.getElementById('selectDestino');
+                const btnAgregarDestino = document.getElementById('btnAgregarDestino');
+                const contenedorDestinos = document.getElementById('contenedorDestinos');
+
+                function agregarDestino() {
+                    const idDestino = selectDestino.value;
+                    const textoDestino = selectDestino.options[selectDestino.selectedIndex]?.text;
+                    if (!idDestino) return;
+
+                    // Evitar duplicados
+                    const yaExiste = contenedorDestinos.querySelector(`.item-destino[data-id="${idDestino}"]`);
+                    if (yaExiste) {
+                        alert('Este destino ya se encuentra agregado a la aerolínea.');
+                        return;
+                    }
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item-destino flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs';
+                    itemDiv.setAttribute('data-id', idDestino);
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center gap-2.5 text-slate-700">
+                            <i class="fa-solid fa-location-dot text-amber-500 text-xs shrink-0"></i>
+                            <span class="font-medium text-slate-800">${textoDestino}</span>
+                        </div>
+                        <input type="hidden" name="destinoIds" value="${idDestino}" />
+                        <button type="button" class="btn-eliminar-destino text-slate-400 hover:text-rose-600 p-1 transition" title="Eliminar destino">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    `;
+
+                    contenedorDestinos.appendChild(itemDiv);
+                    selectDestino.value = '';
+                }
+
+                if (btnAgregarDestino) {
+                    btnAgregarDestino.addEventListener('click', agregarDestino);
+                }
+
+                document.addEventListener('click', (e) => {
+                    const btnEliminar = e.target.closest('.btn-eliminar-destino');
+                    if (btnEliminar) {
+                        const parent = btnEliminar.closest('.item-destino');
+                        if (parent) {
+                            parent.remove();
+                        }
+                    }
+                });
+            });
+        </script>
 
     </div>
 

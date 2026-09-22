@@ -64,7 +64,7 @@ public class ReservaService {
     // Crear
     // ------------------------------------------------------------------
 
-    @Transactional
+
 public Reserva crearDesdeCarrito(Carrito carrito, String username) {
     if (carrito.isVacio()) {
         throw new IllegalStateException("El carrito está vacío.");
@@ -153,7 +153,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     }
 }
 
-    @Transactional
+
     public Reserva cancelarDetalle(Integer idReserva, Integer idDetalle, String username) {
         Reserva reserva = reservaRepo.findById(idReserva)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -187,13 +187,12 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     // Consultar
     // ------------------------------------------------------------------
 
-    @Transactional(readOnly = true)
     public List<Reserva> buscar(Integer idCliente, Long idDestino, EstadoReserva estado,
                                 LocalDate desde, LocalDate hasta) {
         return reservaRepo.buscar(idCliente, idDestino, estado, desde, hasta);
     }
 
-    @Transactional
+
     public Reserva actualizarFechaViajeDetalle(Integer idReserva, Integer idDetalle, LocalDate nuevaFecha, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(idReserva)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -219,7 +218,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
         return reservaRepo.save(reserva);
     }
 
-    @Transactional(readOnly = true)
     public List<Reserva> misReservas(String username) {
         Cliente cliente = clienteRepo.findByUsuarioNombreUsuario(username)
                 .orElseThrow(() -> new IllegalStateException("Tu usuario no tiene un cliente asociado."));
@@ -230,7 +228,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
      * Devuelve la reserva si el usuario es staff o es el dueño.
      * Evita que un cliente vea reservas ajenas cambiando el id en la URL.
      */
-    @Transactional(readOnly = true)
     public Reserva obtener(Integer id, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -247,7 +244,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     // ------------------------------------------------------------------
 
     /** Pagar / simulación de pago de reserva (cliente o staff). */
-    @Transactional
+
     public Reserva pagarReserva(Integer id, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -265,7 +262,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     }
 
     /** Cambio de estado hecho por ADMIN o EMPLEADO. */
-    @Transactional
+
     public Reserva cambiarEstado(Integer id, EstadoReserva nuevoEstado, String username) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -278,7 +275,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     }
 
     /** Un cliente solo puede cancelar sus propias reservas pendientes. */
-    @Transactional
+
     public Reserva cancelarPropia(Integer id, String username) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -294,7 +291,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     }
 
     /** Cambio de fecha de viaje (solo mientras esté pendiente). */
-    @Transactional
+
     public Reserva actualizarFechaViaje(Integer id, LocalDate nuevaFecha, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -339,5 +336,13 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente) {
     private boolean esDuenio(Reserva reserva, String username) {
         return reserva.getCliente().getUsuario() != null
                 && username.equals(reserva.getCliente().getUsuario().getNombreUsuario());
+    }
+
+    public List<Reserva> listarTodasOrdenadasPorFecha() {
+        return reservaRepo.findAllByOrderByFechaReservaDesc();
+    }
+
+    public long contar() {
+        return reservaRepo.count();
     }
 }
