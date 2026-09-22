@@ -17,3 +17,4 @@ public class EntidadConfigDTO {
     private long totalRegistros;
     private String sufijo;
 }
+ 
