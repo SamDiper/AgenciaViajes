@@ -63,14 +63,6 @@
                     <span>Usuarios</span>
                 </a>
 
-                <!-- Reportes -->
-                <a th:href="@{/admin/reportes}"
-                    th:classappend="${activeSection == 'reportes'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
-                    class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl transition duration-150">
-                    <i class="fa-solid fa-chart-column text-base w-5 text-center"></i>
-                    <span>Reportes</span>
-                </a>
-
                 <!-- Configuración -->
                 <a th:href="@{/admin/configuracion}"
                     th:classappend="${activeSection == 'configuracion'} ? 'bg-[#0B63E5] text-white font-semibold shadow-md shadow-blue-900/30' : 'text-slate-200 hover:text-white hover:bg-white/10'"
