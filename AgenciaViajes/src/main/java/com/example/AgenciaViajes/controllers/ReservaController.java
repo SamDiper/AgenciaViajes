@@ -33,7 +33,7 @@ public class ReservaController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     public String listar(@RequestParam(required = false) Integer idCliente,
-                         @RequestParam(required = false) Integer idDestino,
+                         @RequestParam(required = false) Long idDestino,
                          @RequestParam(required = false) EstadoReserva estado,
                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
@@ -56,7 +56,7 @@ public class ReservaController {
     @GetMapping("/mis-reservas")
     public String misReservas(Authentication auth, Model model) {
         model.addAttribute("reservas", reservaService.misReservas(auth.getName()));
-        return "reservas/mis-reservas";
+        return "auth/reservas/reserva";
     }
  
     // ---------------- Detalle (staff o dueño) ----------------
@@ -68,9 +68,37 @@ public class ReservaController {
         model.addAttribute("estados", EstadoReserva.values());
         model.addAttribute("esStaff", staff);
         model.addAttribute("hoy", LocalDate.now());
-        return "reservas/detalle";
+        return "auth/reservas/detallereserva";
+    }
+
+    @PostMapping("/{idReserva}/cancelar-paquete/{idDetalle}")
+    public String cancelarDetalle(@PathVariable Integer idReserva, 
+                                  @PathVariable Integer idDetalle, 
+                                  Authentication auth, 
+                                  RedirectAttributes flash) {
+        try {
+            reservaService.cancelarDetalle(idReserva, idDetalle, auth.getName());
+            flash.addFlashAttribute("exito", "Paquete cancelado correctamente.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/reservas/" + idReserva;
     }
  
+    @PostMapping("/{idReserva}/fecha/{idDetalle}")
+    public String cambiarFechaDetalle(@PathVariable Integer idReserva,
+                                      @PathVariable Integer idDetalle,
+                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaViaje,
+                                      Authentication auth,
+                                      RedirectAttributes flash) {
+        try {
+            reservaService.actualizarFechaViajeDetalle(idReserva, idDetalle, fechaViaje, auth.getName(), esStaff(auth));
+            flash.addFlashAttribute("exito", "Fecha de viaje actualizada para este paquete.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            flash.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/reservas/" + idReserva;
+    }
     // ---------------- Acciones ----------------
  
     @PostMapping("/{id}/estado")

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        th:content="'Detalles y reserva para el paquete ' + ${paquete.nombre} + ' en ' + ${paquete.destino.nombre} + ' con Traveling Colombia.'" />
+    <title th:text="${paquete.nombre} + ' — Traveling Colombia'">Detalle del Paquete — Traveling Colombia</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS (compiled) -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <header th:replace="~{components/navbar/navbar :: navbar}"></header>
+
+    <main class="w-full">
+        <section
+            class="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 text-white min-h-[360px] flex items-center"
+            th:style="'background: url(' + (${paquete.imagenUrl != null and !#strings.isEmpty(paquete.imagenUrl) ? paquete.imagenUrl : (paquete.destino.imagenUrl != null ? paquete.destino.imagenUrl : 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1600')}) + ') center / cover no-repeat;'">
+
+            <!-- Gradiente oscuro para máxima legibilidad -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#041E42]/90 via-[#073B78]/75 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#041E42] via-transparent to-black/30"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+
+                <!-- Botón Volver -->
+                <div class="mb-4">
+                    <a th:href="@{/paquetes}" href="/paquetes"
+                        class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90 hover:text-white bg-black/25 hover:bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all duration-200">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Volver a paquetes</span>
+                    </a>
+                </div>
+
+                <!-- Pill Destino -->
+                <div
+                    class="inline-flex items-center gap-1.5 bg-[#041E42]/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3 shadow-sm">
+                    <i class="fa-solid fa-location-dot text-amber-400 text-xs"></i>
+                    <span
+                        th:text="${paquete.destino.nombre} + (${paquete.destino.ciudad != null ? ', ' + paquete.destino.ciudad : ''})">Cartagena,
+                        Bolívar</span>
+                </div>
+
+                <!-- Título del Destino / Paquete -->
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-2"
+                    th:text="${paquete.destino.nombre}">
+                    Cartagena
+                </h1>
+
+                <!-- Subtítulo descriptivo -->
+                <p class="text-sm sm:text-lg text-slate-200 max-w-2xl font-normal leading-relaxed mb-3"
+                    th:text="${paquete.descripcion}">
+                    Historia, cultura y playas de ensueño en el caribe colombiano.
+                </p>
+
+                <!-- Calificación Estrellas -->
+                <div class="flex items-center gap-2 text-xs sm:text-sm">
+                    <div class="flex text-amber-400 gap-0.5">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <span class="font-bold text-white">4.8</span>
+                    <span class="text-slate-300">(124 reseñas)</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════
+             2. CONTENIDO PRINCIPAL EN 2 COLUMNAS
+        ══════════════════════════════════════════════ -->
+        <section class="py-10 sm:py-14">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+
+                    <!-- ══════════════════════════════════════════════
+                         COLUMNA IZQUIERDA (8 COLUMNAS)
+                    ══════════════════════════════════════════════ -->
+                    <div class="lg:col-span-8 flex flex-col gap-8">
+
+                        <!-- Encabezado del Paquete & Galería -->
+                        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="colombia-tricolor-pill">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#073B78]">
+                                    Paquete Turístico
+                                </span>
+                            </div>
+
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug mb-3"
+                                th:text="${paquete.nombre}">
+                                Cartagena, la joya del Caribe
+                            </h2>
+
+                            <p class="text-sm sm:text-base text-slate-600 leading-relaxed mb-6"
+                                th:text="${paquete.descripcion}">
+                                Descubre la magia de este destino, un lugar lleno de historia, color y encanto. Recorre
+                                sus calles coloniales, disfruta de sus aguas cristalinas y déjate cautivar por su
+                                gastronomía.
+                            </p>
+
+                            <!-- Mini Ficha de Características con Iconos -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-slate-100">
+
+                                <div
+                                    class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-blue-100/80 text-[#073B78] flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-calendar-days text-base"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-900"
+                                            th:text="${paquete.duracionDias} + ' días / ' + (${paquete.duracionDias} - 1) + ' noches'">
+                                        </p>
+                                        <p class="text-[10px] text-slate-400">Duración del viaje</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Galería de Fotos del Paquete (Fiel al diseño) -->
+                            <div class="mt-6 flex flex-col gap-3">
+                                <div class="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden bg-slate-900">
+                                    <img th:src="${paquete.imagenUrl != null and !#strings.isEmpty(paquete.imagenUrl) ? paquete.imagenUrl : paquete.destino.imagenUrl}"
+                                        th:alt="${paquete.nombre}" class="w-full h-full object-cover" />
+                                </div>
+                                <div class="grid grid-cols-4 gap-2.5 sm:gap-3">
+                                    <div
+                                        class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                        <img th:src="${paquete.imagenUrl}" th:alt="${paquete.nombre}"
+                                            class="w-full h-full object-cover" />
+                                    </div>
+                                    <div
+                                        class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                        <img th:src="${paquete.destino.imagenUrl}" th:alt="${paquete.destino.nombre}"
+                                            class="w-full h-full object-cover" />
+                                    </div>
+                                    <div
+                                        class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                        <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=400&auto=format&fit=crop"
+                                            alt="Foto tour" class="w-full h-full object-cover" />
+                                    </div>
+                                    <div
+                                        class="h-16 sm:h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=400&auto=format&fit=crop"
+                                            alt="Foto gastronomía" class="w-full h-full object-cover" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Sección de Itinerario Día a Día -->
+                        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="colombia-tricolor-pill">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#073B78]">
+                                    Itinerario
+                                </span>
+                            </div>
+
+                            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mb-6">
+                                Día a día de tu aventura
+                            </h3>
+
+                            <!-- Timeline vertical dinámico -->
+                            <div class="relative pl-6 sm:pl-8 border-l-2 border-blue-100 flex flex-col gap-6 ml-3">
+
+                                <!-- Itinerario dinámico cargado desde la BD -->
+                                <div th:if="${paquete.itinerario != null and !#lists.isEmpty(paquete.itinerario)}"
+                                    th:each="actividad, stat : ${paquete.itinerario}" class="relative min-h-[3rem]">
+                                    <div
+                                        class="absolute -left-[33px] sm:-left-[41px] top-0.5 w-7 h-7 rounded-full bg-[#073B78] text-white flex items-center justify-center text-xs font-bold shadow-md shadow-blue-900/20">
+                                        <span th:text="${stat.count}">1</span>
+                                    </div>
+                                    <p class="text-sm sm:text-base font-semibold text-slate-800 leading-relaxed pt-0.5"
+                                        th:text="${actividad}">
+                                        Descripción de la actividad.
+                                    </p>
+                                </div>
+
+                                <!-- Fallback si no tiene itinerario en BD -->
+                                <div th:if="${paquete.itinerario == null or #lists.isEmpty(paquete.itinerario)}"
+                                    class="flex flex-col gap-6">
+                                    <div class="relative min-h-[3rem]">
+                                        <div
+                                            class="absolute -left-[33px] sm:-left-[41px] top-0.5 w-7 h-7 rounded-full bg-[#073B78] text-white flex items-center justify-center text-xs font-bold shadow-md shadow-blue-900/20">
+                                            <span>1</span>
+                                        </div>
+                                        <p
+                                            class="text-sm sm:text-base font-semibold text-slate-800 leading-relaxed pt-0.5">
+                                            Recepción en el aeropuerto o terminal, traslado hacia el hotel seleccionado
+                                            y tarde libre.
+                                        </p>
+                                    </div>
+                                    <div class="relative min-h-[3rem]">
+                                        <div
+                                            class="absolute -left-[33px] sm:-left-[41px] top-0.5 w-7 h-7 rounded-full bg-[#073B78] text-white flex items-center justify-center text-xs font-bold shadow-md shadow-blue-900/20">
+                                            <span>2</span>
+                                        </div>
+                                        <p
+                                            class="text-sm sm:text-base font-semibold text-slate-800 leading-relaxed pt-0.5">
+                                            Recorrido guiado por los atractivos más emblemáticos y degustación
+                                            gastronómica tradicional.
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Cajas ¿Qué incluye? y ¿Qué no incluye? -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                            <!-- Incluye (Dinámico) -->
+                            <div class="bg-blue-50/50 rounded-3xl p-6 sm:p-7 border border-blue-100">
+                                <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-blue-600"></i>
+                                    ¿Qué incluye?
+                                </h3>
+
+                                <ul th:if="${paquete.incluye != null and !#lists.isEmpty(paquete.incluye)}"
+                                    class="flex flex-col gap-2.5 text-xs sm:text-sm text-slate-600">
+                                    <li th:each="inc : ${paquete.incluye}" class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                                        <span th:text="${inc}">Item incluido</span>
+                                    </li>
+                                </ul>
+
+                                <!-- Fallback si está vacío -->
+                                <ul th:if="${paquete.incluye == null or #lists.isEmpty(paquete.incluye)}"
+                                    class="flex flex-col gap-2.5 text-xs sm:text-sm text-slate-600">
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                                        <span>Transporte terrestre y traslados</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                                        <span>Alojamiento en el hotel seleccionado</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                                        <span>Desayunos diarios y comidas típicas</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-check text-blue-600 mt-0.5"></i>
+                                        <span>Guía profesional local certificado</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- No Incluye -->
+                            <div class="bg-slate-50 rounded-3xl p-6 sm:p-7 border border-slate-200">
+                                <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-xmark text-slate-400"></i>
+                                    ¿Qué no incluye?
+                                </h3>
+                                <ul class="flex flex-col gap-2.5 text-xs sm:text-sm text-slate-500">
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-xmark text-slate-400 mt-0.5"></i>
+                                        <span>Tiquetes no especificados en la tarifa</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-xmark text-slate-400 mt-0.5"></i>
+                                        <span>Bebidas alcohólicas no incluidas</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-xmark text-slate-400 mt-0.5"></i>
+                                        <span>Gastos personales y compras</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i class="fa-solid fa-xmark text-slate-400 mt-0.5"></i>
+                                        <span>Propinas voluntarias</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ══════════════════════════════════════════════
+                         COLUMNA DERECHA (4 COLUMNAS): BOOKING CARD & MAPA
+                    ══════════════════════════════════════════════ -->
+                    <div class="lg:col-span-4 sticky top-28 flex flex-col gap-6">
+
+                        <!-- Tarjeta de Cotización y Reserva (Fiel al diseño) -->
+                        <div id="tarjeta-reserva"
+                            class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl shadow-blue-950/5">
+
+                            <!-- Header de Precio -->
+                            <div class="flex items-baseline justify-between mb-1">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Desde</span>
+                                <span class="text-[10px] text-slate-400 font-medium">Tarifa base por persona</span>
+                            </div>
+
+                            <div class="flex items-baseline gap-2 mb-2">
+                                <span class="text-3xl font-extrabold text-[#073B78]"
+                                    th:text="'$' + ${#numbers.formatDecimal(precioUnitarioTotal, 0, 'COMMA', 0, 'POINT')}">
+                                    $1.280.000
+                                </span>
+                                <span class="text-xs text-slate-500 font-semibold">COP / persona</span>
+                            </div>
+
+                            <!-- Rating estrellas -->
+                            <div class="flex items-center gap-1.5 text-xs pb-4 border-b border-slate-100 mb-5">
+                                <div class="flex text-amber-400 gap-0.5">
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                </div>
+                                <span class="font-bold text-slate-700">4.8</span>
+                                <span class="text-slate-400">(124 reseñas)</span>
+                            </div>
+
+                            <!-- Formulario de Selección (Thymeleaf puro sin JS) -->
+                            <form method="GET" th:action="@{'/paquetes/' + ${paquete.idPaquete}}"
+                                class="flex flex-col gap-4">
+
+                                <!-- Cantidad de Personas -->
+                                <div>
+                                    <label for="cantidadBoletos"
+                                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                                        <i class="fa-solid fa-user-group text-slate-400 mr-1"></i> Cantidad de personas
+                                    </label>
+                                    <input id="cantidadBoletos" type="number" name="cantidadBoletos" min="1" max="20"
+                                        th:value="${cantidadBoletos}"
+                                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition" />
+                                </div>
+
+                                <!-- Selección de Aerolínea -->
+                                <div>
+                                    <label for="idAerolinea"
+                                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                                        <i class="fa-solid fa-plane text-slate-400 mr-1"></i> Aerolínea
+                                    </label>
+                                    <select id="idAerolinea" name="idAerolinea"
+                                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition">
+                                        <option th:each="aero : ${aerolineas}" th:value="${aero.idAerolinea}"
+                                            th:selected="${aerolineaSeleccionada != null and aerolineaSeleccionada.idAerolinea == aero.idAerolinea}"
+                                            th:text="${aero.nombre} + ' (' + ${aero.codigoIata} + ')' + (${aero.precioAdicional != null and aero.precioAdicional.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? ' [+$' + #numbers.formatDecimal(aero.precioAdicional, 0, 'COMMA', 0, 'POINT') + ']' : ' [Tarifa base / Más barata]'})">
+                                            Aerolínea
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Selección de Hotel -->
+                                <div>
+                                    <label for="idHotel"
+                                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                                        <i class="fa-solid fa-bed text-slate-400 mr-1"></i> Tipo de habitación / Hotel
+                                    </label>
+                                    <select id="idHotel" name="idHotel"
+                                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white transition">
+                                        <option value="0" th:selected="${sinVinculacion or hotelSeleccionado == null}">
+                                            — Sin hotel (Solo vuelo y destino) —
+                                        </option>
+                                        <option th:each="hot : ${hotelesDestino}" th:value="${hot.idHotel}"
+                                            th:selected="${!sinVinculacion and hotelSeleccionado != null and hotelSeleccionado.idHotel == hot.idHotel}"
+                                            th:text="${hot.nombre} + ' (' + ${hot.estrellas} + '★)' + (${hot.precioAdicional != null and hot.precioAdicional.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? ' [+$' + #numbers.formatDecimal(hot.precioAdicional, 0, 'COMMA', 0, 'POINT') + ']' : ' [Tarifa base incluida]'})">
+                                            Hotel
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Botón Actualizar Selección -->
+                                <button type="submit"
+                                    class="w-full inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors border border-slate-200 mt-1 cursor-pointer">
+                                    <i class="fa-solid fa-arrows-rotate text-xs text-[#073B78]"></i>
+                                    Actualizar Cotización
+                                </button>
+
+                            </form>
+
+                            <!-- Resumen del Gran Total -->
+                            <div class="mt-5 p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex flex-col gap-1">
+                                <div class="flex items-center justify-between text-xs text-slate-500">
+                                    <span>Total calculado:</span>
+                                    <span th:text="${cantidadBoletos} + ' persona(s)'">1 persona</span>
+                                </div>
+                                <div class="flex items-baseline justify-between pt-1">
+                                    <span class="text-2xl font-extrabold text-[#073B78]"
+                                        th:text="'$' + ${#numbers.formatDecimal(precioGranTotal, 0, 'COMMA', 0, 'POINT')}">
+                                        $1.280.000
+                                    </span>
+                                    <span class="text-xs font-semibold text-slate-400">COP Total</span>
+                                </div>
+                            </div>
+
+                            <!-- Botón Reservar Ahora (CTA Principal) -->
+                            <div class="mt-4 flex flex-col gap-3">
+                                <form th:action="@{/carrito/agregar}" method="post">
+                                    <input type="hidden" name="idPaquete" th:value="${paquete.idPaquete}" />
+                                    <input type="hidden" name="personas" th:value="${cantidadBoletos}" />
+                                    <input type="hidden" name="idAerolinea"
+                                        th:value="${aerolineaSeleccionada != null ? aerolineaSeleccionada.idAerolinea : ''}" />
+                                    <input type="hidden" name="idHotel"
+                                        th:value="${(!sinVinculacion and hotelSeleccionado != null) ? hotelSeleccionado.idHotel : 0}" />
+                                    
+                                    <button type="submit"
+                                        class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                                        <span>Reservar ahora</span>
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PAQUETES RELACIONADOS (Mismo destino) -->
+        <section class="bg-white py-14 sm:py-20 border-t border-slate-200/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <!-- Header de Sección -->
+                <div
+                    class="mb-10 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <div>
+                        <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                            <div class="colombia-tricolor-pill">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#073B78]">
+                                Experiencias Relacionadas
+                            </span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight"
+                            th:text="'Vive lo mejor de ' + ${paquete.destino.nombre}">
+                            Vive lo mejor de Cartagena
+                        </h2>
+                    </div>
+
+                    <a th:href="@{'/paquetes/buscar'(destino=${paquete.destino.nombre})}"
+                        class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#073B78] hover:text-[#041E42] hover:underline">
+                        <span>Ver todos en <span th:text="${paquete.destino.nombre}">este destino</span></span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Grid de Tarjetas de Paquetes Relacionados -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <article th:each="rel : ${paquetesRelacionados}"
+                        class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col group">
+
+                        <!-- Imagen -->
+                        <div class="relative h-44 w-full overflow-hidden bg-slate-100">
+                            <img th:src="${rel.imagenUrl != null and !#strings.isEmpty(rel.imagenUrl) ? rel.imagenUrl : rel.destino.imagenUrl}"
+                                th:alt="${rel.nombre}"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+
+                            <!-- Badges -->
+                            <div
+                                class="absolute top-3 left-3 bg-[#041E42]/85 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                <span th:text="${rel.destino.nombre}">Destino</span>
+                            </div>
+                            <div
+                                class="absolute top-3 right-3 bg-[#073B78]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                <span th:text="${rel.duracionDias} + ' días'">3 días</span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido de la Card -->
+                        <div class="p-4 flex flex-col flex-1 gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 leading-snug group-hover:text-[#073B78] transition-colors line-clamp-1"
+                                th:text="${rel.nombre}">
+                                Nombre del Paquete
+                            </h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed" th:text="${rel.descripcion}">
+                                Descripción breve del paquete relacionado.
+                            </p>
+
+                            <!-- Precio y Botón CTA -->
+                            <div class="flex items-end justify-between mt-auto pt-3 border-t border-slate-100">
+                                <div>
+                                    <span
+                                        class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Desde</span>
+                                    <span class="text-sm font-extrabold text-[#073B78]"
+                                        th:text="'$' + ${#numbers.formatDecimal(rel.precioBase, 0, 'COMMA', 0, 'POINT')}">
+                                        $980.000
+                                    </span>
+                                </div>
+                                <a th:href="@{'/paquetes/' + ${rel.idPaquete}}"
+                                    class="inline-flex items-center gap-1 text-xs font-semibold text-white bg-[#073B78] hover:bg-[#041E42] px-3 py-1.5 rounded-full transition-colors shadow-sm">
+                                    <span>Ver</span>
+                                    <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════
+             4. BANNER FINAL CTA (Fiel al diseño)
+        ══════════════════════════════════════════════ -->
+        <section
+            class="relative overflow-hidden py-16 sm:py-20 text-center bg-gradient-to-b from-[#F0F7FF] via-[#E2EFFF] to-[#F8FAFC]">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center">
+
+                <p class="text-2xl sm:text-3xl font-slogan text-[#073B78] mb-2">
+                    ¿Listo para vivir esta experiencia?
+                </p>
+
+                <h3 class="text-lg sm:text-xl font-bold text-slate-800 mb-6">
+                    <span th:text="${paquete.destino.nombre}">Este destino</span> te espera. Reserva ahora y empieza tu
+                    aventura.
+                </h3>
+
+                <div class="mt-4 flex flex-col gap-3">
+
+        <!-- Con sesión: agrega lo cotizado al carrito -->
+        <form sec:authorize="isAuthenticated()" th:action="@{/carrito/agregar}" method="post">
+    <input type="hidden" name="idPaquete" th:value="${paquete.idPaquete}" />
+    <input type="hidden" name="personas" th:value="${cantidadBoletos}" />
+    <input type="hidden" name="idAerolinea"
+        th:value="${aerolineaSeleccionada != null ? aerolineaSeleccionada.idAerolinea : ''}" />
+    <input type="hidden" name="idHotel"
+        th:value="${(!sinVinculacion and hotelSeleccionado != null) ? hotelSeleccionado.idHotel : 0}" />
+    
+    <button type="submit"
+        class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+        <span>Reservar ahora</span>
+        <i class="fa-solid fa-arrow-right text-xs"></i>
+    </button>
+</form>
+
+            <!-- Sin sesión -->
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" href="/login"
+                class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl transition-colors text-center">
+                Inicia sesión para reservar
+            </a>
+        </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer th:replace="~{components/footer/footer :: footer}"></footer>
+
+    <!-- Script principal -->
+    <script type="module" th:src="@{/js/app.js}" src="/js/app.js"></script>
+
+</body>
+
+</html>

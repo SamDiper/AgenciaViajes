@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +19,10 @@ public class PaqueteService {
 
     public List<Paquete> listarActivos() {
         return paqueteRepository.findByEstado(EstadoGeneral.ACTIVO);
+    }
+
+    public Optional<Paquete> obtenerPorId(Long id) {
+        return paqueteRepository.findById(id);
     }
 
     public List<Paquete> buscar(String destino, BigDecimal precioMin, BigDecimal precioMax,

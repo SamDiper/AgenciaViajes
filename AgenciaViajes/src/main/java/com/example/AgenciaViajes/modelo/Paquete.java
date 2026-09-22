@@ -1,8 +1,12 @@
 package com.example.AgenciaViajes.modelo;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
 
@@ -38,6 +42,22 @@ public class Paquete {
     @JoinColumn(name = "id_aerolinea")
     private Aerolinea aerolinea;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_hotel")
+    private Hotel hotel;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "paquete_incluye", joinColumns = @JoinColumn(name = "id_paquete"))
+    @Column(name = "item", length = 300)
+    @Fetch(FetchMode.SUBSELECT)
+    private List<String> incluye = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "paquete_itinerario", joinColumns = @JoinColumn(name = "id_paquete"))
+    @Column(name = "actividad", length = 600)
+    @Fetch(FetchMode.SUBSELECT)
+    private List<String> itinerario = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoGeneral estado = EstadoGeneral.ACTIVO;
@@ -70,6 +90,15 @@ public class Paquete {
 
     public Aerolinea getAerolinea() { return aerolinea; }
     public void setAerolinea(Aerolinea aerolinea) { this.aerolinea = aerolinea; }
+
+    public Hotel getHotel() { return hotel; }
+    public void setHotel(Hotel hotel) { this.hotel = hotel; }
+
+    public List<String> getIncluye() { return incluye; }
+    public void setIncluye(List<String> incluye) { this.incluye = incluye; }
+
+    public List<String> getItinerario() { return itinerario; }
+    public void setItinerario(List<String> itinerario) { this.itinerario = itinerario; }
 
     public EstadoGeneral getEstado() { return estado; }
     public void setEstado(EstadoGeneral estado) { this.estado = estado; }

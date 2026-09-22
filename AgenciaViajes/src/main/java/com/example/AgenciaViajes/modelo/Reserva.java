@@ -114,6 +114,7 @@ public class Reserva {
 
     public void recalcularTotal() {
         total = detalles.stream()
+                .filter(d -> d.getEstado() != EstadoReserva.CANCELADA)
                 .map(DetalleReserva::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
