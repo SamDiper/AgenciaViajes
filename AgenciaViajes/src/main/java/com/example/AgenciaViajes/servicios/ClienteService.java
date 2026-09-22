@@ -32,12 +32,8 @@ public class ClienteService {
 
     @Transactional
     public Cliente registrarCliente(RegistroClienteDTO dto) {
-        Rol rolCliente = rolRepository.findByNombreRol("CLIENTE")
-                .orElseGet(() -> {
-                    Rol nuevoRol = new Rol();
-                    nuevoRol.setNombreRol("CLIENTE");
-                    return rolRepository.save(nuevoRol);
-                });
+    Rol rolCliente = rolRepository.findById(2)
+            .orElseThrow(() -> new IllegalStateException("No existe el rol con id 2 (CLIENTE)."));
 
         // 1. Crear Usuario
         Usuario usuario = new Usuario();
@@ -76,4 +72,10 @@ public class ClienteService {
 
         return clienteRepository.save(cliente);
     }
+
+    public Cliente obtenerPorCorreo(String correo) {
+    return clienteRepository.findByCorreo(correo)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+}
+    
 }

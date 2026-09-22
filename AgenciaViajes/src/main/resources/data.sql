@@ -12,7 +12,7 @@ INSERT INTO destinos (nombre, pais, ciudad, descripcion, id_categoria, imagen_ur
 VALUES ('Santa Marta', 'Colombia', 'Santa Marta', 'Ciudad costera entre el mar Caribe y la imponente Sierra Nevada.', 1, 'https://images.unsplash.com/photo-1635079552384-dd8adecd8a7c', 'ACTIVO', CURRENT_TIMESTAMP);
 
 -- Roles y Usuarios
-INSERT INTO roles (nombre_rol) VALUES ('ADMIN');
+INSERT INTO roles (nombre_rol) VALUES ('ADMIN'), ('CLIENTE');
 
 INSERT INTO usuarios (contrasena_hash, correo, estado, fecha_creacion, nombre_usuario, id_rol)
 VALUES ('$2b$10$NbVWHG0SQUA9K3maWmWG/us3OvkpllcfN.KRpxqnpNwfQokBhIKTG', 'andres@gmail.com', 'ACTIVO', CURRENT_TIMESTAMP, 'Andres Gonzalez', 1);

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva - Traveling Colombia</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f1f5f9; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; -webkit-font-smoothing:antialiased;">
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9; padding: 32px 16px;">
+        <tr>
+            <td align="center">
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:576px; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); border:1px solid #f1f5f9;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="background-color:#1e3a8a; background-image:linear-gradient(to bottom, #1e3a8a, #172e6e, #0f172a); padding: 32px;">
+                            <img src="https://res.cloudinary.com/deh93p4on/image/upload/v1789948229/Traveling-colombia-white_wmodwf.png"
+                                 alt="Traveling Colombia"
+                                 width="180"
+                                 style="height:auto; max-height:56px; width:auto; display:block;" />
+                        </td>
+                    </tr>
+
+                    <!-- Título / Mensaje -->
+                    <tr>
+                        <td align="center" style="padding: 48px 32px 32px 32px;">
+                            <span style="display:inline-block; padding:6px 14px; border-radius:9999px; background-color:#f0fdf4; color:#16a34a; font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:16px; border:1px solid #bbf7d0;">
+                                Reserva Confirmada
+                            </span>
+
+                            <h2 style="color:#1e293b; font-size:28px; font-weight:700; margin:16px 0 0 0; letter-spacing:-0.02em;">
+                                ¡Prepara tus maletas!
+                            </h2>
+
+                            <!-- Barra de color -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 24px auto 32px auto;">
+                                <tr>
+                                    <td width="21" height="6" style="background-color:#facc15; border-radius:9999px 0 0 9999px;"></td>
+                                    <td width="21" height="6" style="background-color:#1e3a8a;"></td>
+                                    <td width="21" height="6" style="background-color:#ef4444; border-radius:0 9999px 9999px 0;"></td>
+                                </tr>
+                            </table>
+
+                            <p style="color:#475569; font-size:15px; line-height:1.7; margin:0; max-width:420px; margin-left:auto; margin-right:auto;">
+                                Hola <strong style="color:#1e3a8a; font-weight:600;" th:text="${nombre}">Viajero</strong>,<br><br>
+                                <span th:text="${mensaje}">Tu reserva ha sido procesada con éxito.</span> Desde paisajes impresionantes hasta experiencias únicas, te llevamos a descubrir lo mejor de nuestro país.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Tarjeta Itinerario -->
+                    <tr>
+                        <td style="padding: 0 32px 8px 32px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                                style="background-color:#1e3a8a; background-image:linear-gradient(135deg, #1e3a8a, #172e6e, #0f172a); border-radius:16px; padding:28px; color:#ffffff;">
+                                <tr>
+                                    <td style="padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="font-size:20px; font-weight:600; letter-spacing:0.02em; color:#ffffff;">
+                                                    Tu Itinerario
+                                                </td>
+                                                <td align="right">
+                                                    <span style="color:#facc15; font-size:12px; font-family:monospace; background-color:rgba(0,0,0,0.2); padding:4px 8px; border-radius:6px;">
+                                                        REF: TRV-8923
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding-top:20px;">
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="color:#f1f5f9; font-size:15px;">
+                                            <tr>
+                                                <td width="40" valign="top" style="font-size:20px; padding-bottom:16px;">📍</td>
+                                                <td valign="top" style="padding-bottom:16px;">
+                                                    <p style="margin:0 0 2px 0; font-size:12px; color:#facc15; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">
+                                                        Destino<span th:if="${cantidadPaquetes != null and cantidadPaquetes > 1}">s</span>
+                                                    </p>
+                                                    <p style="margin:0; font-weight:600; color:#ffffff; font-size:18px;" th:text="${destino}">Cartagena de Indias</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="40" valign="top" style="font-size:20px;">📅</td>
+                                                <td valign="top">
+                                                    <p style="margin:0 0 2px 0; font-size:12px; color:#facc15; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">
+                                                        Primera fecha de viaje
+                                                    </p>
+                                                    <p style="margin:0; font-weight:600; color:#ffffff; font-size:18px;" th:text="${fecha}">15 Noviembre, 2026</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Nota de varios paquetes -->
+                    <tr th:if="${cantidadPaquetes != null and cantidadPaquetes > 1}">
+                        <td style="padding: 0 32px 8px 32px;">
+                            <p style="color:#64748b; font-size:13px; text-align:center; margin:0;">
+                                Tu reserva incluye <strong th:text="${cantidadPaquetes}" style="color:#1e3a8a;">2</strong> paquetes. Revisa el detalle completo de fechas, destinos y precios en el PDF adjunto.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Botón CTA -->
+                    <tr>
+                        <td align="center" style="padding: 24px 32px 48px 32px;">
+                            <a href="#" style="display:inline-block; background-color:#1e3a8a; color:#ffffff; text-decoration:none; padding:14px 40px; border-radius:9999px; font-weight:600; font-size:14px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                                Explorar mi destino &rarr;
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background-color:#f8fafc; padding:32px; border-top:1px solid #e2e8f0;">
+                            <p style="color:#64748b; font-size:12px; line-height:1.7; margin:0; max-width:340px; margin-left:auto; margin-right:auto;">
+                                Hemos adjuntado el itinerario detallado en un documento PDF en este correo.<br><br>
+                                © 2026 Traveling Colombia.<br>Todos los derechos reservados.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

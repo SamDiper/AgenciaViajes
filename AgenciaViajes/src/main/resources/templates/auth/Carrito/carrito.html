@@ -1,30 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Carrito - Agencia de Viajes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tu carrito — Traveling Colombia</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="/css/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col">
 
-<header th:replace="~{components/navbar/navbar :: navbar}"></header>
+<body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col">
 
-<main class="flex-grow max-w-5xl w-full mx-auto p-6">
-    <h1 class="text-2xl font-extrabold text-slate-800 mb-6">Mi Carrito</h1>
+    <header th:replace="~{components/navbar/navbar :: navbar}"></header>
 
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
-        <p class="text-slate-500 text-lg">Tu carrito está vacío por ahora.</p>
-        <p class="text-slate-400 text-sm mt-2">Explora nuestros destinos y agrega tus próximos viajes aquí.</p>
-        <a th:href="@{/}" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition">
-            Ver destinos
-        </a>
-    </div>
-</main>
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 flex-1">
 
-<footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-    &copy; 2026 Agencia de Viajes. Todos los derechos reservados.
-</footer>
+        <div class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Tu carrito</h1>
+            <p class="text-sm sm:text-base text-slate-500 mt-2">
+                Revisa tus paquetes, elige la fecha de viaje para cada uno y confirma tu reserva.
+            </p>
+        </div>
 
+        <!-- Mensajes (RedirectAttributes) -->
+        <div th:if="${exito}" role="status"
+            class="mb-6 flex items-start gap-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 text-sm">
+            <i class="fa-solid fa-circle-check mt-0.5"></i>
+            <span th:text="${exito}"></span>
+        </div>
+        <div th:if="${error}" role="alert"
+            class="mb-6 flex items-start gap-3 rounded-2xl bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">
+            <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Carrito vacío -->
+        <div th:if="${carrito.vacio}"
+            class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-10 sm:p-14 text-center">
+            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-blue-50 text-[#073B78] flex items-center justify-center">
+                <i class="fa-solid fa-suitcase-rolling text-xl"></i>
+            </div>
+            <p class="text-lg font-bold text-slate-800">Todavía no agregas ningún paquete</p>
+            <p class="text-sm text-slate-500 mt-1">Elige un destino, ajusta personas, aerolínea y hotel, y reserva.</p>
+            <a th:href="@{/paquetes}" href="/paquetes"
+                class="inline-flex items-center gap-2 mt-6 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm px-6 py-3 rounded-full transition-colors">
+                Ver paquetes
+            </a>
+        </div>
+
+        <!-- Carrito con ítems -->
+        <div th:unless="${carrito.vacio}">
+            <!-- GRAN FORMULARIO QUE ENVUELVE TODO EL CARRITO PARA ENVIAR LAS FECHAS AL CONFIRMAR -->
+            <form th:action="@{/carrito/confirmar}" method="post">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                    <!-- Columna Izquierda: Líneas de Paquetes -->
+                    <div class="lg:col-span-8 flex flex-col gap-4">
+
+                        <article th:each="item : ${carrito.items}"
+                            class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm relative">
+
+                            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                                <div class="min-w-0">
+                                    <h2 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug"
+                                        th:text="${item.nombrePaquete}">Nombre del paquete</h2>
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        <i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>
+                                        <span th:text="${item.nombreDestino}">Destino</span>
+                                    </p>
+                                    <ul class="mt-3 flex flex-col gap-1.5 text-xs sm:text-sm text-slate-600">
+                                        <li th:if="${item.nombreAerolinea != null}" class="flex items-center gap-2">
+                                            <i class="fa-solid fa-plane w-4 text-slate-400"></i>
+                                            <span th:text="${item.nombreAerolinea}">Aerolínea</span>
+                                        </li>
+                                        <li th:if="${item.nombreHotel != null}" class="flex items-center gap-2">
+                                            <i class="fa-solid fa-bed w-4 text-slate-400"></i>
+                                            <span th:text="${item.nombreHotel}">Hotel</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="sm:text-right shrink-0">
+                                    <p class="text-xs text-slate-400"
+                                        th:text="'$' + ${#numbers.formatDecimal(item.precioUnitario, 0, 'POINT', 0, 'COMMA')} + ' por persona'">
+                                        $1.280.000 por persona</p>
+                                    <p class="text-xl font-extrabold text-[#073B78]"
+                                        th:text="'$' + ${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')}">
+                                        $2.560.000</p>
+                                </div>
+                            </div>
+
+                            <!-- NUEVO: SELECCIÓN DE FECHA INDIVIDUAL PARA ESTE PAQUETE -->
+                            <div class="mt-5 p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex flex-col sm:flex-row sm:items-center gap-3">
+                                <label th:for="'fecha_' + ${item.clave}" class="block text-xs font-bold uppercase tracking-wider text-[#073B78] shrink-0">
+                                    <i class="fa-solid fa-calendar-day mr-1"></i> Fecha de viaje:
+                                </label>
+                                <!-- El nombre del input se genera dinámicamente con la clave del item para que el controlador lo identifique -->
+                                <input type="date" th:id="'fecha_' + ${item.clave}" th:name="'fecha_' + ${item.clave}" th:min="${hoy}" required
+                                    class="w-full sm:w-48 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 transition" />
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                                <!-- Cambiar cantidad de personas y quitar paquete (botones independientes mediante formactions) -->
+                                <div class="flex items-center gap-2">
+                                    <label th:for="'personas-' + ${item.clave}"
+                                        class="text-xs font-semibold text-slate-600">Personas</label>
+                                    <input th:id="'personas-' + ${item.clave}" type="number" name="personas" min="1" max="20"
+                                        th:value="${item.personas}"
+                                        class="w-20 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15" />
+                                    <!-- Utilizamos formaction para que estos botones redirijan al actualizar o eliminar sin activar el submit principal de confirmar reserva -->
+                                    <button type="submit" formmethod="post" th:formaction="@{/carrito/actualizar(clave=${item.clave})}"
+                                        class="text-xs font-bold text-[#073B78] hover:underline cursor-pointer">Actualizar</button>
+                                </div>
+
+                                <button type="submit" formmethod="post" th:formaction="@{/carrito/quitar/{clave}(clave=${item.clave})}"
+                                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-red-600 cursor-pointer">
+                                    <i class="fa-regular fa-trash-can"></i> Quitar
+                                </button>
+                            </div>
+                        </article>
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                            <a th:href="@{/paquetes}" href="/paquetes"
+                                class="text-sm font-semibold text-[#073B78] hover:underline">
+                                <i class="fa-solid fa-arrow-left text-xs mr-1"></i> Seguir explorando paquetes
+                            </a>
+                            
+                            <button type="submit" formmethod="post" th:formaction="@{/carrito/vaciar}" onclick="return confirm('¿Vaciar todo el carrito?')"
+                                class="text-sm font-semibold text-slate-500 hover:text-red-600 cursor-pointer">
+                                Vaciar carrito
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Resumen y confirmación -->
+                    <aside class="lg:col-span-4 lg:sticky lg:top-28">
+                        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xl shadow-blue-950/5">
+
+                            <h2 class="text-lg font-extrabold text-slate-900 mb-4">Resumen</h2>
+
+                            <div class="flex items-center justify-between text-sm text-slate-500 mb-1">
+                                <span>Paquetes</span>
+                                <span th:text="${carrito.cantidadItems}">1</span>
+                            </div>
+                            <div class="flex items-baseline justify-between pt-3 mt-3 border-t border-slate-100">
+                                <span class="text-sm font-semibold text-slate-600">Total</span>
+                                <span class="text-2xl font-extrabold text-[#073B78]"
+                                    th:text="'$' + ${#numbers.formatDecimal(carrito.total, 0, 'POINT', 0, 'COMMA')}">$0</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 text-right mb-5">COP</p>
+
+                            <!-- El botón submit ahora envía todo el formulario principal a /carrito/confirmar -->
+                            <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 bg-[#073B78] hover:bg-[#041E42] text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-900/25 transition-colors cursor-pointer">
+                                Confirmar reserva
+                            </button>
+
+                            <p class="text-[11px] text-slate-400 mt-3 leading-relaxed text-center">
+                                La reserva queda pendiente hasta que la agencia la confirme.
+                            </p>
+                        </div>
+                    </aside>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer th:replace="~{components/footer/footer :: footer}"></footer>
+
+    <script type="module" th:src="@{/js/app.js}" src="/js/app.js"></script>
 </body>
+
 </html>

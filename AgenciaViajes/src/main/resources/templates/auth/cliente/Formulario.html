@@ -5,102 +5,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo}">Mi Perfil y Reservas - Agencia de Viajes</title>
-    <!-- Estilos de Tailwind CSS compilados -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link th:href="@{/css/output.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script type="module" th:src="@{/js/app.js}"></script>
 </head>
 
-<body class="bg-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col">
 
     <!-- Inclusión del Navbar desde fragmentos -->
     <header th:replace="~{components/navbar/navbar :: navbar}"></header>
 
-    <div th:replace="~{fragments/alerta :: alertaMensaje}"></div>
-
     <!-- Contenido Principal Centrado -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-
-        <!-- Mensaje de Notificación -->
-        <!-- Inclusión del fragmento de alerta -->
-
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-28 space-y-8">
 
         <!-- Tarjeta Encabezado del Perfil -->
         <div
-            class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-                <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Gestión de Cuenta</span>
-                <h1 class="text-3xl font-extrabold text-slate-800 mt-1" th:text="${cliente.nombreCompleto}"></h1>
-                <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
-                    <span>Documento de Identidad:</span>
-                    <span class="font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md"
-                        th:text="${cliente.tipoDocumento + ' - ' + cliente.documento}"></span>
-                </p>
+            class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner shrink-0">
+                    <i class="fa-solid fa-user text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-[#073B78] uppercase tracking-widest">Gestión de cuenta</span>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5" th:text="${cliente.nombreCompleto}"></h1>
+                    <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-slate-400"></i>
+                        <span class="font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full text-xs"
+                            th:text="${cliente.tipoDocumento + ' · ' + cliente.documento}"></span>
+                    </p>
+                </div>
             </div>
-            <div>
-                <span
-                    class="px-4 py-1.5 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full uppercase tracking-wide shadow-sm"
-                    th:text="${cliente.estado}">ACTIVO</span>
-            </div>
+            <span
+                class="px-4 py-1.5 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full uppercase tracking-wider shadow-sm"
+                th:text="${cliente.estado}">ACTIVO</span>
         </div>
 
-        <!-- LAYOUT EN GRID: 1 Columna a la izquierda (Perfil) + 2 Columnas a la derecha (Tablas) -->
+        <!-- LAYOUT EN GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
             <!-- COLUMNA IZQUIERDA: Formulario de Datos Personales -->
-            <div class="lg:col-span-1 bg-white rounded-3xl shadow-sm border border-slate-200 p-6 self-start">
+            <div class="lg:col-span-1 bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6 self-start">
 
-                <!-- Encabezado de Sección con Botón Ovalado Más Grande y Hover -->
                 <div class="flex items-center justify-between mb-6 border-b pb-4 border-slate-100">
-                    <h2 class="text-xl font-bold text-slate-800">Datos Personales</h2>
+                    <h2 class="text-lg font-extrabold text-slate-900">Datos personales</h2>
 
                     <button type="button" id="btnHabilitarEditar"
-                        class="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-black border border-blue-200 px-5 py-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer">
-                        ✏️ <span>Editar Datos</span>
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-[#073B78] bg-blue-50 hover:bg-[#073B78] hover:text-white border border-blue-100 px-4 py-2 rounded-full transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-pen"></i> Editar
                     </button>
                 </div>
 
-                <!-- Formulario con margen interno, fondo blanco y letras negras -->
-                <form th:action="@{/clientes/actualizar}" th:object="${registroClienteDTO}" method="POST"
-                    class="space-y-5 p-4 bg-white rounded-2xl border border-slate-100">
+                <form th:action="@{/clientes/actualizar/{id}(id=${cliente.idCliente})}" th:object="${registroClienteDTO}" method="POST"
+                    class="space-y-4">
 
                     <div>
                         <label for="nombreCompleto"
-                            class="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Nombre Completo</label>
+                            class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Nombre completo</label>
                         <input type="text" id="nombreCompleto" th:field="*{nombreCompleto}" required readonly
-                            class="input-perfil w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 cursor-not-allowed outline-none transition-all shadow-sm">
+                            class="input-perfil w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 cursor-not-allowed outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
                     </div>
 
                     <div>
                         <label for="telefono"
-                            class="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Teléfono</label>
+                            class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Teléfono</label>
                         <input type="text" id="telefono" th:field="*{telefono}" required readonly
-                            class="input-perfil w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 cursor-not-allowed outline-none transition-all shadow-sm">
+                            class="input-perfil w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 cursor-not-allowed outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
                     </div>
 
                     <div>
                         <label for="direccion"
-                            class="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Dirección de
-                            Residencia</label>
+                            class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Dirección de residencia</label>
                         <input type="text" id="direccion" th:field="*{direccion}" readonly
-                            class="input-perfil w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 cursor-not-allowed outline-none transition-all shadow-sm">
+                            class="input-perfil w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 cursor-not-allowed outline-none transition-all focus:border-[#073B78] focus:ring-2 focus:ring-[#073B78]/15 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Correo
-                            Electrónico</label>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Correo electrónico</label>
                         <input type="email" th:field="*{correo}" readonly
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed font-medium">
+                            class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed font-semibold">
                     </div>
 
-                    <!-- Botones de Acción Centrados y Ovalados -->
-                    <div id="contenedorBotones" class="hidden pt-4 flex justify-center items-center gap-3 w-full">
+                    <!-- Botones de Acción -->
+                    <div id="contenedorBotones" class="hidden pt-3 flex justify-center items-center gap-3 w-full">
                         <button type="button" id="btnCancelar"
-                            class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-full text-xs transition-all border border-slate-200 shadow-sm cursor-pointer">
+                            class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-full text-xs transition-all border border-slate-200 shadow-sm cursor-pointer">
                             Cancelar
                         </button>
                         <button type="submit"
-                            class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all cursor-pointer">
-                            Guardar Cambios
+                            class="px-5 py-2.5 bg-[#073B78] hover:bg-[#041E42] text-white font-bold rounded-full shadow-md hover:shadow-lg text-xs transition-all cursor-pointer">
+                            Guardar cambios
                         </button>
                     </div>
                 </form>
@@ -110,50 +110,53 @@
             <div class="lg:col-span-2 space-y-8">
 
                 <!-- Tabla 1: Reservas Activas -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex items-center justify-between mb-4 border-b pb-3 border-slate-100">
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6">
+                    <div class="flex items-center justify-between mb-4 border-b pb-4 border-slate-100">
                         <div>
-                            <h2 class="text-xl font-bold text-slate-800">Reservas Activas</h2>
-                            <p class="text-xs text-slate-500">Reservas asociadas a tu documento de identidad</p>
+                            <h2 class="text-lg font-extrabold text-slate-900">Reservas activas</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Reservas asociadas a tu documento de identidad</p>
                         </div>
                         <span
-                            class="text-xs font-semibold bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100">Próximos
-                            Viajes</span>
+                            class="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-[#073B78] px-3 py-1.5 rounded-full border border-blue-100 shrink-0">
+                            <i class="fa-solid fa-plane-departure mr-1"></i> Próximos viajes
+                        </span>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 text-slate-500 uppercase text-xs border-b border-slate-200">
-                                    <th class="p-3">ID Reserva</th>
-                                    <th class="p-3">Fecha Reserva</th>
-                                    <th class="p-3">Fecha Viaje</th>
-                                    <th class="p-3">Total ($)</th>
-                                    <th class="p-3 text-center">Estado</th>
+                                <tr class="border-b border-slate-200 text-slate-500">
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider">Reserva</th>
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider">Reservada el</th>
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider">Fecha viaje</th>
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider text-right">Total</th>
+                                    <th class="py-3 font-bold text-[10px] uppercase tracking-wider text-center">Estado</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm">
-                                <tr th:each="reserva : ${reservasActivas}" class="hover:bg-slate-50 transition-colors">
-                                    <td class="p-3 font-mono text-xs font-bold text-blue-600"
-                                        th:text="${'#RES-' + reserva.idReserva}">#RES-01</td>
-                                    <td class="p-3 text-slate-600"
+                            <tbody class="divide-y divide-slate-100">
+                                <tr th:each="reserva : ${reservasActivas}" class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="py-3.5 pr-3 font-extrabold text-[#073B78]"
+    th:text="${'#RES-' + reserva.id}">#RES-01</td>
+                                    <td class="py-3.5 pr-3 text-slate-600"
                                         th:text="${#temporals.format(reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">
                                         --/--/----</td>
-                                    <td class="p-3 font-semibold text-slate-800"
+                                    <td class="py-3.5 pr-3 font-semibold text-slate-800"
                                         th:text="${#temporals.format(reserva.fechaViaje, 'dd/MM/yyyy')}">--/--/----</td>
-                                    <td class="p-3 font-bold text-slate-800"
+                                    <td class="py-3.5 pr-3 font-extrabold text-slate-800 text-right whitespace-nowrap"
                                         th:text="${'$' + #numbers.formatDecimal(reserva.total, 1, 'POINT', 2, 'COMMA')}">
                                         $0.00</td>
-                                    <td class="p-3 text-center">
+                                    <td class="py-3.5 text-center">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800"
                                             th:text="${reserva.estadoReserva}">PENDIENTE</span>
                                     </td>
                                 </tr>
                                 <tr th:if="${reservasActivas == null or #lists.isEmpty(reservasActivas)}">
-                                    <td colspan="5" class="p-8 text-center text-slate-400">
-                                        <p class="font-medium text-slate-500">No registras reservas programadas
-                                            actualmente.</p>
+                                    <td colspan="5" class="py-10 text-center">
+                                        <div class="w-11 h-11 mx-auto mb-3 rounded-full bg-slate-50 text-slate-300 flex items-center justify-center">
+                                            <i class="fa-solid fa-suitcase-rolling text-lg"></i>
+                                        </div>
+                                        <p class="font-semibold text-slate-500 text-sm">No registras reservas programadas actualmente.</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -162,46 +165,50 @@
                 </div>
 
                 <!-- Tabla 2: Historial de Viajes -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex items-center justify-between mb-4 border-b pb-3 border-slate-100">
+                <div class="bg-white rounded-3xl shadow-xl shadow-blue-950/5 border border-slate-200/90 p-6">
+                    <div class="flex items-center justify-between mb-4 border-b pb-4 border-slate-100">
                         <div>
-                            <h2 class="text-xl font-bold text-slate-800">Historial de Viajes</h2>
-                            <p class="text-xs text-slate-500">Histórico de viajes finalizados o cancelados</p>
+                            <h2 class="text-lg font-extrabold text-slate-900">Historial de viajes</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Histórico de viajes finalizados o cancelados</p>
                         </div>
                         <span
-                            class="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200">Completados</span>
+                            class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full border border-slate-200 shrink-0">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i> Completados
+                        </span>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 text-slate-500 uppercase text-xs border-b border-slate-200">
-                                    <th class="p-3">ID Reserva</th>
-                                    <th class="p-3">Fecha de Viaje</th>
-                                    <th class="p-3">Monto Final</th>
-                                    <th class="p-3 text-center">Estado</th>
+                                <tr class="border-b border-slate-200 text-slate-500">
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider">Reserva</th>
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider">Fecha de viaje</th>
+                                    <th class="py-3 pr-3 font-bold text-[10px] uppercase tracking-wider text-right">Monto final</th>
+                                    <th class="py-3 font-bold text-[10px] uppercase tracking-wider text-center">Estado</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 text-sm">
-                                <tr th:each="historia : ${historialViajes}" class="hover:bg-slate-50 transition-colors">
-                                    <td class="p-3 font-mono text-xs font-bold text-slate-600"
+                            <tbody class="divide-y divide-slate-100">
+                                <tr th:each="historia : ${historialViajes}" class="hover:bg-slate-50/60 transition-colors">
+                                    <td class="py-3.5 pr-3 font-extrabold text-slate-600"
                                         th:text="${'#RES-' + historia.idReserva}">#RES-00</td>
-                                    <td class="p-3 text-slate-600"
+                                    <td class="py-3.5 pr-3 text-slate-600"
                                         th:text="${#temporals.format(historia.fechaViaje, 'dd/MM/yyyy')}">--/--/----
                                     </td>
-                                    <td class="p-3 font-bold text-slate-800"
+                                    <td class="py-3.5 pr-3 font-extrabold text-slate-800 text-right whitespace-nowrap"
                                         th:text="${'$' + #numbers.formatDecimal(historia.total, 1, 'POINT', 2, 'COMMA')}">
                                         $0.00</td>
-                                    <td class="p-3 text-center">
+                                    <td class="py-3.5 text-center">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"
+                                            class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800"
                                             th:text="${historia.estadoReserva}">FINALIZADO</span>
                                     </td>
                                 </tr>
                                 <tr th:if="${historialViajes == null or #lists.isEmpty(historialViajes)}">
-                                    <td colspan="4" class="p-8 text-center text-slate-400">
-                                        <p class="font-medium text-slate-500">Aún no registras viajes en tu historial.
-                                        </p>
+                                    <td colspan="4" class="py-10 text-center">
+                                        <div class="w-11 h-11 mx-auto mb-3 rounded-full bg-slate-50 text-slate-300 flex items-center justify-center">
+                                            <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                                        </div>
+                                        <p class="font-semibold text-slate-500 text-sm">Aún no registras viajes en tu historial.</p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -214,9 +221,7 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
-        &copy; 2026 Agencia de Viajes. Todos los derechos reservados.
-    </footer>
+    <footer th:replace="~{components/footer/footer :: footer}"></footer>
 
 </body>
 
