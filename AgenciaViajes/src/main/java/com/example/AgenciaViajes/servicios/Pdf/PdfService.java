@@ -5,9 +5,7 @@ import com.example.AgenciaViajes.modelo.Factura;
 import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
 import com.example.AgenciaViajes.modelo.Reserva;
 import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
@@ -15,12 +13,38 @@ import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.springframework.core.io.ClassPathResource;
+
 @Service
 public class PdfService {
 
-    private static final Color AZUL_MARCA = new Color(7, 59, 120); // #073B78
+    private static final Color AZUL_MARCA = new Color(1, 38, 83); // #012653 Institucional
+    private static final Color AZUL_ACENTO = new Color(11, 99, 229); // #0B63E5
+    private static final Color GRIS_BORDE = new Color(226, 232, 240); // #E2E8F0
+    private static final Color GRIS_TEXTO = new Color(100, 116, 139); // #64748B
     private static final DateTimeFormatter FORMATO_FECHA =
             DateTimeFormatter.ofPattern("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
+
+    private void agregarLogo(Document documento) {
+        try {
+            ClassPathResource imgResource = new ClassPathResource("static/assets/Traveling colombia.png");
+            if (imgResource.exists()) {
+                Image logo = Image.getInstance(imgResource.getInputStream().readAllBytes());
+                logo.scaleToFit(170, 50);
+                logo.setAlignment(Element.ALIGN_CENTER);
+                logo.setSpacingAfter(10);
+                documento.add(logo);
+                return;
+            }
+        } catch (Exception ignored) {
+        }
+        // Fallback texto si el recurso no está disponible
+        Font fuenteTitulo = new Font(Font.HELVETICA, 18, Font.BOLD, AZUL_MARCA);
+        Paragraph titulo = new Paragraph("Traveling Colombia", fuenteTitulo);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        titulo.setSpacingAfter(10);
+        documento.add(titulo);
+    }
 
     public byte[] generarItinerario(Reserva reserva) {
         try {
@@ -29,11 +53,8 @@ public class PdfService {
             PdfWriter.getInstance(documento, salida);
             documento.open();
 
-            // ---- Encabezado ----
-            Font fuenteTitulo = new Font(Font.HELVETICA, 20, Font.BOLD, AZUL_MARCA);
-            Paragraph titulo = new Paragraph("Traveling Colombia", fuenteTitulo);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            documento.add(titulo);
+            // ---- Encabezado con Logo ----
+            agregarLogo(documento);
 
             Font fuenteSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.GRAY);
             Paragraph subtitulo = new Paragraph("Itinerario de viaje", fuenteSubtitulo);
@@ -119,11 +140,8 @@ public class PdfService {
             PdfWriter.getInstance(documento, salida);
             documento.open();
 
-            // ---- Encabezado ----
-            Font fuenteTitulo = new Font(Font.HELVETICA, 20, Font.BOLD, AZUL_MARCA);
-            Paragraph titulo = new Paragraph("Traveling Colombia", fuenteTitulo);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            documento.add(titulo);
+            // ---- Encabezado con Logo ----
+            agregarLogo(documento);
 
             Font fuenteSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.GRAY);
             Paragraph subtitulo = new Paragraph("Factura de venta " + factura.getNumero(), fuenteSubtitulo);
@@ -221,9 +239,177 @@ public class PdfService {
         }
     }
 
+    // ------------------------------------------------------------------
+    // Reporte Ejecutivo del Dashboard
+    // ------------------------------------------------------------------
+    public byte[] generarReporteDashboard(com.example.AgenciaViajes.dto.dashboard.DashboardStatsDTO stats,
+                                          java.time.LocalDate desde,
+                                          java.time.LocalDate hasta,
+                                          String categoria) {
+        try {
+            Document documento = new Document(PageSize.A4, 36, 36, 38, 44);
+            ByteArrayOutputStream salida = new ByteArrayOutputStream();
+            PdfWriter writer = PdfWriter.getInstance(documento, salida);
+
+            writer.setPageEvent(new PdfPageEventHelper() {
+                @Override
+                public void onEndPage(PdfWriter writer, Document doc) {
+                    PdfContentByte cb = writer.getDirectContent();
+                    cb.saveState();
+
+                    // Barra superior minimalista azul institucional #012653
+                    cb.setColorFill(AZUL_MARCA);
+                    cb.rectangle(36, doc.getPageSize().getHeight() - 18, doc.getPageSize().getWidth() - 72, 3);
+                    cb.fill();
+
+                    // Línea inferior minimalista
+                    cb.setColorStroke(GRIS_BORDE);
+                    cb.setLineWidth(0.8f);
+                    cb.moveTo(36, 34);
+                    cb.lineTo(doc.getPageSize().getWidth() - 36, 34);
+                    cb.stroke();
+
+                    Font fontFooter = FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, GRIS_TEXTO);
+                    Phrase pLeft = new Phrase("Traveling Colombia • Informe Ejecutivo de Analítica y Gestión", fontFooter);
+                    Phrase pRight = new Phrase("Pág. " + writer.getPageNumber(), fontFooter);
+
+                    ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, pLeft, 36, 22, 0);
+                    ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, pRight, doc.getPageSize().getWidth() - 36, 22, 0);
+
+                    cb.restoreState();
+                }
+            });
+
+            documento.open();
+
+            // ---- Encabezado con Logo ----
+            agregarLogo(documento);
+
+            Font fuenteSubtitulo = new Font(Font.HELVETICA, 13, Font.BOLD, AZUL_MARCA);
+            Paragraph subtitulo = new Paragraph("Informe Ejecutivo de Ventas & Analítica", fuenteSubtitulo);
+            subtitulo.setAlignment(Element.ALIGN_CENTER);
+            subtitulo.setSpacingAfter(8);
+            documento.add(subtitulo);
+
+            // ---- Metadatos de Filtro ----
+            Font fuenteFiltro = new Font(Font.HELVETICA, 9, Font.NORMAL, Color.DARK_GRAY);
+            String periodoTexto = "Periodo: " + (desde != null ? desde.format(FORMATO_FECHA) : "Inicio") + " al " + (hasta != null ? hasta.format(FORMATO_FECHA) : "Hoy");
+            String catTexto = "Categoría: " + (categoria != null && !categoria.isBlank() ? categoria : "Todas");
+            String genTexto = "Generado: " + java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+            Paragraph infoFiltros = new Paragraph(periodoTexto + "  |  " + catTexto + "  |  " + genTexto, fuenteFiltro);
+            infoFiltros.setAlignment(Element.ALIGN_CENTER);
+            infoFiltros.setSpacingAfter(18);
+            documento.add(infoFiltros);
+
+            // ---- KPIs Resumen ----
+            PdfPTable tablaKpis = new PdfPTable(4);
+            tablaKpis.setWidthPercentage(100);
+            tablaKpis.setSpacingAfter(20);
+
+            Font fuenteKpiTitulo = new Font(Font.HELVETICA, 8, Font.BOLD, Color.WHITE);
+            Font fuenteKpiValor = new Font(Font.HELVETICA, 11, Font.BOLD, AZUL_MARCA);
+
+            String[] kpiHeaders = {"INGRESOS TOTALES", "TOTAL RESERVAS", "CONFIRMADAS", "CLIENTES ACTIVOS"};
+            for (String h : kpiHeaders) {
+                PdfPCell c = new PdfPCell(new Phrase(h, fuenteKpiTitulo));
+                c.setBackgroundColor(AZUL_MARCA);
+                c.setPadding(6);
+                c.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaKpis.addCell(c);
+            }
+
+            agregarCelda(tablaKpis, formatearMoneda(stats.getTotalIngresos()), fuenteKpiValor, Element.ALIGN_CENTER);
+            agregarCelda(tablaKpis, String.valueOf(stats.getTotalReservas()), fuenteKpiValor, Element.ALIGN_CENTER);
+            agregarCelda(tablaKpis, String.valueOf(stats.getTotalConfirmadas()), fuenteKpiValor, Element.ALIGN_CENTER);
+            agregarCelda(tablaKpis, String.valueOf(stats.getTotalClientes()), fuenteKpiValor, Element.ALIGN_CENTER);
+            documento.add(tablaKpis);
+
+            // ---- Sección 1: Ventas por Destino ----
+            Font fuenteSeccion = new Font(Font.HELVETICA, 11, Font.BOLD, AZUL_MARCA);
+            Paragraph sec1 = new Paragraph("1. Ventas por Destino", fuenteSeccion);
+            sec1.setSpacingBefore(10);
+            sec1.setSpacingAfter(8);
+            documento.add(sec1);
+
+            PdfPTable tablaDestinos = new PdfPTable(5);
+            tablaDestinos.setWidthPercentage(100);
+            tablaDestinos.setWidths(new float[]{3.5f, 2f, 2f, 1.5f, 2.5f});
+            tablaDestinos.setSpacingAfter(15);
+
+            Font fuenteHeader = new Font(Font.HELVETICA, 9, Font.BOLD, Color.WHITE);
+            String[] hDest = {"Destino", "Categoría", "Ciudad", "Reservas", "Total Ventas"};
+            for (String h : hDest) {
+                PdfPCell c = new PdfPCell(new Phrase(h, fuenteHeader));
+                c.setBackgroundColor(AZUL_MARCA);
+                c.setPadding(6);
+                c.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaDestinos.addCell(c);
+            }
+
+            Font fuenteFila = new Font(Font.HELVETICA, 8, Font.NORMAL, Color.BLACK);
+            for (com.example.AgenciaViajes.dto.dashboard.DashboardStatsDTO.VentaDestinoDTO d : stats.getVentasPorDestino()) {
+                agregarCelda(tablaDestinos, d.getNombreDestino(), fuenteFila, Element.ALIGN_LEFT);
+                agregarCelda(tablaDestinos, d.getCategoria(), fuenteFila, Element.ALIGN_CENTER);
+                agregarCelda(tablaDestinos, d.getCiudad(), fuenteFila, Element.ALIGN_CENTER);
+                agregarCelda(tablaDestinos, String.valueOf(d.getTotalReservas()), fuenteFila, Element.ALIGN_CENTER);
+                agregarCelda(tablaDestinos, formatearMoneda(d.getTotalVentas()), fuenteFila, Element.ALIGN_RIGHT);
+            }
+            if (stats.getVentasPorDestino().isEmpty()) {
+                PdfPCell c = new PdfPCell(new Phrase("No hay ventas de destinos en este período.", fuenteFila));
+                c.setColspan(5);
+                c.setPadding(8);
+                c.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaDestinos.addCell(c);
+            }
+            documento.add(tablaDestinos);
+
+            // ---- Sección 2: Clientes Frecuentes ----
+            Paragraph sec2 = new Paragraph("2. Principales Clientes (Fidelidad)", fuenteSeccion);
+            sec2.setSpacingBefore(10);
+            sec2.setSpacingAfter(8);
+            documento.add(sec2);
+
+            PdfPTable tablaClientes = new PdfPTable(4);
+            tablaClientes.setWidthPercentage(100);
+            tablaClientes.setWidths(new float[]{3.5f, 2f, 2f, 2.5f});
+            tablaClientes.setSpacingAfter(15);
+
+            String[] hCli = {"Cliente", "Documento", "Confirmadas / Totales", "Total Invertido"};
+            for (String h : hCli) {
+                PdfPCell c = new PdfPCell(new Phrase(h, fuenteHeader));
+                c.setBackgroundColor(AZUL_MARCA);
+                c.setPadding(6);
+                c.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaClientes.addCell(c);
+            }
+
+            for (com.example.AgenciaViajes.dto.dashboard.DashboardStatsDTO.VentaClienteDTO c : stats.getClientesFrecuentes()) {
+                agregarCelda(tablaClientes, c.getNombreCliente(), fuenteFila, Element.ALIGN_LEFT);
+                agregarCelda(tablaClientes, c.getDocumento() != null ? c.getDocumento() : "-", fuenteFila, Element.ALIGN_CENTER);
+                agregarCelda(tablaClientes, c.getReservasConfirmadas() + " / " + c.getReservasTotales(), fuenteFila, Element.ALIGN_CENTER);
+                agregarCelda(tablaClientes, formatearMoneda(c.getTotalGastado()), fuenteFila, Element.ALIGN_RIGHT);
+            }
+            if (stats.getClientesFrecuentes().isEmpty()) {
+                PdfPCell c = new PdfPCell(new Phrase("No hay registros de clientes en este período.", fuenteFila));
+                c.setColspan(4);
+                c.setPadding(8);
+                c.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaClientes.addCell(c);
+            }
+            documento.add(tablaClientes);
+
+            documento.close();
+            return salida.toByteArray();
+
+        } catch (DocumentException e) {
+            throw new RuntimeException("Error generando el PDF del informe: " + e.getMessage(), e);
+        }
+    }
+
     private void agregarCelda(PdfPTable tabla, String texto, Font fuente, int alineacion) {
         PdfPCell celda = new PdfPCell(new Phrase(texto, fuente));
-        celda.setPadding(8);
+        celda.setPadding(6);
         celda.setHorizontalAlignment(alineacion);
         tabla.addCell(celda);
     }

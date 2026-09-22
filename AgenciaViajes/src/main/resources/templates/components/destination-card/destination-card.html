@@ -12,10 +12,12 @@
         class="destination-card relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer border border-slate-100 flex flex-col justify-end p-6 sm:p-8">
 
         <!-- Background Image -->
-        <img th:src="${image != null and !#strings.isEmpty(image) ? image : 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1200&auto=format&fit=crop'}"
-            src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=1200&auto=format&fit=crop"
+        <img th:if="${image != null and !#strings.isEmpty(image)}"
+            th:src="${image}"
             th:alt="${name}" loading="lazy"
             class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105" />
+        <div th:if="${image == null or #strings.isEmpty(image)}"
+            class="absolute inset-0 w-full h-full bg-[#012653]"></div>
 
         <!-- Gradient Overlay -->
         <div class="destination-card-overlay absolute inset-0"></div>

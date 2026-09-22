@@ -46,6 +46,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.AgenciaViajes.servicios.DashboardService;
+import com.example.AgenciaViajes.dto.dashboard.DashboardStatsDTO;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -63,6 +68,7 @@ public class AdminController {
     private final UsuarioAdminService usuarioAdminService;
     private final FacturaService facturaService;
     private final PdfService pdfService;
+    private final DashboardService dashboardService;
 
     public AdminController(ClienteService clienteService,
                            PaqueteService paqueteService,
@@ -76,7 +82,8 @@ public class AdminController {
                            ClienteAdminService clienteAdminService,
                            UsuarioAdminService usuarioAdminService,
                            FacturaService facturaService,
-                           PdfService pdfService) {
+                           PdfService pdfService,
+                           DashboardService dashboardService) {
         this.clienteService = clienteService;
         this.paqueteService = paqueteService;
         this.destinoService = destinoService;
@@ -90,6 +97,7 @@ public class AdminController {
         this.usuarioAdminService = usuarioAdminService;
         this.facturaService = facturaService;
         this.pdfService = pdfService;
+        this.dashboardService = dashboardService;
     }
 
     private void agregarDatosAdmin(Model model) {
@@ -105,9 +113,21 @@ public class AdminController {
     }
 
     @GetMapping({"", "/", "/dashboard"})
-    public String index(Model model) {
+    public String index(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) Long idCategoria,
+            Model model) {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "dashboard");
+
+        DashboardStatsDTO stats = dashboardService.obtenerEstadisticas(fechaInicio, fechaFin, idCategoria);
+        model.addAttribute("stats", stats);
+        model.addAttribute("categorias", categoriaDestinoService.listarTodas());
+        model.addAttribute("fechaInicioFiltro", fechaInicio);
+        model.addAttribute("fechaFinFiltro", fechaFin);
+        model.addAttribute("idCategoriaFiltro", idCategoria);
+
         return "admin/index";
     }
 
