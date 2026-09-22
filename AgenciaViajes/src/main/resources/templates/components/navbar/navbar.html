@@ -45,36 +45,31 @@
                     <div class="h-6 w-px bg-slate-300"></div>
 
                     <!-- Usuario Logueado (Spring Security) -->
-                    <div sec:authorize="isAuthenticated()" class="relative group">
-                        <div class="flex items-center gap-2 cursor-pointer py-2">
-                            <!-- Avatar Circular -->
-                            <div
-                                class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner">
-                                <i class="fa-solid fa-user text-xs"></i>
-                            </div>
-                            <!-- Saludo y Nombre -->
-                            <div class="flex flex-col leading-tight">
-                                <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Hola,</span>
-                                <span class="text-sm font-bold text-slate-800"
-                                    sec:authentication="principal.nombreCompleto"></span>
-                            </div>
-                            <i
-                                class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1 transition-transform duration-200 group-hover:rotate-180"></i>
-                        </div>
-                        <div sec:authorize="isAuthenticated()" class="flex items-center gap-4">
+                    <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+                        <!-- Botón Panel Admin (Solo ADMIN) -->
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
+                            class="text-xs font-semibold text-slate-700 hover:text-white bg-slate-100 hover:bg-[#073B78] border border-slate-200 px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 group shadow-2xs">
+                            <i class="fa-solid fa-shield-halved text-xs text-slate-500 group-hover:text-white transition-colors"></i>
+                            <span>Admin</span>
+                        </a>
 
-                            <!-- Botón Panel Admin (Solo ADMIN) -->
-                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
-                                class="text-xs font-semibold text-slate-700 hover:text-white bg-slate-100 hover:bg-[#073B78] border border-slate-200 px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 group shadow-2xs">
-                                <i
-                                    class="fa-solid fa-shield-halved text-xs text-slate-500 group-hover:text-white transition-colors"></i>
-                                <span>Admin</span>
-                            </a>
+                        <!-- Menú Perfil y Desplegable -->
+                        <div class="relative group">
+                            <div class="flex items-center gap-2 cursor-pointer py-2">
+                                <!-- Avatar Circular -->
+                                <div class="w-8 h-8 rounded-full bg-[#073B78] text-white flex items-center justify-center shadow-inner">
+                                    <i class="fa-solid fa-user text-xs"></i>
+                                </div>
+                                <!-- Saludo y Nombre -->
+                                <div class="flex flex-col leading-tight">
+                                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Hola,</span>
+                                    <span class="text-sm font-bold text-slate-800" sec:authentication="principal.nombreCompleto"></span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1 transition-transform duration-200 group-hover:rotate-180"></i>
+                            </div>
 
                             <!-- Menú desplegable -->
-                            <div
-                                class="absolute right-0 top-full w-56 bg-white rounded-2xl border border-slate-200/90 shadow-xl shadow-blue-950/10 py-2 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-
+                            <div class="absolute right-0 top-full w-56 bg-white rounded-2xl border border-slate-200/90 shadow-xl shadow-blue-950/10 py-2 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
                                 <a th:href="@{/clientes/mi-perfil}"
                                     class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#073B78] transition-colors">
                                     <i class="fa-solid fa-user-pen w-4 text-slate-400"></i>
@@ -85,7 +80,6 @@
                                     <i class="fa-solid fa-suitcase-rolling w-4 text-slate-400"></i>
                                     Reservas
                                 </a>
-
 
                                 <div class="my-1 border-t border-slate-100"></div>
 
@@ -98,14 +92,18 @@
                                 </form>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Usuario NO Logueado -->
-                        <div sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
-                            <a th:href="@{/login}"
-                                class="text-sm font-semibold text-slate-700 hover:text-[#073B78] px-3 py-2 rounded-lg hover:bg-slate-50 transition">
-                                Ingresar
-                            </a>
-                        </div>
+                    <!-- Usuario NO Logueado -->
+                    <div sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
+                        <a th:href="@{/login}"
+                            class="text-sm font-semibold text-slate-700 hover:text-[#073B78] px-3.5 py-2 rounded-xl hover:bg-slate-100 transition">
+                            Ingresar
+                        </a>
+                        <a th:href="@{/clientes}"
+                            class="text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl shadow-2xs transition">
+                            Registrarse
+                        </a>
                     </div>
 
                     <!-- Botones Móvil (Menú hamburguesa + Carrito) -->
