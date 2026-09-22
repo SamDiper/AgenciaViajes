@@ -1,9 +1,14 @@
 package com.example.AgenciaViajes.controllers.admin;
 
 import com.example.AgenciaViajes.dto.EntidadConfigDTO;
+import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Cliente;
-import com.example.AgenciaViajes.modelo.Reserva;
+import com.example.AgenciaViajes.modelo.Destino;
+import com.example.AgenciaViajes.modelo.Enum.EstadoGeneral;
 import com.example.AgenciaViajes.modelo.Enum.EstadoReserva;
+import com.example.AgenciaViajes.modelo.Hotel;
+import com.example.AgenciaViajes.modelo.Paquete;
+import com.example.AgenciaViajes.modelo.Reserva;
 import com.example.AgenciaViajes.repositorio.AerolineaRepository;
 import com.example.AgenciaViajes.repositorio.CategoriaDestinoRepository;
 import com.example.AgenciaViajes.repositorio.ClienteRepository;
@@ -18,12 +23,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -163,6 +173,9 @@ public class AdminController {
         return "admin/usuarios";
     }
 
+    // ==========================================
+    // CRUD PAQUETES
+    // ==========================================
     @GetMapping("/paquetes")
     public String paquetes(Model model) {
         agregarDatosAdmin(model);
@@ -172,6 +185,169 @@ public class AdminController {
         return "admin/paquetes";
     }
 
+    @GetMapping("/paquetes/nuevo")
+    public String nuevoPaquete(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        Paquete paquete = new Paquete();
+        paquete.setEstado(EstadoGeneral.ACTIVO);
+        model.addAttribute("paquete", paquete);
+        model.addAttribute("destinos", destinoRepository.findAll());
+        model.addAttribute("hoteles", hotelRepository.findAll());
+        model.addAttribute("aerolineas", aerolineaRepository.findAll());
+        return "admin/paquetes-form";
+    }
+
+    @GetMapping("/paquetes/editar/{id}")
+    public String editarPaquete(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        Paquete paquete = paqueteRepository.findById(id).orElse(new Paquete());
+        model.addAttribute("paquete", paquete);
+        model.addAttribute("destinos", destinoRepository.findAll());
+        model.addAttribute("hoteles", hotelRepository.findAll());
+        model.addAttribute("aerolineas", aerolineaRepository.findAll());
+        return "admin/paquetes-form";
+    }
+
+    @PostMapping("/paquetes/guardar")
+    public String guardarPaquete(@ModelAttribute Paquete paquete,
+                                 @RequestParam(value = "incluye", required = false) List<String> incluye,
+                                 @RequestParam(value = "itinerario", required = false) List<String> itinerario) {
+        if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
+            destinoRepository.findById(paquete.getDestino().getIdDestino()).ifPresent(paquete::setDestino);
+        }
+        if (paquete.getAerolinea() != null && paquete.getAerolinea().getIdAerolinea() != null) {
+            aerolineaRepository.findById(paquete.getAerolinea().getIdAerolinea()).ifPresent(paquete::setAerolinea);
+        } else {
+            paquete.setAerolinea(null);
+        }
+        if (paquete.getHotel() != null && paquete.getHotel().getIdHotel() != null) {
+            hotelRepository.findById(paquete.getHotel().getIdHotel()).ifPresent(paquete::setHotel);
+        } else {
+            paquete.setHotel(null);
+        }
+
+        if (incluye != null) {
+            paquete.setIncluye(incluye.stream().filter(s -> s != null && !s.isBlank()).collect(Collectors.toList()));
+        } else {
+            paquete.setIncluye(new ArrayList<>());
+        }
+
+        if (itinerario != null) {
+            paquete.setItinerario(itinerario.stream().filter(s -> s != null && !s.isBlank()).collect(Collectors.toList()));
+        } else {
+            paquete.setItinerario(new ArrayList<>());
+        }
+
+        if (paquete.getIdPaquete() != null) {
+            paqueteRepository.findById(paquete.getIdPaquete()).ifPresent(existente -> {
+                paquete.setFechaRegistro(existente.getFechaRegistro());
+            });
+        }
+
+        paqueteRepository.save(paquete);
+        return "redirect:/admin/paquetes";
+    }
+
+    @GetMapping("/paquetes/eliminar/{id}")
+    public String eliminarPaquete(@PathVariable Long id) {
+        paqueteRepository.deleteById(id);
+        return "redirect:/admin/paquetes";
+    }
+
+    // ==========================================
+    // CRUD HOTELES
+    // ==========================================
+    @GetMapping("/hoteles")
+    public String hoteles(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("hoteles", hotelRepository.findAll());
+        model.addAttribute("totalHoteles", hotelRepository.count());
+        return "admin/hoteles";
+    }
+
+    @GetMapping("/hoteles/nuevo")
+    public String nuevoHotel(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        Hotel hotel = new Hotel();
+        hotel.setEstado(EstadoGeneral.ACTIVO);
+        model.addAttribute("hotel", hotel);
+        model.addAttribute("destinos", destinoRepository.findAll());
+        return "admin/hoteles-form";
+    }
+
+    @GetMapping("/hoteles/editar/{id}")
+    public String editarHotel(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        Hotel hotel = hotelRepository.findById(id).orElse(new Hotel());
+        model.addAttribute("hotel", hotel);
+        model.addAttribute("destinos", destinoRepository.findAll());
+        return "admin/hoteles-form";
+    }
+
+    @PostMapping("/hoteles/guardar")
+    public String guardarHotel(@ModelAttribute Hotel hotel) {
+        if (hotel.getDestino() != null && hotel.getDestino().getIdDestino() != null) {
+            destinoRepository.findById(hotel.getDestino().getIdDestino()).ifPresent(hotel::setDestino);
+        }
+        hotelRepository.save(hotel);
+        return "redirect:/admin/hoteles";
+    }
+
+    @GetMapping("/hoteles/eliminar/{id}")
+    public String eliminarHotel(@PathVariable Long id) {
+        hotelRepository.deleteById(id);
+        return "redirect:/admin/hoteles";
+    }
+
+    // ==========================================
+    // CRUD AEROLÍNEAS
+    // ==========================================
+    @GetMapping("/aerolineas")
+    public String aerolineas(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("aerolineas", aerolineaRepository.findAll());
+        model.addAttribute("totalAerolineas", aerolineaRepository.count());
+        return "admin/aerolineas";
+    }
+
+    @GetMapping({"/aerolineas/nuevo", "/aerolineas/nueva"})
+    public String nuevaAerolinea(Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        model.addAttribute("aerolinea", new Aerolinea());
+        return "admin/aerolineas-form";
+    }
+
+    @GetMapping("/aerolineas/editar/{id}")
+    public String editarAerolinea(@PathVariable Long id, Model model) {
+        agregarDatosAdmin(model);
+        model.addAttribute("activeSection", "configuracion");
+        Aerolinea aero = aerolineaRepository.findById(id).orElse(new Aerolinea());
+        model.addAttribute("aerolinea", aero);
+        return "admin/aerolineas-form";
+    }
+
+    @PostMapping("/aerolineas/guardar")
+    public String guardarAerolinea(@ModelAttribute Aerolinea aerolinea) {
+        aerolineaRepository.save(aerolinea);
+        return "redirect:/admin/aerolineas";
+    }
+
+    @GetMapping("/aerolineas/eliminar/{id}")
+    public String eliminarAerolinea(@PathVariable Long id) {
+        aerolineaRepository.deleteById(id);
+        return "redirect:/admin/aerolineas";
+    }
+
+    // ==========================================
+    // OTRAS VISTAS (DESTINOS, CATEGORÍAS, CLIENTES, ROLES, RESERVAS)
+    // ==========================================
     @GetMapping("/destinos")
     public String destinos(Model model) {
         agregarDatosAdmin(model);
@@ -188,24 +364,6 @@ public class AdminController {
         model.addAttribute("categorias", categoriaDestinoRepository.findAll());
         model.addAttribute("totalCategorias", categoriaDestinoRepository.count());
         return "admin/categorias";
-    }
-
-    @GetMapping("/hoteles")
-    public String hoteles(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("hoteles", hotelRepository.findAll());
-        model.addAttribute("totalHoteles", hotelRepository.count());
-        return "admin/hoteles";
-    }
-
-    @GetMapping("/aerolineas")
-    public String aerolineas(Model model) {
-        agregarDatosAdmin(model);
-        model.addAttribute("activeSection", "configuracion");
-        model.addAttribute("aerolineas", aerolineaRepository.findAll());
-        model.addAttribute("totalAerolineas", aerolineaRepository.count());
-        return "admin/aerolineas";
     }
 
     @GetMapping("/clientes")
@@ -231,7 +389,6 @@ public class AdminController {
         agregarDatosAdmin(model);
         model.addAttribute("activeSection", "reservas");
 
-        // Mapear todas las reservas independientemente del estado
         List<Reserva> reservas = reservaRepository.findAllByOrderByFechaReservaDesc();
         model.addAttribute("reservas", reservas);
         model.addAttribute("totalReservas", reservas.size());
