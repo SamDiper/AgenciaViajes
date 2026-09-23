@@ -36,7 +36,6 @@ public class ReservaController {
         return "redirect:/admin/reservas";
     }
  
-    // ---------------- Cliente: sus reservas ----------------
  
     @GetMapping("/mis-reservas")
     public String misReservas(Authentication auth, Model model) {
@@ -44,7 +43,6 @@ public class ReservaController {
         return "auth/reservas/reserva";
     }
  
-    // ---------------- Detalle (staff o dueño) ----------------
  
     @GetMapping("/{id}")
     public String detalle(@PathVariable Integer id, Authentication auth, Model model) {
@@ -84,7 +82,6 @@ public class ReservaController {
         }
         return "redirect:/reservas/" + idReserva;
     }
-    // ---------------- Acciones ----------------
  
     @PostMapping("/{id}/pagar")
     public String pagar(@PathVariable Integer id, Authentication auth, RedirectAttributes flash) {
@@ -137,7 +134,6 @@ public class ReservaController {
         return "redirect:/reservas/" + id;
     }
  
-    // ---------------- Helpers ----------------
  
     private boolean esStaff(Authentication auth) {
         return auth.getAuthorities().stream()

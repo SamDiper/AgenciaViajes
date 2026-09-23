@@ -30,7 +30,6 @@ public class UsuarioAdminService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + id));
     }
 
-    // Crea un usuario con el rol ADMIN
     public Usuario crear(String nombreUsuario, String correo, String contrasena) {
         Rol rolAdmin = rolRepository.findByNombreRol("ADMIN")
                 .orElseThrow(() -> new RuntimeException("No existe el rol ADMIN. Créalo primero en la tabla roles."));
@@ -46,7 +45,6 @@ public class UsuarioAdminService {
         return usuarioRepository.save(usuario);
     }
 
-    // La contraseña solo cambia si se escribe una nueva
     public Usuario actualizar(Integer id, String nombreUsuario, String correo,
                               String contrasena, EstadoGeneral estado) {
         Usuario usuario = buscarPorId(id);

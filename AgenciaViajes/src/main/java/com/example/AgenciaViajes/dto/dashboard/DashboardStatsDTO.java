@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DashboardStatsDTO {
 
-    // KPIs Generales
     @Builder.Default
     private BigDecimal totalIngresos = BigDecimal.ZERO;
 
@@ -36,7 +35,6 @@ public class DashboardStatsDTO {
     @Builder.Default
     private long totalClientes = 0;
 
-    // Listas para Informes y Gráficos
     @Builder.Default
     private List<VentaDestinoDTO> ventasPorDestino = new ArrayList<>();
 
@@ -55,7 +53,6 @@ public class DashboardStatsDTO {
     @Builder.Default
     private List<TransaccionResumenDTO> ultimasTransacciones = new ArrayList<>();
 
-    // Sub-DTO: Ventas por Destino
     @Data
     @Builder
     @NoArgsConstructor
@@ -71,7 +68,6 @@ public class DashboardStatsDTO {
         private String imagenUrl;
     }
 
-    // Sub-DTO: Ventas por Cliente / Clientes Frecuentes
     @Data
     @Builder
     @NoArgsConstructor
@@ -88,7 +84,6 @@ public class DashboardStatsDTO {
         private LocalDateTime ultimaFechaReserva;
     }
 
-    // Sub-DTO: Ventas por Paquete Turístico
     @Data
     @Builder
     @NoArgsConstructor
@@ -104,19 +99,17 @@ public class DashboardStatsDTO {
         private BigDecimal totalIngresos;
     }
 
-    // Sub-DTO: Ingresos por Temporada / Periodo
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class VentaTemporadaDTO {
-        private String etiqueta; // Ej: "Enero 2026", "Temporada Alta (Jun-Jul)", etc.
-        private String periodoClave; // Ej: "2026-01"
+        private String etiqueta;
+        private String periodoClave; 
         private BigDecimal ingresos;
         private long cantidadReservas;
     }
 
-    // Sub-DTO: Distribución por Categoría de Destino
     @Data
     @Builder
     @NoArgsConstructor
@@ -129,7 +122,6 @@ public class DashboardStatsDTO {
         private double porcentaje;
     }
 
-    // Sub-DTO: Transacción Resumen
     @Data
     @Builder
     @NoArgsConstructor

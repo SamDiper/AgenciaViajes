@@ -22,16 +22,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
    @Override
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
-        // Busca al cliente por su correo
         Cliente cliente = clienteRepository.findByCorreo(correo)
                 .orElseThrow(() -> new UsernameNotFoundException("No se encontró usuario asociado al correo: " + correo));
 
-        // Retornamos NUESTRO CustomUserDetails, pasándole el nombreCompleto al final
         return new CustomUserDetails(
                 cliente.getUsuario().getCorreo(),
                 cliente.getUsuario().getContrasenaHash(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + cliente.getUsuario().getRol().getNombreRol())),
-                cliente.getNombreCompleto() // <--- ¡Aquí inyectamos el nombre!
+                cliente.getNombreCompleto() 
         );
     }
 }

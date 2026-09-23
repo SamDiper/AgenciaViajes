@@ -264,9 +264,7 @@ public class AdminController {
         return "redirect:/admin/usuarios";
     }
 
-    // ==========================================
-    // CRUD PAQUETES
-    // ==========================================
+
     @GetMapping("/paquetes")
     public String paquetes(Model model) {
         agregarDatosAdmin(model);
@@ -315,9 +313,6 @@ public class AdminController {
         return "redirect:/admin/paquetes";
     }
 
-    // ==========================================
-    // CRUD HOTELES
-    // ==========================================
     @GetMapping("/hoteles")
     public String hoteles(Model model) {
         agregarDatosAdmin(model);
@@ -360,9 +355,6 @@ public class AdminController {
         return "redirect:/admin/hoteles";
     }
 
-    // ==========================================
-    // CRUD AEROLÍNEAS
-    // ==========================================
     @GetMapping("/aerolineas")
     public String aerolineas(Model model) {
         agregarDatosAdmin(model);
@@ -404,9 +396,6 @@ public class AdminController {
         return "redirect:/admin/aerolineas";
     }
 
-    // ==========================================
-    // RESERVAS
-    // ==========================================
     @GetMapping("/reservas")
     public String reservas(Model model) {
         agregarDatosAdmin(model);
@@ -438,9 +427,6 @@ public class AdminController {
         return "admin/reservas";
     }
 
-    // ==========================================
-    // FACTURACIÓN
-    // ==========================================
     @GetMapping("/facturas")
     public String facturas(Model model) {
         agregarDatosAdmin(model);
@@ -472,9 +458,6 @@ public class AdminController {
                 .body(pdf);
     }
 
-    // ==========================================
-    // CRUD DESTINOS
-    // ==========================================
     @GetMapping("/destinos")
     public String destinos(Model model) {
         agregarDatosAdmin(model);
@@ -523,8 +506,6 @@ public class AdminController {
             destino.setCategoria(categoria);
             destinoService.guardar(destino);
         } else {
-            // Editar: se copian los datos del formulario sobre el destino que ya existe,
-            // así no se pierden campos como la fecha de registro
             Destino existente = destinoService.buscarPorId(destino.getIdDestino());
             existente.setNombre(destino.getNombre());
             existente.setCiudad(destino.getCiudad());
@@ -546,9 +527,6 @@ public class AdminController {
         return "redirect:/admin/destinos";
     }
 
-    // ==========================================
-    // CRUD CATEGORÍAS
-    // ==========================================
     @GetMapping("/categorias")
     public String categorias(Model model) {
         agregarDatosAdmin(model);
@@ -599,9 +577,6 @@ public class AdminController {
         return "redirect:/admin/categorias";
     }
 
-    // ==========================================
-    // CRUD CLIENTES
-    // ==========================================
     @GetMapping("/clientes")
     public String clientes(Model model) {
         agregarDatosAdmin(model);
@@ -655,9 +630,6 @@ public class AdminController {
         return "redirect:/admin/clientes";
     }
 
-    // ==========================================
-    // CRUD ROLES
-    // ==========================================
     @GetMapping("/roles")
     public String roles(Model model) {
         agregarDatosAdmin(model);

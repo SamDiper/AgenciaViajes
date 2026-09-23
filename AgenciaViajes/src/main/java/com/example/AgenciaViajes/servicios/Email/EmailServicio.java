@@ -54,11 +54,7 @@ public class EmailServicio {
             System.err.println("Fallo al enviar correo de reserva a " + destino + ": " + e.getMessage());
         }
     }
-
-    /**
-     * Igual que enviarCorreoReserva, pero permite varios adjuntos.
-     * adjuntos: nombre del archivo -> contenido (ej: "factura.pdf" -> bytes).
-     */
+    
     @Async
     public void enviarCorreoConAdjuntos(String destino, String asunto, String nombrePlantilla,
                                         Map<String, Object> variables,

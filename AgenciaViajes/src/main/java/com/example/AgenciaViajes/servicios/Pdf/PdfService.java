@@ -38,7 +38,6 @@ public class PdfService {
             }
         } catch (Exception ignored) {
         }
-        // Fallback texto si el recurso no está disponible
         Font fuenteTitulo = new Font(Font.HELVETICA, 18, Font.BOLD, AZUL_MARCA);
         Paragraph titulo = new Paragraph("Traveling Colombia", fuenteTitulo);
         titulo.setAlignment(Element.ALIGN_CENTER);
@@ -53,7 +52,6 @@ public class PdfService {
             PdfWriter.getInstance(documento, salida);
             documento.open();
 
-            // ---- Encabezado con Logo ----
             agregarLogo(documento);
 
             Font fuenteSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.GRAY);
@@ -62,7 +60,6 @@ public class PdfService {
             subtitulo.setSpacingAfter(20);
             documento.add(subtitulo);
 
-            // ---- Datos de la reserva ----
             Font fuenteEtiqueta = new Font(Font.HELVETICA, 10, Font.BOLD, Color.DARK_GRAY);
             Font fuenteValor = new Font(Font.HELVETICA, 11, Font.NORMAL, Color.BLACK);
 
@@ -77,7 +74,6 @@ public class PdfService {
             infoReserva.setSpacingAfter(20);
             documento.add(infoReserva);
 
-            // ---- Tabla de paquetes (uno por cada destino/detalle) ----
             PdfPTable tabla = new PdfPTable(4);
             tabla.setWidthPercentage(100);
             tabla.setWidths(new float[]{3f, 2.5f, 2f, 2f});
@@ -102,7 +98,6 @@ public class PdfService {
             }
             documento.add(tabla);
 
-            // ---- Total ----
             Paragraph total = new Paragraph();
             total.setAlignment(Element.ALIGN_RIGHT);
             total.setSpacingBefore(15);
@@ -112,7 +107,6 @@ public class PdfService {
             total.add(new Chunk(formatearMoneda(reserva.getTotal()), fuenteTotalValor));
             documento.add(total);
 
-            // ---- Pie ----
             Paragraph pie = new Paragraph(
                     "\n\nGracias por reservar con Traveling Colombia. Este documento es tu comprobante de itinerario.",
                     new Font(Font.HELVETICA, 9, Font.ITALIC, Color.GRAY));
@@ -128,9 +122,6 @@ public class PdfService {
         }
     }
 
-    // ------------------------------------------------------------------
-    // Factura
-    // ------------------------------------------------------------------
     public byte[] generarFactura(Factura factura) {
         try {
             Reserva reserva = factura.getReserva();
@@ -140,7 +131,6 @@ public class PdfService {
             PdfWriter.getInstance(documento, salida);
             documento.open();
 
-            // ---- Encabezado con Logo ----
             agregarLogo(documento);
 
             Font fuenteSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL, Color.GRAY);
@@ -149,7 +139,6 @@ public class PdfService {
             subtitulo.setSpacingAfter(20);
             documento.add(subtitulo);
 
-            // ---- Datos de la factura y del cliente ----
             Font fuenteEtiqueta = new Font(Font.HELVETICA, 10, Font.BOLD, Color.DARK_GRAY);
             Font fuenteValor = new Font(Font.HELVETICA, 11, Font.NORMAL, Color.BLACK);
 
@@ -175,7 +164,6 @@ public class PdfService {
             info.setSpacingAfter(20);
             documento.add(info);
 
-            // ---- Tabla de conceptos (solo paquetes no cancelados) ----
             PdfPTable tabla = new PdfPTable(4);
             tabla.setWidthPercentage(100);
             tabla.setWidths(new float[]{4f, 1.5f, 2.2f, 2.2f});
@@ -206,7 +194,6 @@ public class PdfService {
             }
             documento.add(tabla);
 
-            // ---- Totales ----
             Font fuenteTotalEtiqueta = new Font(Font.HELVETICA, 11, Font.BOLD, Color.DARK_GRAY);
             Font fuenteTotalValor = new Font(Font.HELVETICA, 11, Font.NORMAL, Color.BLACK);
             Font fuenteGranTotal = new Font(Font.HELVETICA, 16, Font.BOLD, AZUL_MARCA);
@@ -222,7 +209,6 @@ public class PdfService {
             totales.add(new Chunk(formatearMoneda(factura.getTotal()), fuenteGranTotal));
             documento.add(totales);
 
-            // ---- Pie ----
             Paragraph pie = new Paragraph(
                     "\n\nGracias por viajar con Traveling Colombia.\n"
                             + "Documento generado en un entorno de simulación, sin validez fiscal.",
@@ -239,9 +225,6 @@ public class PdfService {
         }
     }
 
-    // ------------------------------------------------------------------
-    // Reporte Ejecutivo del Dashboard
-    // ------------------------------------------------------------------
     public byte[] generarReporteDashboard(com.example.AgenciaViajes.dto.dashboard.DashboardStatsDTO stats,
                                           java.time.LocalDate desde,
                                           java.time.LocalDate hasta,
@@ -257,12 +240,10 @@ public class PdfService {
                     PdfContentByte cb = writer.getDirectContent();
                     cb.saveState();
 
-                    // Barra superior minimalista azul institucional #012653
                     cb.setColorFill(AZUL_MARCA);
                     cb.rectangle(36, doc.getPageSize().getHeight() - 18, doc.getPageSize().getWidth() - 72, 3);
                     cb.fill();
 
-                    // Línea inferior minimalista
                     cb.setColorStroke(GRIS_BORDE);
                     cb.setLineWidth(0.8f);
                     cb.moveTo(36, 34);
@@ -282,7 +263,6 @@ public class PdfService {
 
             documento.open();
 
-            // ---- Encabezado con Logo ----
             agregarLogo(documento);
 
             Font fuenteSubtitulo = new Font(Font.HELVETICA, 13, Font.BOLD, AZUL_MARCA);
@@ -291,7 +271,6 @@ public class PdfService {
             subtitulo.setSpacingAfter(8);
             documento.add(subtitulo);
 
-            // ---- Metadatos de Filtro ----
             Font fuenteFiltro = new Font(Font.HELVETICA, 9, Font.NORMAL, Color.DARK_GRAY);
             String periodoTexto = "Periodo: " + (desde != null ? desde.format(FORMATO_FECHA) : "Inicio") + " al " + (hasta != null ? hasta.format(FORMATO_FECHA) : "Hoy");
             String catTexto = "Categoría: " + (categoria != null && !categoria.isBlank() ? categoria : "Todas");
@@ -302,7 +281,6 @@ public class PdfService {
             infoFiltros.setSpacingAfter(18);
             documento.add(infoFiltros);
 
-            // ---- KPIs Resumen ----
             PdfPTable tablaKpis = new PdfPTable(4);
             tablaKpis.setWidthPercentage(100);
             tablaKpis.setSpacingAfter(20);
@@ -325,7 +303,6 @@ public class PdfService {
             agregarCelda(tablaKpis, String.valueOf(stats.getTotalClientes()), fuenteKpiValor, Element.ALIGN_CENTER);
             documento.add(tablaKpis);
 
-            // ---- Sección 1: Ventas por Destino ----
             Font fuenteSeccion = new Font(Font.HELVETICA, 11, Font.BOLD, AZUL_MARCA);
             Paragraph sec1 = new Paragraph("1. Ventas por Destino", fuenteSeccion);
             sec1.setSpacingBefore(10);
@@ -364,7 +341,6 @@ public class PdfService {
             }
             documento.add(tablaDestinos);
 
-            // ---- Sección 2: Clientes Frecuentes ----
             Paragraph sec2 = new Paragraph("2. Principales Clientes (Fidelidad)", fuenteSeccion);
             sec2.setSpacingBefore(10);
             sec2.setSpacingAfter(8);

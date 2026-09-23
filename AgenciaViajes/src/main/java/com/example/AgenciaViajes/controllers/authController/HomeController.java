@@ -25,10 +25,8 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home(Model model) {
-        // Destinos: siempre se muestran, esté logueado o no
         model.addAttribute("destinos", destinoRepository.findTop6ByOrderByIdDestinoDesc());
 
-        // Datos del cliente: solo si hay sesión activa
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
             Optional<Cliente> clienteOpt = clienteRepository.findByCorreo(auth.getName());

@@ -66,7 +66,6 @@ VALUES ('Parque Tayrona', 'Explora las playas de Cabo San Juan, La Piscina y Arr
 INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, imagen_url, id_destino, id_aerolinea, id_hotel, estado, fecha_registro)
 VALUES ('Ciudad Perdida y Playas', 'Aventura de senderismo arqueológico a Ciudad Perdida combinado con descanso en las playas de Santa Marta.', 2800000, 8, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqumiDf0ljZnCyLBtyoU5OPHgy73Ofz9OJW8KZ7y28JIFhdxveGXDwW5c&s=10', 3, 3, 6, 'ACTIVO', CURRENT_TIMESTAMP);
 
--- IMÁGENES SECUNDARIAS (paquete_imagenes)
 
 -- Paquete 1: Islas del Rosario y Barú
 INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS-1_UhGT6-fFIppsr7VpqXECYocS_I5r7VEYkNhK7cTKl7jMVWeKdn987&s=10');
@@ -98,7 +97,6 @@ INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://travel
 INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://viajeserviexpress.com/wp-content/uploads/playa-cristal-santa-marta-600x400.webp');
 INSERT INTO paquete_imagenes (id_paquete, imagen_url) VALUES (6, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQir8aqXatou2NkrnFIUUYffoCSyOH0qmIVU2t65xpa4QEVMQBY7CicD9ge&s=10');
 
--- ¿QUÉ INCLUYE? (paquete_incluye)
 
 -- Paquete 1: Islas del Rosario y Barú
 INSERT INTO paquete_incluye (id_paquete, item) VALUES (1, 'Transporte ida y vuelta en lancha rápida');

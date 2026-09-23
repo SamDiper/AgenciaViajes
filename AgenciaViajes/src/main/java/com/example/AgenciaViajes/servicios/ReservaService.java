@@ -66,11 +66,6 @@ public class ReservaService {
         this.facturaService = facturaService;
     }
 
-    // ------------------------------------------------------------------
-    // Crear
-    // ------------------------------------------------------------------
-
-
 public Reserva crearDesdeCarrito(Carrito carrito, String username) {
     if (carrito.isVacio()) {
         throw new IllegalStateException("El carrito está vacío.");
@@ -111,9 +106,6 @@ public Reserva crearDesdeCarrito(Carrito carrito, String username) {
     Reserva guardada = reservaRepo.save(reserva);
     carrito.vaciar();
 
-    // El correo ya NO se envía aquí: la reserva queda PENDIENTE hasta que se pague.
-    // Se envía en pagarReserva(), cuando el pago es exitoso.
-
     return guardada;
 }
 
@@ -145,7 +137,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
 
         String asunto = "Confirmación de Reserva - " + destinos;
 
-        // Dos adjuntos: la factura y el itinerario
         Map<String, byte[]> adjuntos = new LinkedHashMap<>();
         adjuntos.put("factura_" + factura.getNumero() + ".pdf", pdfService.generarFactura(factura));
         adjuntos.put("itinerario_reserva_" + reserva.getId() + ".pdf", pdfService.generarItinerario(reserva));
@@ -183,7 +174,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         detalle.setEstado(EstadoReserva.CANCELADA);
         reserva.recalcularTotal(); // Ajusta el costo tras la cancelación
         
-        // Si todos los detalles están cancelados, cancelamos toda la reserva por lógica de negocio
         boolean todosCancelados = reserva.getDetalles().stream()
                 .allMatch(d -> d.getEstado() == EstadoReserva.CANCELADA);
         if (todosCancelados) {
@@ -192,9 +182,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
 
         return reservaRepo.save(reserva);
     }
-    // ------------------------------------------------------------------
-    // Consultar
-    // ------------------------------------------------------------------
 
     public List<Reserva> buscar(Integer idCliente, Long idDestino, EstadoReserva estado,
                                 LocalDate desde, LocalDate hasta) {
@@ -228,15 +215,13 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
     }
 
     public List<Reserva> misReservas(String username) {
-        Cliente cliente = clienteRepo.findByUsuarioNombreUsuario(username)
-                .orElseThrow(() -> new IllegalStateException("Tu usuario no tiene un cliente asociado."));
-        return reservaRepo.findByClienteIdClienteOrderByFechaReservaDesc(cliente.getIdCliente());
+    Cliente cliente = clienteRepo.findByUsuarioNombreUsuario(username).orElse(null);
+    if (cliente == null) {
+        return List.of();
     }
+    return reservaRepo.findByClienteIdClienteOrderByFechaReservaDesc(cliente.getIdCliente());
+}
 
-    /**
-     * Devuelve la reserva si el usuario es staff o es el dueño.
-     * Evita que un cliente vea reservas ajenas cambiando el id en la URL.
-     */
     public Reserva obtener(Integer id, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La reserva no existe."));
@@ -246,23 +231,10 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         return reserva;
     }
 
-    // ------------------------------------------------------------------
-    // Modificar
-    // ------------------------------------------------------------------
-    // Modificar
-    // ------------------------------------------------------------------
-
-    /** Pagar / simulación de pago de reserva (cliente o staff). */
-
     public Reserva pagarReserva(Integer id, String username, boolean esStaff) {
         return pagarReserva(id, username, esStaff, "Pago simulado", null);
     }
 
-    /**
-     * Pago desde la pasarela: confirma la reserva, genera la factura y envía el correo.
-     * @param metodoPago     texto que aparece en la factura (ej: "Tarjeta de crédito")
-     * @param ultimosDigitos últimos 4 dígitos de la tarjeta (puede ser null)
-     */
     @Transactional
     public Reserva pagarReserva(Integer id, String username, boolean esStaff,
                                 String metodoPago, String ultimosDigitos) {
@@ -278,7 +250,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
 
         reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
 
-        // Los paquetes pendientes también quedan confirmados (los cancelados se dejan igual)
         for (DetalleReserva detalle : reserva.getDetalles()) {
             if (detalle.getEstado() == EstadoReserva.PENDIENTE) {
                 detalle.setEstado(EstadoReserva.CONFIRMADA);
@@ -288,16 +259,13 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         usuarioRepo.findByNombreUsuario(username).ifPresent(reserva::setUsuarioGestiona);
         Reserva pagada = reservaRepo.save(reserva);
 
-        // Se genera la factura del pago
         Factura factura = facturaService.generar(pagada, metodoPago, ultimosDigitos);
 
-        // Ahora sí: el correo de confirmación sale después del pago, con la factura adjunta
         enviarCorreoConfirmacion(pagada, pagada.getCliente(), factura);
 
         return pagada;
     }
 
-    /** Cambio de estado hecho por ADMIN o EMPLEADO. */
 
     public Reserva cambiarEstado(Integer id, EstadoReserva nuevoEstado, String username) {
         Reserva reserva = reservaRepo.findById(id)
@@ -310,7 +278,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         return reservaRepo.save(reserva);
     }
 
-    /** Un cliente solo puede cancelar sus propias reservas pendientes. */
 
     public Reserva cancelarPropia(Integer id, String username) {
         Reserva reserva = reservaRepo.findById(id)
@@ -326,7 +293,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         return reservaRepo.save(reserva);
     }
 
-    /** Cambio de fecha de viaje (solo mientras esté pendiente). */
 
     public Reserva actualizarFechaViaje(Integer id, LocalDate nuevaFecha, String username, boolean esStaff) {
         Reserva reserva = reservaRepo.findById(id)
@@ -344,9 +310,6 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         return reservaRepo.save(reserva);
     }
 
-    // ------------------------------------------------------------------
-    // Reglas internas
-    // ------------------------------------------------------------------
 
     private void validarFechaViaje(LocalDate fecha) {
         if (fecha == null) {

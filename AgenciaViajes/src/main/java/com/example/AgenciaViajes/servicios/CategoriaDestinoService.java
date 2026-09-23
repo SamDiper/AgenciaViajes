@@ -57,9 +57,7 @@ public class CategoriaDestinoService {
         return categoriaDestinoRepository.save(categoria);
     }
 
-    
-
-    /** Falla con un mensaje claro si hay destinos que usan esta categoría (restricción de FK). */
+   
     @Transactional
     public void eliminar(Long id) {
         CategoriaDestino categoria = buscarPorId(id);

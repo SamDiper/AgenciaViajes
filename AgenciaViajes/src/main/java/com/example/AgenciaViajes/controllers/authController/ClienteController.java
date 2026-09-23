@@ -25,7 +25,6 @@ public class ClienteController {
         this.reservaService = reservaService;
     }
 
-    // 1. LISTAR TODOS LOS CLIENTES
     @GetMapping("/listar")
     public String listarClientes(Model model) {
         model.addAttribute("clientes", clienteService.obtenerTodos());
@@ -33,7 +32,6 @@ public class ClienteController {
         return "auto/cliente/Lista";
     }
 
-    // 2. FORMULARIO DE REGISTRO
     @GetMapping
     public String nuevoForm(Model model) {
         model.addAttribute("registroClienteDTO", new RegistroClienteDTO());
@@ -41,7 +39,6 @@ public class ClienteController {
         return "auth/cliente/register";
     }
 
-    // 3. PROCESAR REGISTRO (POST)
     @PostMapping("/guardar")
     public String guardar(@Valid @ModelAttribute("registroClienteDTO") RegistroClienteDTO dto,
                           BindingResult result,
@@ -58,15 +55,13 @@ public class ClienteController {
             redirectAttributes.addFlashAttribute("mensaje", "Cliente registrado exitosamente");
             return "redirect:/login";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("errorMessage", "Este correo ya está registrado");
             return "auth/cliente/register";
         }
     }
 
-// 4. FORMULARIO DE EDICIÓN
 @GetMapping("/editar/{id}")
 public String editarForm(@PathVariable Integer id, Authentication auth, Model model) {
-    // Cada cliente solo puede ver su propio perfil (evita cambiar el id en la URL)
     Cliente cliente = clienteService.obtenerPorCorreo(auth.getName());
     if (!cliente.getIdCliente().equals(id)) {
         return "redirect:/clientes/mi-perfil";
@@ -80,7 +75,6 @@ public String editarForm(@PathVariable Integer id, Authentication auth, Model mo
     dto.setTelefono(cliente.getTelefono());
     dto.setDireccion(cliente.getDireccion());
 
-    // Traemos todas las reservas del cliente usando su nombreUsuario
     var todasLasReservas = reservaService.misReservas(cliente.getUsuario().getNombreUsuario());
 
     var reservasActivas = todasLasReservas.stream()
@@ -99,13 +93,11 @@ public String editarForm(@PathVariable Integer id, Authentication auth, Model mo
     return "auth/cliente/Formulario";
 }
 
-    // 5. ACTUALIZAR (desde "Mi perfil")
     @PostMapping("/actualizar/{id}")
     public String actualizar(@PathVariable Integer id,
                              @ModelAttribute("registroClienteDTO") RegistroClienteDTO dto,
                              Authentication auth,
                              RedirectAttributes flash) {
-        // Solo puede editar su propio perfil
         Cliente logueado = clienteService.obtenerPorCorreo(auth.getName());
         if (!logueado.getIdCliente().equals(id)) {
             flash.addFlashAttribute("error", "No puedes editar los datos de otro usuario.");
@@ -114,7 +106,6 @@ public String editarForm(@PathVariable Integer id, Authentication auth, Model mo
 
         clienteService.actualizarPerfil(id, dto);
         flash.addFlashAttribute("exito", "Tus datos se actualizaron correctamente.");
-        // Directo a /editar/{id}: si pasara por /mi-perfil (que redirige otra vez) se perdería el mensaje
         return "redirect:/clientes/editar/" + id;
     }
 

@@ -20,10 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
-/**
- * Pasarela de pago simulada.
- * Flujo: carrito -> /pago/{idReserva} -> (pagar) -> /pago/{idReserva}/exito
- */
 @Controller
 @RequestMapping("/pago")
 public class PagoController {
@@ -40,12 +36,10 @@ public class PagoController {
         this.pdfService = pdfService;
     }
 
-    /** Muestra la pasarela con el resumen de la reserva. */
     @GetMapping("/{idReserva}")
     public String pasarela(@PathVariable Integer idReserva, Principal principal, Model model) {
         Reserva reserva = reservaService.obtener(idReserva, principal.getName(), false);
 
-        // Si ya está pagada, se va directo a la página de éxito
         if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA) {
             return "redirect:/pago/" + idReserva + "/exito";
         }
@@ -54,7 +48,6 @@ public class PagoController {
         return "auth/pago/pasarela";
     }
 
-    /** Procesa el pago simulado. */
     @PostMapping("/{idReserva}")
     public String pagar(@PathVariable Integer idReserva,
                         @RequestParam String titular,
@@ -65,10 +58,8 @@ public class PagoController {
                         Principal principal,
                         RedirectAttributes ra) {
 
-        // Se quitan espacios y guiones del número de tarjeta
         String numero = numeroTarjeta.replaceAll("[\\s-]", "");
 
-        // ---- Validaciones simples ----
         if (titular.isBlank()) {
             ra.addFlashAttribute("error", "Escribe el nombre del titular de la tarjeta.");
             return "redirect:/pago/" + idReserva;
@@ -86,7 +77,6 @@ public class PagoController {
             return "redirect:/pago/" + idReserva;
         }
 
-        // ---- Simulación: una tarjeta que termina en 0000 es rechazada ----
         if (numero.endsWith("0000")) {
             ra.addFlashAttribute("error", "Pago rechazado por el banco. Intenta con otra tarjeta.");
             return "redirect:/pago/" + idReserva;
@@ -103,14 +93,12 @@ public class PagoController {
         return "redirect:/pago/" + idReserva + "/exito";
     }
 
-    /** Página de pago exitoso con los datos de la factura. */
     @GetMapping("/{idReserva}/exito")
     public String exito(@PathVariable Integer idReserva, Principal principal, Model model) {
         Reserva reserva = reservaService.obtener(idReserva, principal.getName(), false);
         Factura factura = facturaService.buscarPorReserva(idReserva).orElse(null);
 
         if (factura == null) {
-            // Todavía no se ha pagado
             return "redirect:/pago/" + idReserva;
         }
 
@@ -119,7 +107,6 @@ public class PagoController {
         return "auth/pago/exito";
     }
 
-    /** Descarga el PDF de la factura (solo el dueño de la reserva). */
     @GetMapping("/{idReserva}/factura")
     public ResponseEntity<byte[]> descargarFactura(@PathVariable Integer idReserva, Principal principal) {
         reservaService.obtener(idReserva, principal.getName(), false); // valida que sea el dueño

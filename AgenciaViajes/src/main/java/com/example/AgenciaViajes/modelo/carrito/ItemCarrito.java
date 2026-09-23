@@ -8,11 +8,6 @@ import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
 
-/**
- * Línea del carrito: un paquete con la aerolínea y el hotel elegidos.
- * Guarda solo datos planos (ids, nombres y precio), nunca entidades JPA,
- * para evitar problemas de lazy loading al vivir en la sesión.
- */
 public class ItemCarrito implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,13 +16,13 @@ public class ItemCarrito implements Serializable {
     private String nombrePaquete;
     private String nombreDestino;
 
-    private Long idAerolinea;          // null = sin aerolínea
+    private Long idAerolinea;          
     private String nombreAerolinea;
 
-    private Long idHotel;              // null = sin hotel
+    private Long idHotel;              
     private String nombreHotel;
 
-    private BigDecimal precioUnitario; // por persona, con extras de aerolínea y hotel
+    private BigDecimal precioUnitario; 
     private int personas;
     private LocalDate fechaViaje;
 
@@ -53,11 +48,6 @@ public class ItemCarrito implements Serializable {
         this.fechaViaje = null;
     }
 
-    /**
-     * Fórmula única del precio por persona. La usan el carrito (para mostrar)
-     * y ReservaService (para guardar), así nunca se desincronizan.
-     * Debe coincidir con cómo calculas precioGranTotal en PaqueteController.
-     */
     public static BigDecimal calcularPrecioUnitario(Paquete paquete, Aerolinea aerolinea, Hotel hotel) {
         BigDecimal precio = paquete.getPrecioBase();
         if (aerolinea != null && aerolinea.getPrecioAdicional() != null) {
@@ -69,7 +59,6 @@ public class ItemCarrito implements Serializable {
         return precio;
     }
 
-    /** Identifica la línea: mismo paquete con distinta aerolínea u hotel = línea distinta. */
     public String getClave() {
         return idPaquete + "-" + (idAerolinea != null ? idAerolinea : 0) + "-" + (idHotel != null ? idHotel : 0);
     }

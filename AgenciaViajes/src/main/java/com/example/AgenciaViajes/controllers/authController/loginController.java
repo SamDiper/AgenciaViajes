@@ -16,17 +16,14 @@ public class loginController {
                         @RequestParam(value = "logout", required = false) String logout,
                         Model model) {
 
-        // Si Spring Security detecta un error en las credenciales
         if (error != null) {
             model.addAttribute("errorMessage", "Correo o contraseña incorrectos.");
         }
 
-        // Si el usuario cerró sesión exitosamente
         if (logout != null) {
             model.addAttribute("logoutMessage", "Has cerrado sesión correctamente.");
         }
 
-        // En ClienteController.java -> guardar()
-        return "auth/login"; // Ajusta la ruta a la vista de tu plantilla login.html
+        return "auth/login"; 
     }
 }

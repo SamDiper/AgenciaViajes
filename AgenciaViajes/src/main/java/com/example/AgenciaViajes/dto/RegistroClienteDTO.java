@@ -15,7 +15,7 @@ public class RegistroClienteDTO {
     private String nombreCompleto;
 
     @NotBlank(message = "El tipo de documento es obligatorio")
-    private String tipoDocumento; // Debe coincidir con el Enum: CC, CE, PASAPORTE, TI
+    private String tipoDocumento; 
 
     @NotBlank(message = "El número de documento es obligatorio")
     @Size(max = 30, message = "El documento no puede superar 30 caracteres")

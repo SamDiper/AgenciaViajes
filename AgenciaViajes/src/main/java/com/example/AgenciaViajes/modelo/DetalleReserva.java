@@ -38,7 +38,6 @@ public class DetalleReserva {
     private BigDecimal precioUnitario;
     private BigDecimal subtotal;
 
-    // NUEVOS CAMPOS: Fecha y Estado individuales
     @Column(nullable = false)
     private LocalDate fechaViaje;
 
@@ -48,7 +47,6 @@ public class DetalleReserva {
 
     public DetalleReserva() {}
 
-    // Getters y Setters...
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public Reserva getReserva() { return reserva; }

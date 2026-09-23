@@ -38,7 +38,6 @@ public class PaqueteController {
     @Autowired
     private HotelService hotelService;
 
-    /** Catálogo completo — muestra todos los paquetes activos */
     @GetMapping
     public String catalogo(Model model) {
         List<Paquete> paquetes = paqueteService.listarActivos();
@@ -50,7 +49,6 @@ public class PaqueteController {
         return "auth/Paquetes/paquetes";
     }
 
-    /** Búsqueda con filtros opcionales por destino, precio y duración */
     @GetMapping("/buscar")
     public String buscar(
             @RequestParam(required = false) String destino,
@@ -67,7 +65,6 @@ public class PaqueteController {
         model.addAttribute("destinos", destinos);
         model.addAttribute("totalResultados", paquetes.size());
 
-        // Reenviar valores del formulario para mantenerlos visibles
         model.addAttribute("filtroDestino", destino);
         model.addAttribute("filtroPrecioMin", precioMin);
         model.addAttribute("filtroPrecioMax", precioMax);
@@ -77,7 +74,6 @@ public class PaqueteController {
         return "auth/Paquetes/paquetes";
     }
 
-    /** Detalle del paquete con cotización y selección de aerolínea y hotel */
     @GetMapping("/{id}")
     public String detalle(
             @PathVariable Long id,
@@ -94,12 +90,10 @@ public class PaqueteController {
 
         Paquete paquete = paqueteOpt.get();
 
-        // Validar cantidad mínima de boletos
         if (cantidadBoletos == null || cantidadBoletos < 1) {
             cantidadBoletos = 1;
         }
 
-        // Cargar aerolíneas con cobertura en el destino del paquete o asignadas al paquete
         List<Aerolinea> aerolineas = List.of();
         if (paquete.getDestino() != null && paquete.getDestino().getIdDestino() != null) {
             aerolineas = aerolineaService.listarPorDestino(paquete.getDestino().getIdDestino());
@@ -115,19 +109,16 @@ public class PaqueteController {
             aerolineas = List.of(paquete.getAerolinea());
         }
 
-        // Encontrar la aerolínea más económica entre las disponibles
         Aerolinea aerolineaMasEconomica = aerolineas.stream()
                 .min(Comparator
                         .comparing(a -> a.getPrecioAdicional() != null ? a.getPrecioAdicional() : BigDecimal.ZERO))
                 .orElse(null);
 
-        // Cargar exclusivamente el hotel asignado al paquete (no todos los hoteles del destino)
         List<Hotel> hotelesDestino = List.of();
         if (paquete.getHotel() != null) {
             hotelesDestino = List.of(paquete.getHotel());
         }
 
-        // Determinar aerolínea seleccionada
         Aerolinea aerolineaSeleccionada = null;
         if (idAerolinea != null) {
             aerolineaSeleccionada = aerolineas.stream()
@@ -139,7 +130,6 @@ public class PaqueteController {
             aerolineaSeleccionada = paquete.getAerolinea() != null ? paquete.getAerolinea() : aerolineaMasEconomica;
         }
 
-        // Determinar hotel seleccionado
         Hotel hotelSeleccionado = null;
         if (!sinVinculacion) {
             if (idHotel != null && idHotel > 0) {
@@ -152,14 +142,12 @@ public class PaqueteController {
             }
         }
 
-        // Paquetes relacionados del mismo destino
         List<Paquete> paquetesRelacionados = paqueteService.listarActivos().stream()
                 .filter(p -> p.getDestino() != null
                         && p.getDestino().getIdDestino().equals(paquete.getDestino().getIdDestino())
                         && !p.getIdPaquete().equals(paquete.getIdPaquete()))
                 .collect(Collectors.toList());
 
-        // Cálculos de precios en el servidor
         BigDecimal precioBaseUnitario = paquete.getPrecioBase();
         BigDecimal adicionalAerolinea = (aerolineaSeleccionada != null
                 && aerolineaSeleccionada.getPrecioAdicional() != null)
@@ -174,7 +162,6 @@ public class PaqueteController {
         BigDecimal precioUnitarioTotal = precioBaseUnitario.add(adicionalAerolinea).add(adicionalHotel);
         BigDecimal precioGranTotal = precioUnitarioTotal.multiply(BigDecimal.valueOf(cantidadBoletos));
 
-        // Pasar todo al modelo
         model.addAttribute("paquete", paquete);
         model.addAttribute("aerolineas", aerolineas);
         model.addAttribute("aerolineaMasEconomica", aerolineaMasEconomica);

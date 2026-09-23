@@ -54,7 +54,7 @@ public class ClienteAdminService {
             datos.setEstado(EstadoGeneral.ACTIVO);
         }
 
-        return clienteRepository.save(datos); // cascade ALL guarda también el Usuario
+        return clienteRepository.save(datos); 
     }
 
     public Cliente actualizar(Integer id, Cliente datos) {
@@ -68,13 +68,12 @@ public class ClienteAdminService {
         existente.setDireccion(datos.getDireccion());
         existente.setEstado(datos.getEstado());
 
-        // Mantiene sincronizado el correo del Usuario (login) con el del Cliente
         existente.getUsuario().setCorreo(datos.getCorreo());
 
         return clienteRepository.save(existente);
     }
 
     public void eliminar(Integer id) {
-        clienteRepository.deleteById(id); // cascade ALL borra también el Usuario asociado
+        clienteRepository.deleteById(id); 
     }
 }

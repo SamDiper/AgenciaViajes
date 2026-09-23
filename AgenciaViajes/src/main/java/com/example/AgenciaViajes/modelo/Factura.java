@@ -14,33 +14,28 @@ public class Factura {
     @Column(name = "id_factura")
     private Integer id;
 
-    // Ej: FAC-000001
     @Column(unique = true, length = 20)
     private String numero;
 
     @Column(name = "fecha_emision", nullable = false)
     private LocalDateTime fechaEmision = LocalDateTime.now();
 
-    // Una reserva tiene una sola factura
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_reserva", nullable = false, unique = true)
     private Reserva reserva;
 
-    // Valor sin IVA
     @Column(nullable = false)
     private BigDecimal subtotal = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private BigDecimal iva = BigDecimal.ZERO;
 
-    // Lo que pagó el cliente (IVA incluido)
     @Column(nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
 
     @Column(name = "metodo_pago", length = 50)
     private String metodoPago;
 
-    // Solo los últimos 4 dígitos de la tarjeta, nunca el número completo
     @Column(name = "ultimos_digitos", length = 4)
     private String ultimosDigitos;
 

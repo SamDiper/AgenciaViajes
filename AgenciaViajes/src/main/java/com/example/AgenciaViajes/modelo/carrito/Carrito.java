@@ -14,17 +14,12 @@ import com.example.AgenciaViajes.modelo.Aerolinea;
 import com.example.AgenciaViajes.modelo.Hotel;
 import com.example.AgenciaViajes.modelo.Paquete;
 
-/**
- * Un carrito por sesión HTTP. Se inyecta como cualquier bean;
- * Spring crea un proxy que resuelve la instancia de la sesión actual.
- */
 @Component
 @SessionScope
 public class Carrito implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // clave = ItemCarrito.getClave() (paquete-aerolínea-hotel)
     private final Map<String, ItemCarrito> items = new LinkedHashMap<>();
 
     public void agregar(Paquete paquete, Aerolinea aerolinea, Hotel hotel, int personas) {

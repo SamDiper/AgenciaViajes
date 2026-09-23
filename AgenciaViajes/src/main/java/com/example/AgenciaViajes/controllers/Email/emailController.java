@@ -29,7 +29,6 @@ public class emailController {
             variablesReserva.put("fecha", fechaViaje);
             variablesReserva.put("mensaje", "¡Tu reserva ha sido confirmada exitosamente!");
 
-            // generación de pdf - falta implementar
             byte[] documentoAdjunto = null;
             String nombreAdjunto = "itinerario_" + destinoViaje.replaceAll("\\s+", "") + ".pdf";
 

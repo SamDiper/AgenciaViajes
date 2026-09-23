@@ -16,7 +16,6 @@ public class Cliente {
     @Column(name = "id_cliente")
     private Integer idCliente;
 
-    // Relación 1 a 1: 'id_usuario' es la FK hacia la tabla usuarios
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false, unique = true)
     private Usuario usuario;
@@ -37,7 +36,7 @@ public class Cliente {
     @Column(nullable = false, length = 20)
     private String telefono;
 
-    @Column(length = 150) // Opcional (sin NN en el diagrama)
+    @Column(length = 150) 
     private String direccion;
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)

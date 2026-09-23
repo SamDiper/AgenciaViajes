@@ -41,7 +41,6 @@ public class DashboardService {
     public DashboardStatsDTO obtenerEstadisticas(LocalDate fechaInicio, LocalDate fechaFin, Long idCategoria) {
         List<Reserva> todasLasReservas = reservaRepository.findAllByOrderByFechaReservaDesc();
 
-        // Filtrado en memoria
         List<Reserva> reservasFiltradas = todasLasReservas.stream().filter(r -> {
             LocalDate fechaReserva = r.getFechaReserva() != null ? r.getFechaReserva().toLocalDate() : null;
 
@@ -67,7 +66,6 @@ public class DashboardService {
             return true;
         }).collect(Collectors.toList());
 
-        // 1. Métricas Generales (KPIs)
         long totalReservas = reservasFiltradas.size();
         long totalConfirmadas = reservasFiltradas.stream().filter(r -> r.getEstadoReserva() == EstadoReserva.CONFIRMADA).count();
         long totalPendientes = reservasFiltradas.stream().filter(r -> r.getEstadoReserva() == EstadoReserva.PENDIENTE).count();
@@ -84,7 +82,6 @@ public class DashboardService {
                 .collect(Collectors.toSet());
         long totalClientes = clientesIds.size();
 
-        // 2. Ventas por Destino
         Map<Long, List<DetalleReserva>> detallesPorDestino = new HashMap<>();
         for (Reserva r : reservasFiltradas) {
             if (r.getEstadoReserva() == EstadoReserva.CANCELADA) continue;
@@ -127,7 +124,6 @@ public class DashboardService {
                     .build());
         }
 
-        // Calcular porcentajes por destino
         final BigDecimal totalDestinosCalc = totalIngresosDestinos.compareTo(BigDecimal.ZERO) > 0 ? totalIngresosDestinos : BigDecimal.ONE;
         ventasPorDestino.forEach(vd -> {
             double pct = vd.getTotalVentas()
@@ -138,7 +134,6 @@ public class DashboardService {
         });
         ventasPorDestino.sort((a, b) -> b.getTotalVentas().compareTo(a.getTotalVentas()));
 
-        // 3. Clientes Frecuentes
         Map<Integer, List<Reserva>> reservasPorCliente = reservasFiltradas.stream()
                 .filter(r -> r.getCliente() != null)
                 .collect(Collectors.groupingBy(r -> r.getCliente().getIdCliente()));
@@ -176,7 +171,6 @@ public class DashboardService {
         }
         clientesFrecuentes.sort((a, b) -> b.getTotalGastado().compareTo(a.getTotalGastado()));
 
-        // 4. Ventas por Paquete Turístico
         Map<Long, List<DetalleReserva>> detallesPorPaquete = new HashMap<>();
         for (Reserva r : reservasFiltradas) {
             if (r.getEstadoReserva() == EstadoReserva.CANCELADA) continue;
@@ -219,7 +213,6 @@ public class DashboardService {
         }
         ventasPorPaquete.sort((a, b) -> b.getTotalIngresos().compareTo(a.getTotalIngresos()));
 
-        // 5. Ingresos por Temporada / Cronología Mensual
         Map<String, List<Reserva>> reservasPorPeriodo = new TreeMap<>();
         DateTimeFormatter claveFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
         DateTimeFormatter labelFormatter = DateTimeFormatter.ofPattern("MMM yyyy", new Locale("es", "CO"));
@@ -239,7 +232,6 @@ public class DashboardService {
                     .map(r -> r.getTotal() != null ? r.getTotal() : BigDecimal.ZERO)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Formatear etiqueta amigable
             LocalDate dateSample = LocalDate.parse(key + "-01");
             String label = dateSample.format(labelFormatter);
             label = label.substring(0, 1).toUpperCase() + label.substring(1);
@@ -252,7 +244,6 @@ public class DashboardService {
                     .build());
         }
 
-        // 6. Distribución por Categoría
         Map<String, List<DetalleReserva>> detallesPorCategoria = new HashMap<>();
         for (Reserva r : reservasFiltradas) {
             if (r.getEstadoReserva() == EstadoReserva.CANCELADA) continue;
@@ -295,7 +286,6 @@ public class DashboardService {
         });
         distribucionCategorias.sort((a, b) -> b.getTotalIngresos().compareTo(a.getTotalIngresos()));
 
-        // 7. Últimas Transacciones Resumen
         List<TransaccionResumenDTO> ultimasTransacciones = reservasFiltradas.stream()
                 .limit(15)
                 .map(r -> {

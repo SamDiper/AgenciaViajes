@@ -55,7 +55,6 @@ public class CarritoController {
         return "auth/Carrito/carrito";
     }
 
-    /** Lo llama el botón "Reservar ahora" de la página del paquete. */
     @PostMapping("/agregar")
     public String agregar(@RequestParam Long idPaquete,
                           @RequestParam(defaultValue = "1") int personas,
@@ -69,7 +68,6 @@ public class CarritoController {
             return "redirect:/carrito";
         }
 
-        // 0 o null significa "sin aerolínea" / "sin hotel"
         Aerolinea aerolinea = (idAerolinea != null && idAerolinea > 0) ? aerolineaRepo.findById(idAerolinea).orElse(null) : null;
         Hotel hotel = (idHotel != null && idHotel > 0) ? hotelRepo.findById(idHotel).orElse(null) : null;
 
@@ -122,7 +120,6 @@ public class CarritoController {
                 item.setFechaViaje(fechaViaje);
             }
 
-            // Se crea la reserva (queda PENDIENTE) y se lleva al cliente a la pasarela de pago
             Reserva reserva = reservaService.crearDesdeCarrito(carrito, principal.getName());
             return "redirect:/pago/" + reserva.getId();
             
