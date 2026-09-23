@@ -71,8 +71,10 @@ public Reserva crearDesdeCarrito(Carrito carrito, String username) {
         throw new IllegalStateException("El carrito está vacío.");
     }
 
-    Cliente cliente = clienteRepo.findByUsuarioNombreUsuario(username)
-            .orElseThrow(() -> new IllegalStateException("Tu usuario no tiene un cliente asociado."));
+        Cliente cliente = buscarCliente(username);
+    if (cliente == null) {
+        throw new IllegalStateException("Tu usuario no tiene un cliente asociado.");
+    }
 
     Reserva reserva = new Reserva();
     reserva.setCliente(cliente);
@@ -108,6 +110,12 @@ public Reserva crearDesdeCarrito(Carrito carrito, String username) {
 
     return guardada;
 }
+
+    private Cliente buscarCliente(String username) {
+        return clienteRepo.findByUsuarioNombreUsuario(username)
+                .or(() -> clienteRepo.findByCorreo(username))
+                .orElse(null);
+    }
 
 private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura factura) {
     try {
@@ -215,7 +223,7 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
     }
 
     public List<Reserva> misReservas(String username) {
-    Cliente cliente = clienteRepo.findByUsuarioNombreUsuario(username).orElse(null);
+        Cliente cliente = buscarCliente(username);
     if (cliente == null) {
         return List.of();
     }
@@ -332,9 +340,13 @@ private void enviarCorreoConfirmacion(Reserva reserva, Cliente cliente, Factura 
         }
     }
 
-    private boolean esDuenio(Reserva reserva, String username) {
-        return reserva.getCliente().getUsuario() != null
-                && username.equals(reserva.getCliente().getUsuario().getNombreUsuario());
+       private boolean esDuenio(Reserva reserva, String username) {
+        Cliente cliente = reserva.getCliente();
+        if (username.equals(cliente.getCorreo())) {
+            return true;
+        }
+        return cliente.getUsuario() != null
+                && username.equals(cliente.getUsuario().getNombreUsuario());
     }
 
     public List<Reserva> listarTodasOrdenadasPorFecha() {
